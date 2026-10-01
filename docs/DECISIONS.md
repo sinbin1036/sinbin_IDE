@@ -77,3 +77,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 새 모듈은 `require("sinbin.<name>")`. Leader는 Keymap/Plugin보다 먼저 설정되도록 `keymaps`를 가장 먼저 로드
 - Related Task: TASK-003
 - Evidence: `nvim --headless` 검증 (2026-10-01, TASK-003)
+
+### D-007: Plugin Manager로 Neovim 내장 `vim.pack` 사용
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Phase 2 이후 Plugin 도입을 위해 Plugin Manager 필요. RULES Plugin 원칙(기본 기능 우선, 특정 Plugin 종속 금지)
+- Decision: Neovim 0.12 내장 `vim.pack` 사용. Plugin 목록은 `lua/sinbin/plugins.lua`의 `vim.pack.add()` 한 곳에 두고, lock 파일 `nvim-pack-lock.json`(Repository Root)을 git으로 관리
+- Reason: 추가 의존성 없음(git만 필요), Config가 `vim.pack.add()` 목록뿐이라 다른 Manager로 이전 쉬움, lock 파일이 Repository Root에 생겨 재현성(D-004) 확보
+- Alternatives: lazy.nvim (성숙·Lazy loading·전용 UI, 단 bootstrap 필요하고 spec 형식에 Config가 묶이기 쉬움), mini.deps
+- Consequences: 공식 문서상 experimental — Neovim 업데이트 시 API 변경 확인 필요. Lazy loading 내장 없음 → 필요 시 `:packadd`/autocmd로 직접 처리. 첫 설치 시 확인 prompt 표시(`confirm` 기본값 유지)
+- Related Task: TASK-004
+- Evidence: 사용자 선택 (2026-10-01), `:h vim.pack` (v0.12.5), 테스트 Plugin 설치·제거 검증 (TASK-004)
