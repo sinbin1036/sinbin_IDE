@@ -5,3 +5,4 @@
 require("sinbin.keymaps")
 require("sinbin.options")
 require("sinbin.platform").setup()
+require("sinbin.plugins")
