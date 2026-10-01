@@ -88,3 +88,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 공식 문서상 experimental — Neovim 업데이트 시 API 변경 확인 필요. Lazy loading 내장 없음 → 필요 시 `:packadd`/autocmd로 직접 처리. 첫 설치 시 확인 prompt 표시(`confirm` 기본값 유지)
 - Related Task: TASK-004
 - Evidence: 사용자 선택 (2026-10-01), `:h vim.pack` (v0.12.5), 테스트 Plugin 설치·제거 검증 (TASK-004)
+
+### D-008: 편집 보조 Plugin으로 mini 계열 개별 모듈 사용, Surround는 vim-surround 키
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Phase 2에서 괄호 자동 닫기와 Surround는 Neovim 내장 기능이 없어 Plugin 필요
+- Decision: `nvim-mini/mini.pairs`, `nvim-mini/mini.surround`를 개별 repo로 `stable` branch 기준 설치. Surround 키는 `ys`/`ds`/`cs`(+ Visual `S`, `yss`)로 재매핑 (`:h MiniSurround-vim-surround-config`)
+- Reason: 의존성 없음, 필요한 모듈만 설치 가능(`mini.nvim` 전체 묶음 불필요), 같은 계열이라 설정 방식 일관. `ys`/`ds`/`cs`는 가장 널리 쓰이는 키이고 내장 `s`를 덮어쓰지 않음
+- Alternatives: `nvim-autopairs` + `nvim-surround` (기능 충분, 단 제작자·설정 방식이 각각 다름), mini.surround 기본 키 `sa`/`sd`/`sr` (내장 `s` 덮어씀)
+- Consequences: 다른 mini 모듈(`mini.ai` 등)도 같은 방식으로 추가 가능. `stable` branch는 release 시점에만 갱신되므로 최신 기능은 늦게 반영됨. Surround 동작은 vim-surround와 완전히 같지는 않음(문서상 "closest, not identical")
+- Related Task: TASK-005
+- Evidence: 사용자 선택 (2026-10-01), mini.surround 문서, headless 동작 검증 (TASK-005)
