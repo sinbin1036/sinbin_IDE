@@ -10,6 +10,7 @@
 | 전체 구조·Component·Data Flow | [ARCHITECTURE.md](ARCHITECTURE.md) | Component 경계를 넘는 변경, 새 모듈 추가 | 단일 파일 내부 수정 |
 | 개발 규칙 | [RULES.md](RULES.md) | 코드 작성·커밋 전 (해당 섹션만) | 문서만 수정 |
 | 과거 기술 선택 이유 | [DECISIONS.md](DECISIONS.md) | 기술/구조 선택을 하려 할 때 (재결정 방지) | 기존 패턴을 따르는 변경 |
+| Neovim 사용법 튜토리얼, 조작법·Keymap·설치된 Plugin | [USAGE.md](USAGE.md) | 사용법 확인, Keymap/Plugin/명령 변경 후 갱신 | 내부 구조 변경 |
 | 변경 후 검증 방법 | [VERIFICATION.md](VERIFICATION.md) | 작업 완료 처리 전 | — |
 | 특정 Domain 지식 | `domain/` | Task가 해당 Domain을 참조할 때 | 그 외 |
 | 완료된 작업 기록 | [tasks/completed/](tasks/completed/) | 과거 작업 맥락이 필요할 때만 | 대부분 |

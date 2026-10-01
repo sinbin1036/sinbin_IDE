@@ -25,6 +25,7 @@
 |---|---|---|
 | [PROJECT.md](PROJECT.md) "Keymap 방향"의 Leader 그룹을 따름 | 일관된 조작 | 모든 Keymap |
 | 새 Keymap 추가 전 기존/Plugin Keymap 충돌 확인 | 무음 덮어쓰기 방지 | 모든 Keymap |
+| Keymap·Plugin·사용자 명령 변경 시 [USAGE.md](USAGE.md) 갱신 | 조작법 문서와 실제 설정 불일치 방지 | 모든 Keymap, Plugin, 명령 |
 
 ## Documentation
 
