@@ -11,6 +11,8 @@
 | `nvim --headless "+lua io.write(vim.env.MYVIMRC)" "+qa"` | 이 Repository의 `init.lua`가 로드되는지 확인 | 확인됨 (2026-10-01) |
 | `nvim --headless "+lua io.write(vim.inspect({vim.g.mapleader, vim.o.clipboard}))" "+qa"` | Option·Leader 실제 적용 값 확인 (확인할 항목으로 교체) | 확인됨 (2026-10-01) |
 | `nvim --headless "+verbose map <Space>" "+qa"` | Keymap 충돌 및 정의 위치 확인 | 확인됨 (2026-10-01) |
+| `nvim --headless "+lua io.write(vim.inspect(vim.pack.get(nil,{info=false})))" "+qa"` | `vim.pack` 관리 Plugin 목록·revision 확인 | 확인됨 (2026-10-01) |
+| `nvim --headless "+lua vim.pack.del({'<name>'})" "+qa"` | Plugin을 디스크에서 제거 (목록에서 먼저 지운 뒤) | 확인됨 (2026-10-01) |
 
 주의: Repository 안이 아닌 임시 디렉터리에서 실행하면 열린 파일의 영향 없이 Config만 검증된다.
 
@@ -19,7 +21,7 @@
 | 변경 | 검증 |
 |---|---|
 | Lua Config (`init.lua`, `lua/`) | Startup 에러 확인 → 변경한 기능 수동 확인 |
-| Plugin 추가/제거 | Startup 에러 확인 → checkhealth → Plugin lock 파일 일관성 (Plugin Manager 결정 후 구체화) |
+| Plugin 추가/제거 | Startup 에러 확인 → checkhealth (`vim.pack` 섹션) → `nvim-pack-lock.json` diff가 `plugins.lua` 변경과 일치하는지 확인 → 제거 시 `vim.pack.del()` 후 디스크에서 사라졌는지 확인 |
 | Keymap | 충돌 확인 (`:verbose map <key>`) → 동작 수동 확인 |
 | LSP / Formatter / Debugger | checkhealth (`vim.lsp` 섹션) → 대상 언어 파일에서 수동 확인 |
 | Platform Layer | 해당 OS에서 Startup 확인. 검증 불가한 OS는 UNVERIFIED로 기록 |
@@ -50,7 +52,7 @@
 | 구분 | 내용 |
 |---|---|
 | Relevant Source | `init.lua`, `lua/**` (생성 예정) |
-| Relevant Config | `%LOCALAPPDATA%\nvim` Junction (깨지면 Config 미로드), Plugin lock 파일 (Plugin Manager 결정 후) |
+| Relevant Config | `%LOCALAPPDATA%\nvim` Junction (깨지면 Config 미로드), `nvim-pack-lock.json` |
 | Dependency | 외부 CLI Tool, LSP Server 등 ([PROJECT.md](PROJECT.md) Dependency 분류) |
 | Toolchain | Neovim 버전 |
 | Environment | OS, Shell, Nerd Font |

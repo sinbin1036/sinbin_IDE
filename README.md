@@ -10,7 +10,7 @@ Windows / Linux / macOS / WSL / SSH에서 동일한 조작 방식을 목표로 �
 
 ## 현재 상태
 
-Phase 1 — Core Config 완료, Phase 2 준비. 상세: [docs/PROGRESS.md](docs/PROGRESS.md)
+Phase 1 완료 (Core Config, Plugin Manager `vim.pack`), Phase 2 준비. 상세: [docs/PROGRESS.md](docs/PROGRESS.md)
 
 ## 주요 기술
 
