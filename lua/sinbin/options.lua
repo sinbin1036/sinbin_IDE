@@ -28,3 +28,16 @@ opt.undofile = true
 opt.splitright = true
 opt.splitbelow = true
 opt.scrolloff = 8
+
+-- Visual aids
+opt.cursorline = true
+opt.list = true
+opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
+
+-- Long lines: soft-wrap at word boundaries, keeping the indent
+opt.wrap = true
+opt.linebreak = true
+opt.breakindent = true
+
+-- Live preview of :substitute in a split
+opt.inccommand = "split"

@@ -4,5 +4,7 @@
 -- Leader must be set before any mapping or plugin is defined.
 require("sinbin.keymaps")
 require("sinbin.options")
+require("sinbin.autocmds")
+require("sinbin.commands")
 require("sinbin.platform").setup()
 require("sinbin.plugins")
