@@ -50,6 +50,8 @@
 | 기본 branch는 `main` | Repository 초기화 시 설정 | Repository |
 | AI Agent는 사용자 요청 시에만 commit | 변경 이력의 통제권은 사용자에게 | AI Agent |
 | Commit 메시지는 아래 형식을 따르고 본문 bullet을 반드시 포함 | 이력만으로 변경 내용 파악 | 모든 commit |
+| 작업은 branch에서 진행하고, 논리 단위로 commit을 나눔 | 변경 단위별 검토·되돌리기 용이 | 모든 작업 |
+| PR 본문은 `.github/pull_request_template.md`를 따름 | 원칙 준수·검증 결과를 일관되게 전달 | 모든 PR |
 
 ### Commit 메시지 형식
 

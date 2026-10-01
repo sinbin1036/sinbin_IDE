@@ -1,6 +1,6 @@
 # TASK-003: Phase 1 — Core Config Skeleton
 
-- **Status:** Ready
+- **Status:** Completed (2026-10-01)
 - **Goal:** Plugin 없이 Neovim 기본 기능만으로 Config 모듈 구조, 기본 Option, Leader Key를 세운다.
 
 ## Background
@@ -36,7 +36,20 @@ Platform Layer(D-003)와 Plugin 원칙(RULES Plugin)을 고려한 구조가 필�
 [VERIFICATION.md](../../VERIFICATION.md) — Lua Config 항목
 
 ## Related Files
-`init.lua`, `lua/**` (생성 예정), `docs/ARCHITECTURE.md`
+`init.lua`, `lua/sinbin/**`, `docs/ARCHITECTURE.md`, `docs/DECISIONS.md` (D-006)
+
+## Result
+- 구조: `lua/sinbin/{keymaps,options}.lua`, `lua/sinbin/platform/{init,windows,linux,macos}.lua` ([D-006](../../DECISIONS.md))
+- Leader `<Space>` (`<Space>` 단독은 `<Nop>`), LocalLeader `\`
+- Platform 감지: `vim.uv.os_uname().sysname` + `has("wsl")`. OS별 `setup()`은 빈 stub
+
+## Verification Result (2026-10-01, Windows 11 / Neovim 0.12.5, 임시 디렉터리에서 실행)
+- `nvim --headless "+qa"` → 출력 없음, exit 0
+- Option/Leader 값 확인: number, relativenumber, signcolumn=yes, expandtab, sw/ts=4, ignorecase, smartcase, clipboard=unnamedplus, undofile, scrolloff=8, splitright/below, mapleader=" ", platform.os="windows", is_wsl=false
+- `:verbose map <Space>` → n/x `<Nop>`, `init.lua`에서 정의
+- checkhealth ERROR 0. Clipboard: win32yank OK
+- OS 분기 grep: `lua/sinbin/platform/` 밖에 없음
+- Linux / macOS / WSL 분기: UNVERIFIED (환경 없음)
 
 ## Notes
-—
+- checkhealth에서 Git Bash 경유 실행 시 `ripgrep not available` WARNING 발생 (해당 Shell PATH 문제로 추정, 미확인). Phase 3 Search 착수 시 확인

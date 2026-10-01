@@ -66,3 +66,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: Junction 생성은 현재 수동. Linux/macOS 연결 방식은 Phase 12/13에서 결정
 - Related Task: TASK-002
 - Evidence: 사용자 선택 (2026-10-01), `stdpath('config')` 확인
+
+### D-006: Config 모듈을 `lua/sinbin/` Namespace 아래 역할별로 분리
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Phase 1에서 `init.lua` → `lua/` 모듈 구조 결정 필요. 이후 Plugin이 추가되면 `lua/` 최상위 모듈명이 runtimepath 상 Plugin 모듈과 충돌할 수 있음
+- Decision: 모든 Config 모듈을 `lua/sinbin/` 아래에 둠. 역할별 파일(`keymaps`, `options`, `platform/`)로 나누고, `init.lua`는 `require`만 수행. 내용 없는 모듈은 만들지 않음(Platform OS별 stub 제외 — 진입점이 로드하므로 필요)
+- Reason: `config`, `options`, `platform` 같은 일반명의 Plugin 모듈과 충돌 방지. 진입점이 짧아 로드 순서가 한눈에 보임
+- Alternatives: `lua/` 최상위에 직접 배치, `init.lua` 단일 파일
+- Consequences: 새 모듈은 `require("sinbin.<name>")`. Leader는 Keymap/Plugin보다 먼저 설정되도록 `keymaps`를 가장 먼저 로드
+- Related Task: TASK-003
+- Evidence: `nvim --headless` 검증 (2026-10-01, TASK-003)

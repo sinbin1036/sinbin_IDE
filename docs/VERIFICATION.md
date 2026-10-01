@@ -9,6 +9,8 @@
 | `nvim --headless "+qa"` | Startup 에러 확인 (출력 없음 + exit 0 = 정상) | 확인됨 (2026-10-01) |
 | `nvim --headless "+checkhealth" "+w! <file>" "+qa!"` | checkhealth 결과를 파일로 저장 → `ERROR` 검색 | 확인됨 (2026-10-01, ERROR 0) |
 | `nvim --headless "+lua io.write(vim.env.MYVIMRC)" "+qa"` | 이 Repository의 `init.lua`가 로드되는지 확인 | 확인됨 (2026-10-01) |
+| `nvim --headless "+lua io.write(vim.inspect({vim.g.mapleader, vim.o.clipboard}))" "+qa"` | Option·Leader 실제 적용 값 확인 (확인할 항목으로 교체) | 확인됨 (2026-10-01) |
+| `nvim --headless "+verbose map <Space>" "+qa"` | Keymap 충돌 및 정의 위치 확인 | 확인됨 (2026-10-01) |
 
 주의: Repository 안이 아닌 임시 디렉터리에서 실행하면 열린 파일의 영향 없이 Config만 검증된다.
 
