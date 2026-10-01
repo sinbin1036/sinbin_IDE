@@ -1,0 +1,68 @@
+# DECISIONS
+
+중요한 Architecture / 기술 결정만 기록한다. 미확정 사항은 기록하지 않는다.
+Status: `Proposed` / `Accepted` / `Superseded`
+
+## Format
+
+```
+### D-XXX: <제목>
+- Date / Status / Context / Decision / Reason / Alternatives / Consequences / Related Task / Evidence
+```
+
+## Decisions
+
+### D-001: 완성형 IDE 대신 Neovim 기반 개인 개발환경
+- Date: 2026-10-01
+- Status: Accepted
+- Context: AI Agent 활용으로 주 작업이 코드 작성에서 Diff·Diagnostic·Build/Test·Terminal 확인으로 이동
+- Decision: VS Code/JetBrains를 쓰지 않고 Neovim으로 필요한 기능만 직접 구성
+- Reason: CLI·Agent 중심 Workflow 최적화, 경량화, 자유로운 UI/Keymap 커스터마이징
+- Alternatives: VS Code, JetBrains 계열 IDE
+- Consequences: 기능을 직접 구성·유지해야 함. IDE 전체 기능 복제는 Out of Scope
+- Related Task: TASK-001
+- Evidence: 사용자 프로젝트 설명 (2026-10-01)
+
+### D-002: AI Agent는 독립 CLI로 유지
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Claude Code, Codex CLI 등 여러 Agent 사용 예정
+- Decision: Agent를 Neovim Core에 내장하지 않고 Terminal/Panel에서 독립 CLI로 실행
+- Reason: Agent 교체 가능성, Neovim Config와의 결합 최소화
+- Alternatives: Neovim 내장형 AI Plugin
+- Consequences: Neovim 쪽 책임은 Agent 실행 위치·결과 확인 UX로 한정
+- Related Task: TASK-001
+- Evidence: 사용자 프로젝트 설명 (2026-10-01)
+
+### D-003: OS 차이는 Platform Layer로 격리
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Windows / Linux / macOS / WSL / SSH에서 동일 Config 사용 목표
+- Decision: Shell, Path, Package Manager 등 OS 분기는 별도 Platform Layer에만 둠 (정확한 파일 구조는 구현 시 확정)
+- Reason: OS 차이가 Config 전체로 퍼지는 것 방지
+- Alternatives: OS별 별도 Config, 각 모듈 내부 분기
+- Consequences: 공통 Config는 OS 중립적으로 작성해야 함
+- Related Task: TASK-001
+- Evidence: 사용자 프로젝트 설명 (2026-10-01)
+
+### D-004: Config 전체를 Git Repository로 관리
+- Date: 2026-10-01
+- Status: Accepted
+- Context: 새 장비에서 동일 환경을 빠르게 재구성해야 함
+- Decision: Neovim Config 전체를 이 Repository에서 관리. 장기 목표는 `git clone` → install script → `nvim`
+- Reason: 환경 재현성, 변경 이력 관리
+- Alternatives: 수동 설정, 범용 dotfiles Repository의 일부로 관리
+- Consequences: Config 경로 연결 방식(D-005)과 install script(Phase 13)가 필요
+- Related Task: TASK-001
+- Evidence: 사용자 프로젝트 설명 (2026-10-01)
+
+### D-005: Windows에서 Junction으로 Repository를 config 경로에 연결
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Repository 위치(`Desktop\sb_git\sinbin_IDE`)와 Neovim 기본 config 경로(`%LOCALAPPDATA%\nvim`)가 다름
+- Decision: `%LOCALAPPDATA%\nvim` → Repository Junction
+- Reason: 관리자 권한 불필요, Repository 위치 유지, install script로 자동화 용이
+- Alternatives: Repository를 config 경로로 이동/clone, `NVIM_APPNAME`
+- Consequences: Junction 생성은 현재 수동. Linux/macOS 연결 방식은 Phase 12/13에서 결정
+- Related Task: TASK-002
+- Evidence: 사용자 선택 (2026-10-01), `stdpath('config')` 확인

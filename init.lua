@@ -1,0 +1,2 @@
+-- sinbin_IDE entry point.
+-- Modules are added from Phase 1 (see docs/PROJECT.md Roadmap).
