@@ -34,6 +34,14 @@ vim.pack.add({
   -- Start screen with recent files and search entry points.
   mini("starter"),
 
+  -- LSP / Completion (TASK-007)
+  -- Server configs (cmd, root markers) for the built-in vim.lsp.config.
+  { src = "https://github.com/neovim/nvim-lspconfig" },
+  -- Installs LSP servers the same way on every OS.
+  { src = "https://github.com/mason-org/mason.nvim" },
+  -- Completion popup with docs and signature help on top of built-in LSP.
+  mini("completion"),
+
   -- Colorscheme: soft neon dark (tokyonight-moon), user choice.
   { src = "https://github.com/folke/tokyonight.nvim" },
 })
@@ -42,3 +50,4 @@ vim.pack.add({
 require("sinbin.plugins.ui")
 require("sinbin.plugins.editing")
 require("sinbin.plugins.search")
+require("sinbin.plugins.lsp")
