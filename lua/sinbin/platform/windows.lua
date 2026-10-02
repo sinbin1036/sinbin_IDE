@@ -37,6 +37,28 @@ function M.setup(platform)
 
   -- Python launcher name (Linux/macOS usually only have python3).
   platform.python = "python"
+
+  -- Suffix of compiled executables (Debug, TASK-014).
+  platform.exe_suffix = ".exe"
+  -- Python venv executables directory (Linux/macOS: bin).
+  platform.venv_bin = "Scripts"
+
+  -- Real dart.exe of the Flutter SDK for debug adapters: dart.bat goes through cmd.exe,
+  -- which the debug protocol over stdio does not get through.
+  local dart_bat = vim.fn.exepath("dart.bat")
+  if dart_bat ~= "" then
+    local exe = vim.fs.joinpath(vim.fs.dirname(dart_bat), "cache", "dart-sdk", "bin", "dart.exe")
+    if vim.uv.fs_stat(exe) then
+      platform.dart_exe = exe
+      -- What flutter.bat runs: `flutter <args>` = dart.exe --packages=... flutter_tools.snapshot <args>
+      local root = vim.fs.dirname(vim.fs.dirname(dart_bat))
+      local snapshot = vim.fs.joinpath(root, "bin", "cache", "flutter_tools.snapshot")
+      local packages = vim.fs.joinpath(root, "packages", "flutter_tools", ".dart_tool", "package_config.json")
+      if vim.uv.fs_stat(snapshot) and vim.uv.fs_stat(packages) then
+        platform.flutter_cmd = { exe, "--packages=" .. packages, snapshot }
+      end
+    end
+  end
 end
 
 return M

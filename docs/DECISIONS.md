@@ -126,7 +126,7 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Date: 2026-10-02
 - Status: Accepted
 - Context: Neovim 0.12.5 내장 parser는 c, lua, markdown, vim 등뿐이라 TypeScript, Python, Java, Dart 구문 강조에 parser 필요. nvim-treesitter `master`는 잠김(0.11 호환용), `main`은 Neovim 0.12+, `tree-sitter` CLI 0.26.1+, C compiler, tar, curl 필요
-- Decision: `nvim-treesitter` `main` branch로 parser·query 설치 (`typescript`, `tsx`, `javascript`, `python`, `java`, `dart`, `json`, `yaml`, `toml`. `c`는 내장 사용). 강조는 FileType autocmd에서 parser가 있을 때만 내장 `vim.treesitter.start()`. Treesitter indent(experimental)와 folding은 사용 안 함. `tree-sitter` CLI는 winget 설치. vim.pack `PackChanged`(update) 시 `:TSUpdate`
+- Decision: `nvim-treesitter` `main` branch로 parser·query 설치 (`typescript`, `tsx`, `javascript`, `python`, `java`, `dart`, `json`, `yaml`, `toml`. `c`는 처음엔 내장 사용, TASK-014에서 추가 — 내장 query에 `locals`가 없어 디버그 virtual text가 안 됨). 강조는 FileType autocmd에서 parser가 있을 때만 내장 `vim.treesitter.start()`. Treesitter indent(experimental)와 folding은 사용 안 함. `tree-sitter` CLI는 winget 설치. vim.pack `PackChanged`(update) 시 `:TSUpdate`
 - Reason: parser 빌드·버전 관리를 직접 하지 않기 위함. 강조 자체는 내장 기능이라 Plugin 의존이 parser 관리로 한정됨. indent는 공식 문서상 experimental이고 현재 내장 indent에 문제 없음
 - Alternatives: Plugin 없이 `tree-sitter` CLI로 parser 수동 빌드, `master` branch, Treesitter indent/folding 사용
 - Consequences: parser는 lock 파일 밖 (`stdpath('data')/site/parser`). 새 장비에 `tree-sitter` CLI와 C compiler 필요 (Phase 12/13). Plugin 업데이트 시 parser도 갱신해야 함 (autocmd로 처리)
@@ -176,3 +176,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 감지 규칙은 run.lua에 직접 추가해야 함. `.sinbin/run.json`은 저장소의 명령을 키 입력 시 실행하므로 신뢰하는 저장소에서만 사용. Git Bash가 없으면 'shell'(cmd.exe)로 실행되어 sh 인용이 맞지 않을 수 있음 (Phase 12)
 - Related Task: TASK-013
 - Evidence: 사용자 선택 (2026-10-02), 샘플 프로젝트 감지·실행 검증 (TASK-013)
+
+### D-016: Debug는 nvim-dap + nvim-dap-view, adapter는 실제 실행 파일로 직접 실행
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 9. Neovim에 디버거 내장 없음. 5개 언어(C, Python, TypeScript/Node, Dart/Flutter, Java) 디버깅. Windows에서 Mason의 `.cmd` shim과 Flutter SDK의 `.bat`/확장자 없는 script는 nvim-dap(libuv spawn)에서 이름으로 찾지 못하거나, 찾아도 cmd.exe를 거치며 DAP stdio 통신이 되지 않음(`initialize` 응답 없음)
+- Decision: DAP client `mfussenegger/nvim-dap`, UI `igorlfs/nvim-dap-view`(하단 패널 하나, `auto_toggle`, 내장 virtual text를 줄 끝 `eol`로 사용 → nvim-dap-virtual-text 미사용). Adapter: C `gdb -i dap`(MSYS2 gdb 16.2 내장 DAP, 현재 파일을 `gcc -g -O0`로 컴파일), Python debugpy(Mason venv의 python으로 `-m debugpy.adapter`), Node js-debug(`node dapDebugServer.js`), Dart `dart.exe debug_adapter`, Flutter `dart.exe --packages=... flutter_tools.snapshot debug_adapter`, Java java-debug bundle을 jdtls `init_options.bundles`에 넣고 jdtls 명령(`startDebugSession`, `resolveMainClass`, `resolveClasspath`)으로 실행. OS별 경로(`exe_suffix`, `venv_bin`, `dart_exe`, `flutter_cmd`)는 Platform Layer. `.vscode/launch.json`은 nvim-dap 기본 지원. Keymap `<Leader>d*` + F5/F10/F11/F12
+- Reason: nvim-dap이 사실상 표준이고 adapter 선택이 자유로움. dap-view는 하단 패널 하나라 Terminal Layout과 맞고 virtual text까지 포함(중복 Plugin 회피, RULES). 실제 실행 파일 직접 실행이 Windows에서 유일하게 안정적으로 동작. gdb 내장 DAP와 SDK adapter는 추가 설치 불필요
+- Alternatives: nvim-dap-ui(+nvim-nio), nvim-dap-virtual-text, codelldb/cpptools(C), nvim-jdtls(Java), Mason shim을 그대로 adapter command로 사용(동작 안 함)
+- Consequences: Mason 패키지 내부 경로(debugpy venv, js-debug `dapDebugServer.js`, java-debug jar)와 Flutter SDK 내부 구조(`flutter_tools.snapshot`)에 의존 → 패키지·SDK 구조가 바뀌면 경로 수정 필요. Java는 jdtls가 프로젝트를 불러온 뒤에만 시작 가능. java-debug bundle은 jdtls 시작 시 적용되므로 설치 후 nvim 재시작 필요. 브라우저(Chrome) 프론트엔드 디버깅은 범위 밖
+- Related Task: TASK-014
+- Evidence: 사용자 선택 (2026-10-02), 5개 언어 + Flutter Windows 앱 디버그 검증 (TASK-014)

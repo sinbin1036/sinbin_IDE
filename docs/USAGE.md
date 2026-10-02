@@ -252,6 +252,8 @@ ma      현재 위치를 a로 표시
 | [mini.completion](https://github.com/nvim-mini/mini.completion) | 자동완성 목록, 문서 창, 인자 힌트 | `lua/sinbin/plugins/lsp.lua` |
 | [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | 구문 분석기(parser) 설치·업데이트 | `lua/sinbin/plugins/treesitter.lua` |
 | [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | git 변경 표시, hunk, inline blame | `lua/sinbin/plugins/git.lua` |
+| [nvim-dap](https://github.com/mfussenegger/nvim-dap) | 디버거 연결 (DAP) | `lua/sinbin/plugins/debug.lua` |
+| [nvim-dap-view](https://github.com/igorlfs/nvim-dap-view) | 디버그 패널, 줄 끝 변수 값 | `lua/sinbin/plugins/debug.lua` |
 | [diffview-plus.nvim](https://github.com/dlyongemallo/diffview-plus.nvim) | 여러 파일 변경 검토, 파일 이력 (diffview.nvim 유지보수 fork) | `lua/sinbin/plugins/git.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
@@ -406,7 +408,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 
 코드 구조를 분석해 색을 입힌다. 아래 언어는 파일을 열면 자동으로 적용된다.
 
-- TypeScript (`.ts`, `.tsx`), JavaScript, Python, Java, Dart, C, JSON, YAML, TOML
+- TypeScript (`.ts`, `.tsx`), JavaScript, Python, Java, Dart, C, JSON, YAML, TOML (C도 nvim-treesitter로 설치: 디버그 변수 표시에 필요)
 - 목록에 없는 언어는 기존 방식(Vim syntax)으로 강조된다.
 
 | 작업 | 방법 |
@@ -588,6 +590,37 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 ```
 
 - 키를 누르면 이 파일의 명령이 그대로 실행되므로, 믿을 수 있는 저장소에서만 쓴다.
+
+## Debug (nvim-dap)
+
+breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(끝나면 자동으로 닫힘), 멈춘 동안 코드 줄 끝에 변수 값(`total = 3`)이 보인다.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `<Space>db` | breakpoint 켜기 / 끄기 (줄 번호 옆 빨간 점) |
+| N | `<Space>dB` | 조건부 breakpoint (예: `i == 2`) |
+| N | `<Space>dc` 또는 `F5` | 디버그 시작 (방식이 여러 개면 목록에서 선택) / 멈춘 상태면 계속 |
+| N | `<Space>dn` 또는 `F10` | 다음 줄 (함수 안으로 안 들어감) |
+| N | `<Space>di` 또는 `F11` | 함수 안으로 들어가기 |
+| N | `<Space>do` 또는 `F12` | 함수 밖으로 나가기 |
+| N | `<Space>dq` | 디버그 종료 |
+| N | `<Space>du` | 디버그 패널 열기 / 닫기 |
+| N, V | `<Space>de` | 커서 아래(또는 선택한) 식의 값 보기 |
+
+- Windows Terminal은 `F11`을 전체 화면 전환에 쓰므로 Neovim에 전달되지 않을 수 있다 → `<Space>di` 사용.
+- 디버그 패널 위쪽 탭: Scopes(변수, `S`), Watches(`W`), Breakpoints(`B`), Threads(`T`), Exceptions(`E`), REPL(`R`), Console(`C`, 프로그램 출력·입력). 패널 안에서 `<CR>`로 펼치기.
+
+| 언어 | 디버그 방식 (`F5` 목록) | 필요한 것 |
+|---|---|---|
+| C | 현재 파일 (`gcc -g`로 컴파일 후 gdb) / 실행 파일 지정 | MSYS2 gdb (설치됨) |
+| Python | 현재 파일 / pytest 현재 파일 | `:MasonInstall debugpy` |
+| JavaScript / TypeScript | 현재 파일 (Node, TS는 Node 22 TS 실행) / 실행 중인 node 프로세스에 attach | `:MasonInstall js-debug-adapter` |
+| Dart | 현재 파일 | Dart/Flutter SDK |
+| Flutter | Flutter 앱 (Windows) / Flutter 앱 (Chrome) — `lib/` 안 파일이면 그 파일, 아니면 `lib/main.dart` | Flutter SDK. 첫 실행은 빌드로 오래 걸림 |
+| Java | 현재 클래스 (`main` 메서드) | `:MasonInstall java-debug-adapter` 후 nvim 재시작. jdtls가 프로젝트를 다 불러온 뒤 시작 |
+
+- 프로젝트에 `.vscode/launch.json`이 있으면 그 설정도 `F5` 목록에 나온다.
+- 필요한 것이 없으면 이유를 알려 준다 (예: `lua 디버그 설정 없음`).
 
 ## 명령
 

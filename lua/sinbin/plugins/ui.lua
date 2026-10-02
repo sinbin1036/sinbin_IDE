@@ -41,6 +41,7 @@ miniclue.setup({
     { mode = "n", keys = "<Leader>t", desc = "+Terminal" },
     { mode = "n", keys = "<Leader>r", desc = "+Run" },
     { mode = "n", keys = "<Leader>x", desc = "+Test" },
+    { mode = { "n", "x" }, keys = "<Leader>d", desc = "+Debug" },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),
