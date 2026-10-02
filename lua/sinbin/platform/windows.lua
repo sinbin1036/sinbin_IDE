@@ -28,7 +28,15 @@ function M.setup(platform)
   local bash = git_bash()
   if bash then
     platform.terminal_shell = { bash, "--login", "-i" }
+    -- Run/Test commands (TASK-013) go through bash too: npm, mvn and flutter ship
+    -- extensionless shell scripts next to their .cmd/.bat that cannot be spawned directly.
+    platform.terminal_exec = function(cmd)
+      return { bash, "-c", cmd }
+    end
   end
+
+  -- Python launcher name (Linux/macOS usually only have python3).
+  platform.python = "python"
 end
 
 return M

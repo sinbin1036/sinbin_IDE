@@ -82,6 +82,14 @@ map("n", "<Leader>gl", function()
     vim.cmd("DiffviewFileHistory %")
   end
 end, { desc = "Current file history" })
-map("n", "<Leader>gh", function() MiniExtra.pickers.git_hunks() end, { desc = "Changed hunks" })
-map("n", "<Leader>gc", function() MiniExtra.pickers.git_commits() end, { desc = "Commits" })
-map("n", "<Leader>gB", function() MiniExtra.pickers.git_branches() end, { desc = "Branches" })
+-- mini.extra git pickers raise a Lua error outside a repository, so check first.
+local function git_picker(name)
+  return function()
+    if git_root(false) then
+      MiniExtra.pickers[name]()
+    end
+  end
+end
+map("n", "<Leader>gh", git_picker("git_hunks"), { desc = "Changed hunks" })
+map("n", "<Leader>gc", git_picker("git_commits"), { desc = "Commits" })
+map("n", "<Leader>gB", git_picker("git_branches"), { desc = "Branches" })
