@@ -415,6 +415,24 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 
 - parser 설치에는 `tree-sitter` CLI와 C compiler(gcc)가 필요하다. Windows는 `winget install tree-sitter.tree-sitter-cli`.
 
+## 에러·경고 (Diagnostics)
+
+LSP가 찾은 에러·경고는 줄 끝에 `● 메시지`로, 줄 번호 옆에 아이콘으로 표시된다 (심각한 것 우선).
+메시지는 Insert 모드를 벗어날 때 갱신된다. 상태바에 개수가 표시된다.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `]d` / `[d` | 다음 / 이전 에러로 이동 + 전체 메시지 창 (내장) |
+| N | `]D` / `[D` | 마지막 / 처음 에러로 이동 (내장) |
+| N | `<Space>ee` | 커서 위치 에러 메시지 창 (내장 `<C-w>d`와 같음) |
+| N | `<Space>ed` | 현재 파일 에러 목록 (검색 창) |
+| N | `<Space>eD` | 열린 파일 전체 에러 목록 (검색 창) |
+| N | `<Space>eq` | 에러를 quickfix 목록으로 → `]q` / `[q`로 이동, `:copen`으로 목록 창 |
+| N | `<Space>et` | 에러 표시 켜기 / 끄기 |
+
+- 메시지 창은 커서를 움직이면 닫힌다.
+- 줄 끝 메시지가 길어 잘리면 `]d`나 `<Space>ee`로 전체를 본다.
+
 ## 명령
 
 | 명령 | 동작 |
