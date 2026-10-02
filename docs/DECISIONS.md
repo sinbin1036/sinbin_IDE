@@ -121,3 +121,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: Mason Server는 lock 파일 밖 (버전 고정 안 됨, Phase 13에서 설치 목록 자동화 필요). Windows에서 Flutter SDK의 확장자 없는 `dart` 스크립트 때문에 Platform Layer에서 `dart.bat` 지정. jdtls는 JDK 21+ 필요
 - Related Task: TASK-007
 - Evidence: 사용자 선택 (2026-10-02), 5개 언어 headless 검증 (TASK-007)
+
+### D-011: Treesitter는 nvim-treesitter `main`으로 parser만 관리하고 강조는 내장 기능 사용
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Neovim 0.12.5 내장 parser는 c, lua, markdown, vim 등뿐이라 TypeScript, Python, Java, Dart 구문 강조에 parser 필요. nvim-treesitter `master`는 잠김(0.11 호환용), `main`은 Neovim 0.12+, `tree-sitter` CLI 0.26.1+, C compiler, tar, curl 필요
+- Decision: `nvim-treesitter` `main` branch로 parser·query 설치 (`typescript`, `tsx`, `javascript`, `python`, `java`, `dart`, `json`, `yaml`, `toml`. `c`는 내장 사용). 강조는 FileType autocmd에서 parser가 있을 때만 내장 `vim.treesitter.start()`. Treesitter indent(experimental)와 folding은 사용 안 함. `tree-sitter` CLI는 winget 설치. vim.pack `PackChanged`(update) 시 `:TSUpdate`
+- Reason: parser 빌드·버전 관리를 직접 하지 않기 위함. 강조 자체는 내장 기능이라 Plugin 의존이 parser 관리로 한정됨. indent는 공식 문서상 experimental이고 현재 내장 indent에 문제 없음
+- Alternatives: Plugin 없이 `tree-sitter` CLI로 parser 수동 빌드, `master` branch, Treesitter indent/folding 사용
+- Consequences: parser는 lock 파일 밖 (`stdpath('data')/site/parser`). 새 장비에 `tree-sitter` CLI와 C compiler 필요 (Phase 12/13). Plugin 업데이트 시 parser도 갱신해야 함 (autocmd로 처리)
+- Related Task: TASK-008
+- Evidence: 사용자 선택 (2026-10-02), nvim-treesitter README (main), headless 검증 (TASK-008)

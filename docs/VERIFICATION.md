@@ -47,7 +47,8 @@
 | Java / Maven | 27 / 3.9.16 |
 | Dart (Flutter SDK `C:\flutter`) | 3.10.4 |
 | LSP Server (Mason, 2026-10-02) | vtsls, basedpyright 1.40.1, ruff, clangd, jdtls |
-| fd, fzf, lazygit, make, tree-sitter CLI | 미설치 |
+| tree-sitter CLI | 0.27.0 (winget `tree-sitter.tree-sitter-cli`, 2026-10-02 설치) |
+| fd, fzf, lazygit, make | 미설치 |
 | Nerd Font | JetBrainsMono Nerd Font 3.3.0 (winget `DEVCOM.JetBrainsMonoNerdFont`, Font 이름 `JetBrainsMono NF`, 2026-10-02 설치). Windows Terminal Font 지정은 사용자 설정 |
 | `%LOCALAPPDATA%\nvim` (Windows 기본 config 경로) | 이 Repository로의 Junction |
 | Linux / macOS / WSL / SSH | UNVERIFIED (검증 환경 없음) |

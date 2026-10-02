@@ -250,6 +250,7 @@ ma      현재 위치를 a로 표시
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | 언어 Server 설정 모음 | `lua/sinbin/plugins/lsp.lua` |
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | 언어 Server 설치 (`:Mason`) | `lua/sinbin/plugins/lsp.lua` |
 | [mini.completion](https://github.com/nvim-mini/mini.completion) | 자동완성 목록, 문서 창, 인자 힌트 | `lua/sinbin/plugins/lsp.lua` |
+| [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | 구문 분석기(parser) 설치·업데이트 | `lua/sinbin/plugins/treesitter.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
 
@@ -397,6 +398,22 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | C | clangd | |
 
 - 새 언어를 추가하려면 `:MasonInstall <이름>` 후 `lua/sinbin/plugins/lsp.lua`의 `vim.lsp.enable({ ... })`에 이름 추가.
+
+## 구문 강조 (Treesitter)
+
+코드 구조를 분석해 색을 입힌다. 아래 언어는 파일을 열면 자동으로 적용된다.
+
+- TypeScript (`.ts`, `.tsx`), JavaScript, Python, Java, Dart, C, JSON, YAML, TOML
+- 목록에 없는 언어는 기존 방식(Vim syntax)으로 강조된다.
+
+| 작업 | 방법 |
+|---|---|
+| 언어 추가 | `lua/sinbin/plugins/treesitter.lua`의 `parsers` 목록에 이름 추가 후 재시작 (또는 `:TSInstall <이름>`) |
+| 업데이트 | `:TSUpdate` (Plugin 업데이트 시 자동 실행) |
+| 상태 확인 | `:checkhealth nvim-treesitter` |
+| 현재 위치 구조 보기 | `:InspectTree` (내장) |
+
+- parser 설치에는 `tree-sitter` CLI와 C compiler(gcc)가 필요하다. Windows는 `winget install tree-sitter.tree-sitter-cli`.
 
 ## 명령
 
