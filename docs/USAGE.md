@@ -236,8 +236,17 @@ ma      현재 위치를 a로 표시
 
 | Plugin | 하는 일 | 설정 위치 |
 |---|---|---|
-| [mini.pairs](https://github.com/nvim-mini/mini.pairs) | 괄호·따옴표 자동 닫기 | `lua/sinbin/plugins.lua` |
-| [mini.surround](https://github.com/nvim-mini/mini.surround) | 감싸는 문자 추가·삭제·교체 | `lua/sinbin/plugins.lua` |
+| [mini.pairs](https://github.com/nvim-mini/mini.pairs) | 괄호·따옴표 자동 닫기 | `lua/sinbin/plugins/editing.lua` |
+| [mini.surround](https://github.com/nvim-mini/mini.surround) | 감싸는 문자 추가·삭제·교체 | `lua/sinbin/plugins/editing.lua` |
+| [mini.pick](https://github.com/nvim-mini/mini.pick) | 파일·내용·버퍼·도움말 검색 창 | `lua/sinbin/plugins/search.lua` |
+| [mini.extra](https://github.com/nvim-mini/mini.extra) | 추가 검색 창 (최근 파일) | `lua/sinbin/plugins/search.lua` |
+| [mini.files](https://github.com/nvim-mini/mini.files) | 파일 탐색기 (폴더를 버퍼처럼 편집) | `lua/sinbin/plugins/search.lua` |
+| [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) | 색 테마 (`moon`) | `lua/sinbin/plugins/ui.lua` |
+| [mini.icons](https://github.com/nvim-mini/mini.icons) | 파일 아이콘 (Nerd Font 필요) | `lua/sinbin/plugins/ui.lua` |
+| [mini.statusline](https://github.com/nvim-mini/mini.statusline) | 하단 상태바 | `lua/sinbin/plugins/ui.lua` |
+| [mini.clue](https://github.com/nvim-mini/mini.clue) | 키 힌트 창 | `lua/sinbin/plugins/ui.lua` |
+| [mini.notify](https://github.com/nvim-mini/mini.notify) | 알림 창 (오른쪽 위) | `lua/sinbin/plugins/ui.lua` |
+| [mini.starter](https://github.com/nvim-mini/mini.starter) | 시작 화면 (파일 없이 `nvim` 실행 시) | `lua/sinbin/plugins/ui.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
 
@@ -295,6 +304,51 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 - `\` 바로 뒤에서는 자동 닫기를 하지 않는다.
 - filetype이 없는 버퍼(`:enew` 등)에서 `{<CR>`은 들여쓰기가 한 단계 더 들어간다. 코드 파일(lua, c 등)에서는 정상.
 
+## 검색과 파일 이동 (mini.pick, mini.files)
+
+외부 도구: 내용 검색에 ripgrep(`rg`) 사용. Windows는 `winget install BurntSushi.ripgrep.MSVC`.
+아이콘 표시에 Nerd Font 필요. Windows는 `winget install DEVCOM.JetBrainsMonoNerdFont` 후 Terminal 글꼴을 `JetBrainsMono NF`로 지정.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `<Space>ff` | 파일 이름 검색 |
+| N | `<Space>fb` | 열린 버퍼 전환 |
+| N | `<Space>fr` | 최근 파일 |
+| N | `<Space>fe` | 파일 탐색기 (현재 파일 위치에서 열림) |
+| N | `<Space>sg` | 프로젝트 내용 검색 (입력하는 대로 결과 갱신) |
+| N | `<Space>sw` | 커서 아래 단어로 내용 검색 |
+| N | `<Space>sh` | 도움말 검색 |
+| N | `<Space>sr` | 마지막 검색 창 다시 열기 |
+
+`<Space>`만 누르고 기다리면 가능한 키 목록이 아래에 뜬다 (mini.clue). `g`, `z`, `[`, `]`, `<C-w>`, `"`, `'`도 같다.
+
+### 검색 창 안에서
+
+| 키 | 동작 |
+|---|---|
+| 글자 입력 | 결과 좁히기 (fuzzy) |
+| `<C-n>` / `<C-p>` | 아래 / 위 항목 |
+| `<CR>` | 열기 |
+| `<C-v>` / `<C-s>` / `<C-t>` | 세로 분할 / 가로 분할 / 새 탭으로 열기 |
+| `<Tab>` | 미리보기 토글 |
+| `<C-x>` → `<M-CR>` | 여러 개 표시 후 한꺼번에 열기 (quickfix) |
+| `<C-Space>` | 현재 결과 안에서 다시 검색 (refine) |
+| `<Esc>` | 닫기 |
+
+### 파일 탐색기 안에서
+
+| 키 | 동작 |
+|---|---|
+| `l` / `h` | 폴더 들어가기·파일 열기 / 상위 폴더 |
+| `L` | 파일 열고 탐색기 닫기 |
+| 글자 편집 | 이름 바꾸기, 새 줄에 이름 입력 = 새 파일 (`/`로 끝나면 폴더), `dd` = 삭제 |
+| `=` | 편집 내용 실제 적용 (확인 창 표시) |
+| `g?` | 도움말 |
+| `q` | 닫기 |
+
+- 탐색기에서 편집만 하고 `=`를 누르지 않으면 디스크는 바뀌지 않는다.
+- 기본 탐색기 netrw(`:Ex`)도 그대로 쓸 수 있다.
+
 ## 명령
 
 | 명령 | 동작 |
@@ -317,12 +371,15 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 클립보드 | `y` / `p`가 시스템 클립보드와 공유 |
 | Undo 유지 | 파일을 닫았다 열어도 `u`로 이전 변경 되돌리기 가능 |
 | 검색 | 소문자로만 검색하면 대소문자 무시, 대문자가 섞이면 구분 |
+| 색 테마 | tokyonight `moon` (네온 계열 다크). 바꾸려면 `ui.lua`의 `style`을 `storm`/`night`로 |
+| 시작 화면 | 파일 없이 `nvim` 실행 시 최근 파일·메뉴 표시. 글자 입력으로 좁히고 `<CR>` |
+| 알림 | 메시지가 오른쪽 위 창에 잠깐 표시 |
 
 ## Plugin 관리
 
 | 작업 | 방법 |
 |---|---|
-| 추가 | `lua/sinbin/plugins.lua`의 `vim.pack.add({ ... })`에 항목 추가 후 Neovim 재시작 (설치 확인 prompt 표시) |
+| 추가 | `lua/sinbin/plugins/init.lua`의 `vim.pack.add({ ... })`에 항목 추가 후 Neovim 재시작 (설치 확인 prompt 표시) |
 | 업데이트 | `:lua vim.pack.update()` → 확인 buffer에서 `:write`로 적용 |
 | 제거 | 목록에서 지운 뒤 `:lua vim.pack.del({ "이름" })` |
 | 상태 확인 | `:checkhealth vim.pack` |

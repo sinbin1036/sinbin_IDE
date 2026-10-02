@@ -1,14 +1,58 @@
 {
   "plugins": {
+    "mini.clue": {
+      "rev": "62e9e38c3dc4b7d429f1b6e28d96f96cdff71132",
+      "src": "https://github.com/nvim-mini/mini.clue",
+      "version": "'stable'"
+    },
+    "mini.extra": {
+      "rev": "e5ecf197f8954d002cb9e85b3715851e2c8d3cd5",
+      "src": "https://github.com/nvim-mini/mini.extra",
+      "version": "'stable'"
+    },
+    "mini.files": {
+      "rev": "a5689dae6b732955e33eec225b798d6815063179",
+      "src": "https://github.com/nvim-mini/mini.files",
+      "version": "'stable'"
+    },
+    "mini.icons": {
+      "rev": "e56797f90192d81f1fda02e662fc3e8e3d775027",
+      "src": "https://github.com/nvim-mini/mini.icons",
+      "version": "'stable'"
+    },
+    "mini.notify": {
+      "rev": "821db7d464f7a9bb8666b4ba3be7d2ed637cfcfc",
+      "src": "https://github.com/nvim-mini/mini.notify",
+      "version": "'stable'"
+    },
     "mini.pairs": {
       "rev": "4a014143fcb4e9df26198ccb3ecff3b9e77a048c",
       "src": "https://github.com/nvim-mini/mini.pairs",
+      "version": "'stable'"
+    },
+    "mini.pick": {
+      "rev": "8c1f75f8ddd8c9f75d07ed2ab5718d2c3cb65a66",
+      "src": "https://github.com/nvim-mini/mini.pick",
+      "version": "'stable'"
+    },
+    "mini.starter": {
+      "rev": "0575c96206d63fd98d7f786df78dc225bf847d95",
+      "src": "https://github.com/nvim-mini/mini.starter",
+      "version": "'stable'"
+    },
+    "mini.statusline": {
+      "rev": "b5547f44560dae3ccd81f914256fa6f705837022",
+      "src": "https://github.com/nvim-mini/mini.statusline",
       "version": "'stable'"
     },
     "mini.surround": {
       "rev": "580e4cb98c5900d9fe743865fb5a5b2178b4ab18",
       "src": "https://github.com/nvim-mini/mini.surround",
       "version": "'stable'"
+    },
+    "tokyonight.nvim": {
+      "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
+      "src": "https://github.com/folke/tokyonight.nvim"
     }
   }
 }

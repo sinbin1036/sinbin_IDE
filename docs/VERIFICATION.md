@@ -15,13 +15,15 @@
 | `nvim --headless "+lua vim.pack.del({'<name>'})" "+qa"` | Plugin을 디스크에서 제거 (목록에서 먼저 지운 뒤) | 확인됨 (2026-10-01) |
 
 주의: Repository 안이 아닌 임시 디렉터리에서 실행하면 열린 파일의 영향 없이 Config만 검증된다.
+주의: `mini.pick` picker는 입력을 기다리며 block되므로 headless에서 실행하지 않는다. picker 화면은 사용자 확인으로 검증.
+주의: 외부 CLI를 설치한 직후에는 기존 Shell의 PATH가 갱신되지 않는다. 새 Terminal에서 확인.
 
 ## 변경 종류별
 
 | 변경 | 검증 |
 |---|---|
 | Lua Config (`init.lua`, `lua/`) | Startup 에러 확인 → 변경한 기능 수동 확인 |
-| Plugin 추가/제거 | Startup 에러 확인 → checkhealth (`vim.pack` 섹션) → `nvim-pack-lock.json` diff가 `plugins.lua` 변경과 일치하는지 확인 → 제거 시 `vim.pack.del()` 후 디스크에서 사라졌는지 확인 |
+| Plugin 추가/제거 | Startup 에러 확인 → checkhealth (`vim.pack` 섹션) → `nvim-pack-lock.json` diff가 `plugins/init.lua` 변경과 일치하는지 확인 → 제거 시 `vim.pack.del()` 후 디스크에서 사라졌는지 확인 |
 | Keymap | 충돌 확인 (`:verbose map <key>`) → 동작 수동 확인 |
 | LSP / Formatter / Debugger | checkhealth (`vim.lsp` 섹션) → 대상 언어 파일에서 수동 확인 |
 | Platform Layer | 해당 OS에서 Startup 확인. 검증 불가한 OS는 UNVERIFIED로 기록 |
@@ -39,11 +41,11 @@
 | OS | Windows 11 Pro |
 | Neovim | v0.12.5 (`C:\Program Files\Neovim`) |
 | Git | 2.55.0 |
-| ripgrep | 14.1.1 |
+| ripgrep | 15.2.0 (winget `BurntSushi.ripgrep.MSVC`, 2026-10-01 설치. 이전 기록 14.1.1은 실제로는 PATH에 없었음) |
 | gcc (MSYS2) | 14.2.0 |
 | node / python / go | 22.19.0 / 3.13.3 / 1.25.3 |
 | fd, fzf, lazygit, make, tree-sitter CLI | 미설치 |
-| Nerd Font | UNVERIFIED |
+| Nerd Font | JetBrainsMono Nerd Font 3.3.0 (winget `DEVCOM.JetBrainsMonoNerdFont`, Font 이름 `JetBrainsMono NF`, 2026-10-02 설치). Windows Terminal Font 지정은 사용자 설정 |
 | `%LOCALAPPDATA%\nvim` (Windows 기본 config 경로) | 이 Repository로의 Junction |
 | Linux / macOS / WSL / SSH | UNVERIFIED (검증 환경 없음) |
 

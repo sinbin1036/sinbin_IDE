@@ -99,3 +99,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 다른 mini 모듈(`mini.ai` 등)도 같은 방식으로 추가 가능. `stable` branch는 release 시점에만 갱신되므로 최신 기능은 늦게 반영됨. Surround 동작은 vim-surround와 완전히 같지는 않음(문서상 "closest, not identical")
 - Related Task: TASK-005
 - Evidence: 사용자 선택 (2026-10-01), mini.surround 문서, headless 동작 검증 (TASK-005)
+
+### D-009: Search/Navigation과 기본 UI를 mini 계열 + tokyonight로 구성, Plugin 설정은 영역별 파일로 분리
+- Date: 2026-10-01
+- Status: Accepted
+- Context: Phase 3 시작. 사용자는 직접 구성을 유지하되 UI를 빠르게 갖추길 원함. NvChad 등 설정 프레임워크는 lazy.nvim 전제·덮어쓰기 구조라 D-001/D-006/D-007과 충돌하여 채택 안 함
+- Decision: 검색·탐색기는 `mini.pick`/`mini.extra`/`mini.files`, 기본 UI는 `mini.icons`/`mini.statusline`/`mini.clue`/`mini.notify`/`mini.starter` (모두 `stable`). Colorscheme은 `folke/tokyonight.nvim` `moon` style. 내용 검색은 ripgrep. Plugin 목록은 `lua/sinbin/plugins/init.lua` 한 곳에 유지하고 설정은 `plugins/{ui,editing,search}.lua`로 분리. 기본 UI는 Phase 11에서 Phase 3으로 앞당김
+- Reason: D-008과 같은 계열로 설정 방식 일관, 의존성 없음, 모듈 단위로 교체 가능. tokyonight moon은 사용자 요구(너무 어둡지 않은 네온 계열 다크, 눈 편안함)에 부합. 설정 파일 분리로 `plugins.lua` 비대화 방지, 목록은 한 곳이라 D-007 유지
+- Alternatives: snacks.nvim (화려하나 큰 Plugin 하나에 기능 집중), fzf-lua/telescope, NvChad/LazyVim 등 프레임워크, 내장 `:find`/`:grep`만 사용. Colorscheme: catppuccin macchiato, nightfox duskfox, tokyonight storm
+- Consequences: 아이콘 표시에 Nerd Font 필요. ripgrep은 외부 의존성 (설치 자동화는 Phase 13). Mode별 Layout 등 세부 UI는 Phase 11에 남음
+- Related Task: TASK-006
+- Evidence: 사용자 선택 (2026-10-01), headless 검증 (TASK-006)
