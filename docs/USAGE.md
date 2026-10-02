@@ -251,6 +251,8 @@ ma      현재 위치를 a로 표시
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | 언어 Server 설치 (`:Mason`) | `lua/sinbin/plugins/lsp.lua` |
 | [mini.completion](https://github.com/nvim-mini/mini.completion) | 자동완성 목록, 문서 창, 인자 힌트 | `lua/sinbin/plugins/lsp.lua` |
 | [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) | 구문 분석기(parser) 설치·업데이트 | `lua/sinbin/plugins/treesitter.lua` |
+| [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim) | git 변경 표시, hunk, inline blame | `lua/sinbin/plugins/git.lua` |
+| [diffview-plus.nvim](https://github.com/dlyongemallo/diffview-plus.nvim) | 여러 파일 변경 검토, 파일 이력 (diffview.nvim 유지보수 fork) | `lua/sinbin/plugins/git.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
 
@@ -451,6 +453,53 @@ LSP가 찾은 에러·경고는 줄 끝에 `● 메시지`로, 줄 번호 옆에
 - 규칙에 없는 메시지는 영어 원문 그대로 나온다.
 - 규칙 추가: `lua/sinbin/diagnostics/rules_ko.lua`에 `{ "원문 Lua pattern", "치환문" }` 한 줄 추가. 메시지 창의 영어 원문을 복사해 패턴으로 만들면 된다 (`.`, `(`, `)`, `-`, `?` 앞에는 `%`). 구체적인 패턴을 일반 패턴보다 위에 둔다.
 
+## Git (gitsigns, diffview, lazygit)
+
+git 저장소의 파일을 열면 줄 번호 옆에 변경 표시(`┃` 추가·변경, `_` 삭제)가 나오고,
+커서 줄 끝에 `작성자, 언제 - 커밋 메시지`가 흐리게 표시된다. 상태바에 브랜치와 변경 수가 보인다.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `]h` / `[h` | 다음 / 이전 변경 묶음(hunk) |
+| N | `<Space>gp` | hunk 미리보기 창 (바뀌기 전 / 후) |
+| N, V | `<Space>gs` | hunk stage (V는 선택한 줄만). stage된 hunk에서 누르면 unstage |
+| N, V | `<Space>gr` | hunk 되돌리기 (V는 선택한 줄만) |
+| N | `<Space>gS` / `<Space>gR` | 파일 전체 stage / 되돌리기 |
+| N | `<Space>gb` | 커서 줄 blame 자세히 (커밋 전체 메시지) |
+| N | `<Space>gd` | 파일 diff 화면 (좌우 비교, 다시 누르면 닫기) |
+| N | `<Space>gv` | **전체 변경 검토** (변경된 파일 목록 + 좌우 비교, 다시 누르거나 `q`로 닫기) |
+| N | `<Space>gl` | **현재 파일 변경 이력** (커밋 목록 + 커밋별 diff, `q`로 닫기) |
+| N | `<Space>gh` | 변경된 hunk 목록 (검색 창) |
+| N | `<Space>gc` / `<Space>gB` | 커밋 / 브랜치 목록 (검색 창) |
+| N | `<Space>gg` | lazygit (commit, push, 브랜치 등 전체 Git 작업) |
+
+### 전체 변경 검토 화면 (`<Space>gv`) 안에서
+
+| 키 | 동작 |
+|---|---|
+| `<Tab>` / `<S-Tab>` | 다음 / 이전 파일 diff |
+| `j` / `k`, `<CR>` | 파일 목록에서 이동, 선택한 파일 diff 열기 |
+| `-` 또는 `s` / `S` | 파일 stage·unstage / 전체 stage |
+| `X` | 파일 변경 되돌리기 |
+| `g?` | 도움말 |
+| `q` | 닫기 |
+
+### lazygit 기본 조작
+
+| 키 | 동작 |
+|---|---|
+| `?` | 현재 화면에서 쓸 수 있는 키 목록 |
+| `1`~`5` 또는 마우스 | 패널 이동 (Status, Files, Branches, Commits, Stash) |
+| `space` | 파일 stage / unstage |
+| `c` | commit (메시지 입력) |
+| `P` / `p` | push / pull |
+| `enter` | 파일·커밋 상세 (diff) |
+| `q` | 종료 (Neovim으로 돌아옴) |
+
+- `<Space>gv` / `<Space>gl`을 쓸 수 없는 상황이면 이유를 알려 준다: `git 저장소 아님`, `파일 버퍼 아님`, `커밋 이력 없음 (아직 commit 안 된 파일)`.
+- 외부 도구: lazygit. Windows는 `winget install JesseDuffield.lazygit`.
+- lazygit을 닫으면 열린 파일이 자동으로 다시 읽힌다 (checkout, reset 등 반영).
+
 ## 명령
 
 | 명령 | 동작 |
@@ -475,6 +524,7 @@ LSP가 찾은 에러·경고는 줄 끝에 `● 메시지`로, 줄 번호 옆에
 | 검색 | 소문자로만 검색하면 대소문자 무시, 대문자가 섞이면 구분 |
 | 색 테마 | tokyonight `moon` (네온 계열 다크). 바꾸려면 `ui.lua`의 `style`을 `storm`/`night`로 |
 | 시작 화면 | 파일 없이 `nvim` 실행 시 최근 파일·메뉴 표시. 글자 입력으로 좁히고 `<CR>` |
+| 외부 수정 반영 | Agent·git 등이 파일을 바꾸면 Neovim으로 돌아올 때 자동으로 다시 읽음 (수정 중인 버퍼는 확인 메시지) |
 | 알림 | 메시지가 오른쪽 위 창에 잠깐 표시. LSP 진행 상황(로딩·분석 중)은 표시하지 않음. 지난 알림은 `:lua MiniNotify.show_history()` |
 
 ## Plugin 관리

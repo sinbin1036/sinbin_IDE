@@ -17,6 +17,7 @@
 주의: Repository 안이 아닌 임시 디렉터리에서 실행하면 열린 파일의 영향 없이 Config만 검증된다.
 주의: `mini.pick` picker는 입력을 기다리며 block되므로 headless에서 실행하지 않는다. picker 화면은 사용자 확인으로 검증.
 주의: 외부 CLI를 설치한 직후에는 기존 Shell의 PATH가 갱신되지 않는다. 새 Terminal에서 확인.
+주의: autocmd 안의 `:checktime`은 안전한 시점까지 미뤄진다 (`:h :checktime`). headless 스크립트 안에서는 실행되지 않으므로 `nvim --embed`를 RPC로 조작해 확인한다.
 
 ## 변경 종류별
 
@@ -48,7 +49,8 @@
 | Dart (Flutter SDK `C:\flutter`) | 3.10.4 |
 | LSP Server (Mason, 2026-10-02) | vtsls, basedpyright 1.40.1, ruff, clangd, jdtls |
 | tree-sitter CLI | 0.27.0 (winget `tree-sitter.tree-sitter-cli`, 2026-10-02 설치) |
-| fd, fzf, lazygit, make | 미설치 |
+| lazygit | 0.65.1 (winget `JesseDuffield.lazygit`, 2026-10-02 설치) |
+| fd, fzf, make | 미설치 |
 | Nerd Font | JetBrainsMono Nerd Font 3.3.0 (winget `DEVCOM.JetBrainsMonoNerdFont`, Font 이름 `JetBrainsMono NF`, 2026-10-02 설치). Windows Terminal Font 지정은 사용자 설정 |
 | `%LOCALAPPDATA%\nvim` (Windows 기본 config 경로) | 이 Repository로의 Junction |
 | Linux / macOS / WSL / SSH | UNVERIFIED (검증 환경 없음) |

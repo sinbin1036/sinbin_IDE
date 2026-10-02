@@ -9,22 +9,24 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 
 | 경로 | 책임 |
 |---|---|
-| `init.lua` | Neovim 진입점. 아래 모듈을 순서대로 로드 (keymaps → options → autocmds → commands → diagnostics → platform → plugins) |
+| `init.lua` | Neovim 진입점. 아래 모듈을 순서대로 로드 (keymaps → options → autocmds → commands → diagnostics → platform → plugins → lazygit) |
 | `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap). Plugin 전용 Keymap은 `plugins/` 영역별 파일 |
 | `lua/sinbin/options.lua` | OS 중립 기본 Option (번호, indent, search, clipboard, undo, split, 표시, 긴 줄, inccommand) |
-| `lua/sinbin/autocmds.lua` | 전역 Autocmd (`sinbin` augroup 하나): Yank 하이라이트, 커서 위치 복원 |
+| `lua/sinbin/autocmds.lua` | 전역 Autocmd (`sinbin` augroup 하나): Yank 하이라이트, 커서 위치 복원, 외부 수정 반영(`checktime`) |
 | `lua/sinbin/commands.lua` | 사용자 명령: `:TrimWhitespace` (저장 시 자동 실행 안 함) |
 | `lua/sinbin/diagnostics/init.lua` | 내장 `vim.diagnostic` 설정(virtual_text, 심각도 정렬, sign 아이콘, 이동 시 float)과 Plugin 무관 `<Leader>e` Keymap. virtual_text·float의 `format`에서 혼합 번역 적용. Picker Keymap(`<Leader>ed`/`eD`)은 `plugins/search.lua` |
 | `lua/sinbin/diagnostics/translate.lua` | 진단 메시지 첫 줄을 규칙으로 혼합 번역 (표시 전용, 진단 데이터는 변경 안 함, [D-012](DECISIONS.md)) |
 | `lua/sinbin/diagnostics/rules_ko.lua` | 언어별 번역 규칙 목록 (Lua pattern → 치환문) |
 | `lua/sinbin/platform/init.lua` | Platform Layer 진입점 ([D-003](DECISIONS.md)). OS 감지(`os`, `is_wsl`) 후 해당 OS 모듈 `setup()` 호출. OS 분기는 이 디렉터리에만 존재 |
 | `lua/sinbin/platform/{windows,linux,macos}.lua` | OS별 설정. `windows`: dartls `cmd`를 `dart.bat`로 지정 (TASK-007). 그 외 내용은 Phase 12 |
-| `lua/sinbin/plugins/init.lua` | Plugin 목록 (`vim.pack.add()` 한 곳, [D-007](DECISIONS.md)) 후 영역별 설정 모듈을 ui → editing → search → lsp → treesitter 순으로 로드 ([D-009](DECISIONS.md)) |
+| `lua/sinbin/plugins/init.lua` | Plugin 목록 (`vim.pack.add()` 한 곳, [D-007](DECISIONS.md)) 후 영역별 설정 모듈을 ui → editing → search → lsp → treesitter → git 순으로 로드 ([D-009](DECISIONS.md)) |
 | `lua/sinbin/plugins/ui.lua` | Colorscheme(tokyonight moon), mini.icons, mini.statusline, mini.notify, mini.starter, mini.clue |
 | `lua/sinbin/plugins/editing.lua` | mini.pairs, mini.surround 설정·Keymap ([D-008](DECISIONS.md)) |
 | `lua/sinbin/plugins/search.lua` | mini.pick, mini.extra, mini.files 설정 및 `<Leader>f`/`<Leader>s` Keymap, 진단 picker `<Leader>ed`/`<Leader>eD` |
 | `lua/sinbin/plugins/lsp.lua` | mason.nvim, mini.completion 설정, `vim.lsp.enable()` Server 목록 (nvim-lspconfig 설정 사용, [D-010](DECISIONS.md)), 자동완성 Keymap, LspAttach Keymap |
 | `lua/sinbin/plugins/treesitter.lua` | nvim-treesitter parser 설치 목록, FileType autocmd로 내장 `vim.treesitter.start()`, `PackChanged` 시 `:TSUpdate` ([D-011](DECISIONS.md)) |
+| `lua/sinbin/plugins/git.lua` | gitsigns.nvim 설정(변경 표시, hunk, inline blame), diffview-plus 설정(전체 변경 검토, 파일 이력, `q` 닫기), `<Leader>g` Keymap, mini.extra git picker ([D-013](DECISIONS.md)) |
+| `lua/sinbin/lazygit.lua` | 외부 CLI lazygit을 floating terminal로 실행 (`<Leader>gg`), 종료 시 `checktime` |
 | Treesitter Parser (Repository 밖) | `stdpath('data')/site/parser`. `c` 등 내장 parser는 Neovim 설치 경로 |
 | LSP Server (Repository 밖) | Mason 설치 위치 `stdpath('data')/mason`. Dart는 Flutter SDK의 `dart language-server` |
 | `nvim-pack-lock.json` | `vim.pack` lock 파일 (자동 생성, 직접 수정 금지). Plugin 설치 위치는 `stdpath('data')/site/pack/core/opt` (Repository 밖) |

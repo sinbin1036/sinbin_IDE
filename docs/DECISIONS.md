@@ -143,3 +143,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 규칙에 등록된 메시지만 번역되므로 자주 보는 메시지를 계속 추가해야 함. 서버 업데이트로 원문이 바뀌면 해당 규칙은 원문으로 fallback (에러 아님)
 - Related Task: TASK-010
 - Evidence: 사용자 결정 (2026-10-02), 실제 수집 메시지 104개 전부 번역 확인 (TASK-010)
+
+### D-013: Git은 gitsigns.nvim(버퍼 안) + diffview-plus(전체 변경 검토) + lazygit(전체 Git 작업)
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 6. 주 작업이 Agent가 바꾼 코드의 Diff 확인(D-001). Neovim 내장 git 변경 표시 없음. 초안은 D-008/D-009 일관성을 위해 `mini.diff` + `mini.git`이었으나 사용자가 "최대한 사용자 친화적인 방법"을 기준으로 재검토 요청
+- Decision: 버퍼 안 변경 표시·hunk 이동/미리보기 창/stage/reset·inline blame은 `lewis6991/gitsigns.nvim`. commit·push·브랜치·전체 변경 검토는 외부 CLI `lazygit`(winget)을 floating terminal로 실행(`<Leader>gg`). hunk·commit·branch 목록은 기존 `mini.extra` picker. 외부 수정은 내장 `checktime` autocmd로 반영. 여러 파일 변경 검토·파일 이력은 `dlyongemallo/diffview-plus.nvim`(sindrets/diffview.nvim의 유지보수 fork, 기본 branch)
+- Reason: hunk 미리보기 창, 자동 inline blame, 메뉴·`?` 도움말·마우스가 있는 lazygit이 명령어 기반(`:Git ...`)보다 초보자에게 쉬움. `mini.statusline`은 `mini.git`이 없으면 gitsigns 정보를 사용하므로 상태바 연동 유지
+- Alternatives: `mini.diff` + `mini.git` (일관성·최소 구성), vim-fugitive, sindrets/diffview.nvim (원본, 마지막 commit 2024-06으로 사실상 유지보수 중단)
+- Consequences: mini 계열 일관성 일부 포기(제작자·설정 방식이 다른 Plugin 1개). lazygit은 외부 의존성 (설치 자동화는 Phase 13). Terminal 일반 UX는 Phase 7. diffview-plus의 tag(`v0.38`)는 semver가 아니라 vim.pack 버전 지정 불가 → 기본 branch 추적 (lock 파일로 revision 고정)
+- Related Task: TASK-011
+- Evidence: 사용자 선택 (2026-10-02), 임시 git 저장소 검증 (TASK-011)
