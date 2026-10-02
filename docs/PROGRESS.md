@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 9 — Debug 준비
+- **Current Phase:** Phase 9 — Debug
 - **Status:** Phase 8 Run / Test 완료 (파일 / 프로젝트 범위 분리). 설치된 Plugin 17개 ([D-009](DECISIONS.md)~[D-015](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -21,17 +21,17 @@
 - Phase 8 Run / Test ([TASK-013](tasks/completed/TASK-013-run-test.md))
 
 ## In Progress
-- 없음
+- [TASK-014](tasks/active/TASK-014-debug.md): 5개 언어 + Flutter 구현·검증 완료. 사용자 화면 확인 대기
 
 ## Blocked
 - 없음
 
 ## Unverified
 - Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
-- lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
+- lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
 ## Current Active Task
-없음
+[TASK-014](tasks/active/TASK-014-debug.md) — nvim-dap 기반 5개 언어 디버깅
 
 ## Next Action
-Phase 9 (Debug) Task 작성: 사용자와 범위 확정 (디버깅할 언어 우선순위: TS/Node, Python, Java, Dart/Flutter, C, breakpoint·step·변수 보기 UI 수준) → DAP(nvim-dap) 및 언어별 debug adapter(Mason 설치 가능 여부) 검토. `<Leader>d` Debug 그룹. 보류 항목: 빌드 에러 quickfix 연동(TASK-013). 진단 번역 규칙은 쓰면서 계속 추가.
+TASK-014 사용자 화면 확인 (`<Space>db` → `F5` → `F10`/`<Space>di` → 패널·줄 끝 변수 값 → `<Space>dq`, 언어별) → 완료 처리. 이후 Phase 10 (AI Coding Agent Integration) Task 작성. 보류: 빌드 에러 quickfix 연동(TASK-013). 진단 번역 규칙은 쓰면서 계속 추가.
