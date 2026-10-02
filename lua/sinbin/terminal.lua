@@ -1,13 +1,14 @@
 -- Terminal windows (TASK-012), built on jobstart(term = true).
--- Numbered shell terminals in a bottom split, one floating shell terminal, and
--- one-off command terminals (lazygit, later AI Agent CLIs in Phase 10).
--- Hiding a terminal keeps its process running.
+-- Numbered shell terminals in a bottom split, one floating shell terminal, program
+-- terminals in a right split (AI Agent CLIs, TASK-015) and one-off command terminals
+-- (lazygit). Hiding a terminal keeps its process running.
 
 local M = {}
 
 --- @class sinbin.Term
 --- @field buf integer
 --- @field name string
+--- @field kind? "split"|"float"|"right" where it is shown again
 
 --- @type table<string, sinbin.Term>
 local terms = {}
@@ -34,11 +35,18 @@ end
 
 --- Opens a window for `buf` and returns its id.
 --- @param buf integer
---- @param kind "split"|"float"
+--- @param kind "split"|"float"|"right"
 local function open_window(buf, kind)
   local win
   if kind == "float" then
     win = vim.api.nvim_open_win(buf, true, float_config())
+  elseif kind == "right" then
+    win = vim.api.nvim_open_win(buf, true, {
+      split = "right",
+      win = -1, -- full height at the right of the tab
+      width = math.max(60, math.floor(vim.o.columns * 0.4)),
+    })
+    vim.wo[win].winfixwidth = true
   else
     win = vim.api.nvim_open_win(buf, true, {
       split = "below",
@@ -106,10 +114,13 @@ local function close_buffer(buf)
   vim.api.nvim_buf_delete(buf, { force = true })
 end
 
---- Shows or hides the shell terminal `id`.
+--- Shows or hides terminal `id`: a shell, or the program `opts.cmd` (a shell command
+--- line, run like Run commands so Windows npm shims work).
 --- @param id string
---- @param kind "split"|"float"
-function M.toggle(id, kind)
+--- @param kind "split"|"float"|"right"
+--- @param opts? { cmd?: string, cwd?: string, name?: string }
+function M.toggle(id, kind, opts)
+  opts = opts or {}
   local term = terms[id]
   if is_alive(term) then
     local win = find_window(term.buf)
@@ -121,12 +132,50 @@ function M.toggle(id, kind)
     end
     return
   end
-  local buf = start(shell_cmd(), kind, function(b)
-    -- `exit` in the shell: drop the window and buffer.
+  local cmd = shell_cmd()
+  if opts.cmd then
+    local exec = require("sinbin.platform").terminal_exec
+    cmd = exec and exec(opts.cmd) or opts.cmd
+  end
+  local buf = start(cmd, kind, function(b)
+    -- `exit` in the shell / the program quit: drop the window and buffer.
     terms[id] = nil
     close_buffer(b)
-  end)
-  terms[id] = { buf = buf, name = kind == "float" and "float" or ("terminal " .. id) }
+  end, opts.cwd)
+  terms[id] = { buf = buf, kind = kind, name = opts.name or (kind == "float" and "float" or ("terminal " .. id)) }
+end
+
+--- Whether terminal `id` is running.
+function M.is_running(id)
+  return is_alive(terms[id])
+end
+
+--- Shows terminal `id` (where it was opened) if hidden, focuses it in terminal mode.
+--- @return boolean false when it is not running
+function M.focus(id)
+  local term = terms[id]
+  if not is_alive(term) then
+    return false
+  end
+  local win = find_window(term.buf)
+  if win then
+    vim.api.nvim_set_current_win(win)
+  else
+    open_window(term.buf, term.kind or "split")
+  end
+  vim.cmd.startinsert()
+  return true
+end
+
+--- Types `text` into terminal `id` as if from the keyboard (no Enter).
+--- @return boolean false when it is not running
+function M.send(id, text)
+  local term = terms[id]
+  if not is_alive(term) then
+    return false
+  end
+  vim.api.nvim_chan_send(vim.bo[term.buf].channel, text)
+  return true
 end
 
 --- Runs a command in a floating terminal that closes when the command exits.
