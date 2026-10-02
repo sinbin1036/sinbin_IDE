@@ -187,3 +187,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: Mason 패키지 내부 경로(debugpy venv, js-debug `dapDebugServer.js`, java-debug jar)와 Flutter SDK 내부 구조(`flutter_tools.snapshot`)에 의존 → 패키지·SDK 구조가 바뀌면 경로 수정 필요. Java는 jdtls가 프로젝트를 불러온 뒤에만 시작 가능. java-debug bundle은 jdtls 시작 시 적용되므로 설치 후 nvim 재시작 필요. 브라우저(Chrome) 프론트엔드 디버깅은 범위 밖
 - Related Task: TASK-014
 - Evidence: 사용자 선택 (2026-10-02), 5개 언어 + Flutter Windows 앱 디버그 검증 (TASK-014)
+
+### D-017: AI Agent는 오른쪽 세로 Terminal에서 CLI 그대로 실행, 파일 위치는 `@경로#L` 텍스트로 전달
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 10. Claude Code와 Codex CLI를 함께 사용. D-002에 따라 Agent를 Neovim Core에 내장하지 않음. Claude Code 공식 IDE 연동의 Neovim 구현(`coder/claudecode.nvim`, 선택 공유·diff 수락)이 있으나 Claude 전용
+- Decision: `lua/sinbin/agent.lua`가 `terminal.lua`의 오른쪽 세로 창(화면 40%, 최소 60열)으로 `claude` / `codex`를 실행·토글(숨겨도 세션 유지, 현재 파일의 git root에서 시작). 현재 파일·선택 줄은 `@상대경로#L10-20 `을 입력창에 키 입력으로 넣고 Enter는 누르지 않음(질문을 이어서 입력). 결과 검토는 기존 `checktime`·`<Leader>gv`·hunk 기능 사용. claudecode.nvim은 보류
+- Reason: 두 Agent를 같은 방식으로 다룸, Agent 교체·추가가 명령 이름 한 줄. 하단은 run Terminal·디버그 패널이 쓰고 Agent 화면은 폭이 필요. `@`는 두 Agent 모두 파일 참조 표기
+- Alternatives: claudecode.nvim (Claude 전용 IDE 프로토콜), avante.nvim·codecompanion 등 Neovim 내장형 (D-002 위반), 하단·floating 배치, `경로:10-20` 형식
+- Consequences: Agent가 제안하는 수정을 diff로 수락/거절하는 IDE식 기능은 없음 (Agent CLI 자체 확인 흐름 사용). Claude 전용 기능이 필요하면 claudecode.nvim을 추가 검토. Codex는 폴더별 첫 실행 시 신뢰 확인 화면이 나옴
+- Related Task: TASK-015
+- Evidence: 사용자 선택 (2026-10-02), Claude Code·Codex 실제 실행 검증 (TASK-015)

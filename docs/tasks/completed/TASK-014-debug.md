@@ -1,6 +1,6 @@
 # TASK-014: Phase 9 Debug
 
-- **Status:** Active (2026-10-02)
+- **Status:** Completed (2026-10-02)
 - **Goal:** 5개 언어에서 breakpoint를 걸고, 한 줄씩 실행하며, 변수·호출 스택을 보는 디버깅을 Neovim 안에서 한다.
 
 ## Background
@@ -106,7 +106,7 @@ UI attach한 `nvim --embed --headless -n`을 RPC로 조작, 임시 샘플. 각 �
 - Keymap desc 확인 (`F5`/`F10`/`F11`/`F12`, `<Space>d*`), 기존 매핑 없음
 - 테스트 후 adapter·앱 프로세스 남지 않음 확인
 - `nvim --headless "+qa"` 출력 없음, exit 0. `:checkhealth dap` → gdb executable OK
-- 화면 확인: **사용자 확인 필요**
+- 화면 확인: 별도 확인 없이 사용자가 PR #13 merge (2026-10-02). Java step·변수는 미검증으로 남음
 
 ## Notes
 - breakpoint가 안 걸리던 문제: Write 도구로 쓴 Nerd Font 아이콘(Private Use Area 문자)이 빈 문자열로 저장됨 → sign text가 비어 breakpoint sign이 놓이지 않음(`dap.breakpoints.get()` 비어 있음, `setBreakpoints` 요청 없음). Python으로 `\u` escape해 다시 씀

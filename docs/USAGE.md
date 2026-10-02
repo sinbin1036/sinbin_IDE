@@ -622,6 +622,26 @@ breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(끝나
 - 프로젝트에 `.vscode/launch.json`이 있으면 그 설정도 `F5` 목록에 나온다.
 - 필요한 것이 없으면 이유를 알려 준다 (예: `lua 디버그 설정 없음`).
 
+## AI Agent (Claude Code, Codex)
+
+Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 세로 창에서 돈다. 숨겨도 대화는 이어진다.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N, T | `Alt+a` | **코드 창 ↔ Agent 창 왕복.** 코드에서 누르면 Agent로 가서 바로 입력(숨겨져 있으면 열고, 꺼져 있으면 마지막 Agent·처음엔 Claude 실행), Agent에서 누르면 원래 코드 창으로 |
+| N | `<Space>ac` | Claude Code 열기 / 숨기기 |
+| N | `<Space>ax` | Codex 열기 / 숨기기 |
+| N | `<Space>aa` | 마지막으로 쓴 Agent 열기 / 숨기기 |
+| N | `<Space>af` | 현재 파일을 Agent 입력창에 넣기 (`@경로 `) |
+| V | `<Space>as` | 선택한 줄 범위를 Agent 입력창에 넣기 (`@경로#L10-20 `) |
+
+- `<Space>af` / `<Space>as`는 입력만 하고 Enter는 누르지 않는다. 커서가 Agent로 옮겨 가니 이어서 질문을 쓰면 된다. 예: `@src/user.ts#L10-20 이 함수 리팩터링해줘`
+- Agent 창 안: `<Esc>`는 Agent에 전달된다. 코드 창으로는 `Alt+a` (또는 `<C-q>` → `<C-w>h`). 쓰던 입력은 Agent 창에 그대로 남는다.
+- `Alt+a`는 Phase 11(UI/Layout 재설계) 전까지 쓰는 임시 이동 키다.
+- Agent는 현재 파일의 git 저장소 루트에서 시작한다 (없으면 작업 폴더).
+- Agent가 파일을 고치면 열린 버퍼가 자동으로 다시 읽힌다. 바뀐 내용은 `<Space>gv`(전체 변경 검토), `]h` / `<Space>gp`(변경 묶음)로 본다.
+- Codex는 폴더를 처음 열 때 "Trust this folder?" 확인이 나온다.
+
 ## 명령
 
 | 명령 | 동작 |

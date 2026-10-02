@@ -42,6 +42,7 @@ miniclue.setup({
     { mode = "n", keys = "<Leader>r", desc = "+Run" },
     { mode = "n", keys = "<Leader>x", desc = "+Test" },
     { mode = { "n", "x" }, keys = "<Leader>d", desc = "+Debug" },
+    { mode = { "n", "x" }, keys = "<Leader>a", desc = "+AI Agent" },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),
