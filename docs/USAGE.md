@@ -320,7 +320,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | N | `<Space>ff` | 파일 이름 검색 |
 | N | `<Space>fb` | 열린 버퍼 전환 |
 | N | `<Space>fr` | 최근 파일 |
-| N | `<Space>fe` | 파일 탐색기 (현재 파일 위치에서 열림) |
+| N | `<Space>fe` | 파일 탐색기 열기 / 닫기 (현재 파일 위치에서 열림) |
 | N | `<Space>sg` | 프로젝트 내용 검색 (입력하는 대로 결과 갱신) |
 | N | `<Space>sw` | 커서 아래 단어로 내용 검색 |
 | N | `<Space>sh` | 도움말 검색 |
@@ -499,6 +499,23 @@ git 저장소의 파일을 열면 줄 번호 옆에 변경 표시(`┃` 추가·
 - `<Space>gv` / `<Space>gl`을 쓸 수 없는 상황이면 이유를 알려 준다: `git 저장소 아님`, `파일 버퍼 아님`, `커밋 이력 없음 (아직 commit 안 된 파일)`.
 - 외부 도구: lazygit. Windows는 `winget install JesseDuffield.lazygit`.
 - lazygit을 닫으면 열린 파일이 자동으로 다시 읽힌다 (checkout, reset 등 반영).
+
+## Terminal
+
+Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 명령(dev server 등)은 계속 돈다.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `<Space>tt` | 하단 Terminal 열기 / 숨기기 |
+| N | `2<Space>tt`, `3<Space>tt` … | 2번, 3번 Terminal (따로 동작) |
+| N | `<Space>tf` | floating Terminal 열기 / 숨기기 (잠깐 명령 하나 실행할 때) |
+| N | `<Space>tl` | 열린 Terminal 목록 → 골라서 하단에 표시 |
+| T | `<C-q>` | Terminal 입력 → Normal 모드 (스크롤, 복사, `<C-w>`로 창 이동) |
+| N (Terminal 창) | `i` 또는 `a` | 다시 Terminal 입력 |
+
+- Shell에서 `exit`하면 그 Terminal 창과 버퍼가 닫힌다.
+- `<Esc>`는 Terminal 안 프로그램(Claude Code, lazygit 등)에 그대로 전달된다.
+- Windows Shell은 Git Bash. nvim을 PowerShell에서 실행해도 같다 (Neovim의 `:!` 명령은 기존 'shell' 그대로).
 
 ## 명령
 

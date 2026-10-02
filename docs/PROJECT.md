@@ -26,9 +26,9 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 
 | 영역 | 내용 | 상태 |
 |---|---|---|
-| 편집·탐색 | Syntax, Treesitter, LSP, 자동완성, Definition/Reference, Rename, Code Action, Formatting, 파일·문자열·Symbol 검색 | Planned |
-| Git | 변경 파일, Diff, Hunk 단위 확인, Stage/Reset, Branch, Commit, 필요 시 LazyGit 연동 | Planned |
-| Terminal | Neovim 내부 Terminal (dev server, test, docker, git 등) | Planned |
+| 편집·탐색 | Syntax, Treesitter, LSP, 자동완성, Definition/Reference, Rename, Code Action, Formatting, 파일·문자열·Symbol 검색 | Current (Phase 2~5) |
+| Git | 변경 파일, Diff, Hunk 단위 확인, Stage/Reset, Branch, Commit, 필요 시 LazyGit 연동 | Current (Phase 6) |
+| Terminal | Neovim 내부 Terminal (dev server, test, docker, git 등) | Current (Phase 7) |
 | Run / Test | 프로젝트 종류 감지 후 공통 키(`<leader>r`)로 실행 명령 자동 선택 (Next.js / Spring / Flutter / Go / Python …) | Planned |
 | Debug | Debugger 연동 | Planned |
 | AI Agent | Claude Code, Codex CLI 등 Terminal 기반 Agent를 Terminal/Panel에서 실행 | Planned |
@@ -55,8 +55,8 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 
 ## Capabilities
 
-- Current: 없음 (Neovim Config 미작성)
-- Planned: 위 Scope 전체
+- Current: 편집·탐색, Git, Terminal (상세: [USAGE.md](USAGE.md), 구조: [ARCHITECTURE.md](ARCHITECTURE.md))
+- Planned: Run / Test, Debug, AI Agent, UI / Layout, Cross-platform, 환경 재현
 
 ## Supported Platform
 
@@ -68,7 +68,7 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 - Neovim + Lua Config
 - 외부 CLI Tool 활용: Git, ripgrep, fd, fzf, lazygit 등
 - Plugin 최소화 ([RULES.md](RULES.md) Plugin)
-- Plugin Manager, 개별 Plugin 선택: **미정** (Phase 1 이후 결정 → DECISIONS)
+- Plugin Manager: 내장 `vim.pack` ([D-007](DECISIONS.md)). 개별 Plugin 선택은 [DECISIONS.md](DECISIONS.md) D-008 이후
 
 ### Dependency 분류 (Planned — Phase 13에서 확정)
 
