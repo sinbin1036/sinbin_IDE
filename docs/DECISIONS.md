@@ -110,3 +110,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 아이콘 표시에 Nerd Font 필요. ripgrep은 외부 의존성 (설치 자동화는 Phase 13). Mode별 Layout 등 세부 UI는 Phase 11에 남음
 - Related Task: TASK-006
 - Evidence: 사용자 선택 (2026-10-01), headless 검증 (TASK-006)
+
+### D-010: LSP는 내장 `vim.lsp` + nvim-lspconfig 설정, Server 설치는 mason.nvim, 자동완성은 mini.completion
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 4. 대상 언어 TypeScript, Python, Java, Dart/Flutter, C. Neovim 0.12는 `vim.lsp.config` / `vim.lsp.enable`로 LSP Client를 내장
+- Decision: LSP Client는 내장 기능을 쓰고, Server별 설정(cmd, root marker)은 `neovim/nvim-lspconfig`의 `lsp/*.lua`를 그대로 사용. Server 설치는 `mason-org/mason.nvim` (`:MasonInstall`), Dart는 SDK 포함 Server 사용. 자동완성은 `mini.completion` (snippet은 내장 `vim.snippet`). Server: `vtsls`, `basedpyright` + `ruff`(ruff hover 비활성), `jdtls`, `dartls`, `clangd`. LSP Keymap은 내장 기본값 + `gd`, `<Leader>cf`(+Code 그룹 신설)
+- Reason: 내장 우선(RULES), 설정 데이터만 쓰므로 lspconfig 제거 시 `lsp/*.lua` 직접 작성으로 대체 가능. Mason은 OS 공통 설치 방식이라 Phase 12/13에 유리. mini.completion은 D-008/D-009와 일관
+- Alternatives: Server 직접 설치(npm/pip/winget), 내장 `vim.lsp.completion`, blink.cmp, ts_ls, pyright 단독, nvim-jdtls
+- Consequences: Mason Server는 lock 파일 밖 (버전 고정 안 됨, Phase 13에서 설치 목록 자동화 필요). Windows에서 Flutter SDK의 확장자 없는 `dart` 스크립트 때문에 Platform Layer에서 `dart.bat` 지정. jdtls는 JDK 21+ 필요
+- Related Task: TASK-007
+- Evidence: 사용자 선택 (2026-10-02), 5개 언어 headless 검증 (TASK-007)
