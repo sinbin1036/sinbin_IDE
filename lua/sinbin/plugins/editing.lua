@@ -1,13 +1,4 @@
--- Plugin list, managed by the built-in vim.pack (docs/DECISIONS.md D-007).
--- Add each plugin with a one-line reason (docs/RULES.md Plugin).
--- Lock file: nvim-pack-lock.json at the repository root, tracked by git.
-
-vim.pack.add({
-  -- Auto-close brackets/quotes: no built-in equivalent.
-  { src = "https://github.com/nvim-mini/mini.pairs", version = "stable" },
-  -- Add/delete/replace surroundings: no built-in equivalent.
-  { src = "https://github.com/nvim-mini/mini.surround", version = "stable" },
-})
+-- Editing plugins (TASK-005, D-008): mini.pairs, mini.surround.
 
 require("mini.pairs").setup()
 
