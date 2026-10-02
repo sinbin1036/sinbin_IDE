@@ -10,13 +10,16 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 | 경로 | 책임 |
 |---|---|
 | `init.lua` | Neovim 진입점. 아래 모듈을 순서대로 로드 (keymaps → options → autocmds → commands → platform → plugins) |
-| `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap). Plugin 전용 Keymap은 `plugins.lua` |
+| `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap). Plugin 전용 Keymap은 `plugins/` 영역별 파일 |
 | `lua/sinbin/options.lua` | OS 중립 기본 Option (번호, indent, search, clipboard, undo, split, 표시, 긴 줄, inccommand) |
 | `lua/sinbin/autocmds.lua` | 전역 Autocmd (`sinbin` augroup 하나): Yank 하이라이트, 커서 위치 복원 |
 | `lua/sinbin/commands.lua` | 사용자 명령: `:TrimWhitespace` (저장 시 자동 실행 안 함) |
 | `lua/sinbin/platform/init.lua` | Platform Layer 진입점 ([D-003](DECISIONS.md)). OS 감지(`os`, `is_wsl`) 후 해당 OS 모듈 `setup()` 호출. OS 분기는 이 디렉터리에만 존재 |
 | `lua/sinbin/platform/{windows,linux,macos}.lua` | OS별 설정. 현재 빈 `setup()` — 내용은 Phase 12 |
-| `lua/sinbin/plugins.lua` | Plugin 목록 (`vim.pack.add()`, [D-007](DECISIONS.md)) 및 각 Plugin 설정·Keymap. 현재 mini.pairs, mini.surround ([D-008](DECISIONS.md)) |
+| `lua/sinbin/plugins/init.lua` | Plugin 목록 (`vim.pack.add()` 한 곳, [D-007](DECISIONS.md)) 후 영역별 설정 모듈을 ui → editing → search 순으로 로드 ([D-009](DECISIONS.md)) |
+| `lua/sinbin/plugins/ui.lua` | Colorscheme(tokyonight moon), mini.icons, mini.statusline, mini.notify, mini.starter, mini.clue |
+| `lua/sinbin/plugins/editing.lua` | mini.pairs, mini.surround 설정·Keymap ([D-008](DECISIONS.md)) |
+| `lua/sinbin/plugins/search.lua` | mini.pick, mini.extra, mini.files 설정 및 `<Leader>f`/`<Leader>s` Keymap |
 | `nvim-pack-lock.json` | `vim.pack` lock 파일 (자동 생성, 직접 수정 금지). Plugin 설치 위치는 `stdpath('data')/site/pack/core/opt` (Repository 밖) |
 | `AGENTS.md` / `CLAUDE.md` | AI Agent 작업 규약 / Claude Code 진입점 |
 | `docs/` | Human Source of Truth |

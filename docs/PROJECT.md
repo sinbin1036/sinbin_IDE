@@ -97,7 +97,7 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 Phase 0  Neovim 설치 및 Bootstrap        Phase 8  Run / Test
 Phase 1  Core Config                     Phase 9  Debug
 Phase 2  기본 Editing UX                 Phase 10 AI Coding Agent Integration
-Phase 3  Search / Navigation             Phase 11 Custom UI / Layout
+Phase 3  Search / Navigation + 기본 UI   Phase 11 Custom UI / Layout
 Phase 4  LSP / Completion                Phase 12 Cross-platform Setup
 Phase 5  Diagnostics                     Phase 13 Installer / Bootstrap 자동화
 Phase 6  Git                             Phase 14 안정화 및 최적화
