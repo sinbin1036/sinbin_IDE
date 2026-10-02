@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 11 — Custom UI / Layout 준비
+- **Current Phase:** Phase 11 — Custom UI / Layout
 - **Status:** Phase 10 AI Agent 완료 (Claude Code·Codex 오른쪽 창, `Alt+a` 왕복). 설치된 Plugin 19개 ([D-009](DECISIONS.md)~[D-017](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -23,7 +23,7 @@
 - Phase 10 AI Coding Agent Integration ([TASK-015](tasks/completed/TASK-015-ai-agent.md))
 
 ## In Progress
-- 없음
+- [TASK-016](tasks/active/TASK-016-ui-layout.md): Task 작성·Decisions 확정(추천안) 완료. 구현은 다음 세션 (1단계부터)
 
 ## Blocked
 - 없음
@@ -34,8 +34,19 @@
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
+## Remaining Phases
+- **11 Custom UI / Layout** (진행 중, TASK-016) → 12 Cross-platform Setup → 13 Installer / Bootstrap 자동화 → 14 안정화 및 최적화
+- 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
+
+## Deferred
+- 빌드 에러 quickfix 연동 (TASK-013)
+- 목적별 Mode 전환 Coding / Debug / Git / AI / Focus (Phase 11 기본 배치 이후 별도 Task)
+- claudecode.nvim Claude 전용 IDE 연동 (D-017, 필요 시)
+- 브라우저(Chrome) 프론트엔드 디버깅 (TASK-014)
+- 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
+
 ## Current Active Task
-없음
+[TASK-016](tasks/active/TASK-016-ui-layout.md) — VS Code식 기본 배치 (트리·탭·하단 패널·Agent·경로) + 창 이동 체계
 
 ## Next Action
-Phase 11 (Custom UI / Layout) Task 작성: 사용자와 범위 확정 — PROJECT 목표 Layout(탐색기 / 코드 / 진단·심볼·Git / 하단 Terminal·Agent·Test), 목적별 Mode(Coding / Debug / Git / AI / Focus), 창 이동 체계 재설계(TASK-015에서 넘긴 임시 `Alt+a`, `<Leader>a*` 토글이 보이는 창을 숨기는 문제, 마우스·`<C-w>` 진입 시 자동 입력 모드). 보류: 빌드 에러 quickfix 연동(TASK-013). 진단 번역 규칙은 쓰면서 계속 추가.
+TASK-016 1단계 구현 시작 — 문서의 "다음 세션 시작 지점" 순서대로: nvim-tree·mini.tabline 추가 → mini.files 제거·기능 이전 → 하단 영역 공통화 → winbar 경로·명령 팔레트 → 시작 시 트리 자동 열기 → 검증 → 사용자 화면 확인. 브랜치 `feat/ui-layout`.
