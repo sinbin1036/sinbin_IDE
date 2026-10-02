@@ -142,6 +142,73 @@ function M.run_float(cmd, opts)
   end, opts.cwd)
 end
 
+--- Runs a shell command line in terminal `id` (bottom split), replacing whatever ran
+--- there before. The buffer stays after the command ends so its output can be read.
+--- With `focus`, the cursor moves into the terminal ready for input (programs reading
+--- stdin); otherwise focus returns to the window it came from (dev servers).
+--- @param id string
+--- @param cmd string shell command line
+--- @param opts? { cwd?: string, name?: string, focus?: boolean }
+function M.exec(id, cmd, opts)
+  opts = opts or {}
+  local prev = vim.api.nvim_get_current_win()
+  local old = terms[id]
+  local win = is_alive(old) and find_window(old.buf) or nil
+
+  local buf = vim.api.nvim_create_buf(false, false)
+  if win then
+    vim.api.nvim_win_set_buf(win, buf)
+    vim.api.nvim_set_current_win(win)
+  else
+    win = open_window(buf, "split")
+  end
+  if is_alive(old) then
+    pcall(vim.fn.jobstop, vim.bo[old.buf].channel)
+    vim.api.nvim_buf_delete(old.buf, { force = true })
+  end
+
+  -- Same shell as the terminal windows when the Platform Layer provides one;
+  -- a string goes through 'shell' + 'shellcmdflag'.
+  local exec = require("sinbin.platform").terminal_exec
+  vim.fn.jobstart(exec and exec(cmd) or cmd, {
+    term = true,
+    cwd = opts.cwd,
+    on_exit = function()
+      vim.schedule(function()
+        -- In terminal mode the next key would close a finished terminal and lose its
+        -- output, so drop back to Normal mode when the command ends.
+        if vim.api.nvim_get_current_buf() == buf and vim.api.nvim_get_mode().mode == "t" then
+          vim.cmd.stopinsert()
+        end
+      end)
+    end,
+  })
+  terms[id] = { buf = buf, name = opts.name or id }
+
+  -- Cursor on the last line keeps the window following the output.
+  vim.api.nvim_win_set_cursor(win, { vim.api.nvim_buf_line_count(buf), 0 })
+  if opts.focus then
+    vim.cmd.startinsert()
+  elseif prev ~= win and vim.api.nvim_win_is_valid(prev) then
+    vim.api.nvim_set_current_win(prev)
+  end
+end
+
+--- Stops the command running in terminal `id`.
+--- @return boolean stopped false when nothing was running
+function M.stop(id)
+  local term = terms[id]
+  if not is_alive(term) then
+    return false
+  end
+  local chan = vim.bo[term.buf].channel
+  if vim.fn.jobwait({ chan }, 0)[1] ~= -1 then
+    return false
+  end
+  vim.fn.jobstop(chan)
+  return true
+end
+
 --- Live shell terminals, for pickers.
 --- @return { id: string, name: string, buf: integer }[]
 function M.list()

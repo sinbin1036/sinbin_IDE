@@ -2,8 +2,8 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 8 — Run / Test 준비
-- **Status:** Phase 7 Terminal 완료 (자체 모듈, Windows Git Bash). 설치된 Plugin 17개 ([D-009](DECISIONS.md)~[D-014](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
+- **Current Phase:** Phase 9 — Debug 준비
+- **Status:** Phase 8 Run / Test 완료 (파일 / 프로젝트 범위 분리). 설치된 Plugin 17개 ([D-009](DECISIONS.md)~[D-015](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
 - Project 정의 ([TASK-001](tasks/completed/TASK-001-define-project.md))
@@ -18,6 +18,7 @@
 - Phase 5 진단 메시지 혼합 번역 ([TASK-010](tasks/completed/TASK-010-diagnostic-translate.md))
 - Phase 6 Git ([TASK-011](tasks/completed/TASK-011-git.md))
 - Phase 7 Terminal ([TASK-012](tasks/completed/TASK-012-terminal.md))
+- Phase 8 Run / Test ([TASK-013](tasks/completed/TASK-013-run-test.md))
 
 ## In Progress
 - 없음
@@ -33,4 +34,4 @@
 없음
 
 ## Next Action
-Phase 8 (Run / Test) Task 작성: 사용자와 범위 확정 (대상 프로젝트 종류: Next.js/TS, Python, Spring/Java, Flutter, C 등, 실행·테스트·빌드 명령, 결과 표시 위치) → 프로젝트 감지 → `<Leader>r`(Run) / `<Leader>x`(Test)로 `terminal.lua`에서 실행하는 구조 검토. 진단 번역 규칙은 쓰면서 계속 추가.
+Phase 9 (Debug) Task 작성: 사용자와 범위 확정 (디버깅할 언어 우선순위: TS/Node, Python, Java, Dart/Flutter, C, breakpoint·step·변수 보기 UI 수준) → DAP(nvim-dap) 및 언어별 debug adapter(Mason 설치 가능 여부) 검토. `<Leader>d` Debug 그룹. 보류 항목: 빌드 에러 quickfix 연동(TASK-013). 진단 번역 규칙은 쓰면서 계속 추가.
