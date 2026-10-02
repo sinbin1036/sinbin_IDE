@@ -37,6 +37,7 @@ miniclue.setup({
     { mode = "n", keys = "<Leader>s", desc = "+Search" },
     { mode = { "n", "x" }, keys = "<Leader>c", desc = "+Code" },
     { mode = "n", keys = "<Leader>e", desc = "+Error/Diagnostic" },
+    { mode = { "n", "x" }, keys = "<Leader>g", desc = "+Git" },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),

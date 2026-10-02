@@ -27,3 +27,14 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end
   end,
 })
+
+-- Reload files changed outside Neovim (AI Agent, git, formatters). 'autoread' is on by default.
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
+  group = group,
+  desc = "Check for files changed outside Neovim",
+  callback = function()
+    if vim.fn.getcmdwintype() == "" and vim.fn.mode() ~= "c" then
+      vim.cmd.checktime()
+    end
+  end,
+})

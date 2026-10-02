@@ -46,6 +46,13 @@ vim.pack.add({
   -- Installs/updates parsers and queries; highlighting itself is built-in vim.treesitter.
   { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
 
+  -- Git (TASK-011)
+  -- Changed-line signs, hunk preview/stage/reset, inline blame: no built-in equivalent.
+  { src = "https://github.com/lewis6991/gitsigns.nvim" },
+  -- Review all changed files / file history side by side. Maintained fork of sindrets/diffview.nvim.
+  -- Default branch: its tags (v0.38) are not semver, so vim.pack cannot use them as versions.
+  { src = "https://github.com/dlyongemallo/diffview-plus.nvim" },
+
   -- Colorscheme: soft neon dark (tokyonight-moon), user choice.
   { src = "https://github.com/folke/tokyonight.nvim" },
 })
@@ -56,3 +63,4 @@ require("sinbin.plugins.editing")
 require("sinbin.plugins.search")
 require("sinbin.plugins.lsp")
 require("sinbin.plugins.treesitter")
+require("sinbin.plugins.git")
