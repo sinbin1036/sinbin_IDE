@@ -1,6 +1,6 @@
 # TASK-005: Phase 2 기본 Editing UX
 
-- **Status:** Active — 구현·headless 검증 완료, 화면 확인 대기 (2026-10-01)
+- **Status:** Completed (2026-10-01)
 - **Goal:** 일상 편집에 필요한 최소 UX를 Neovim 기본 기능 우선으로 구성하고, 기본 기능으로 부족한 항목만 Plugin으로 보완한다.
 
 ## Background
@@ -95,4 +95,4 @@ RULES Plugin 원칙("기본 기능으로 충분하면 추가 안 함")에 따라
 
 ## Notes
 - 사용자 `BufReadPost`는 filetype 감지보다 먼저 실행되어 `vim.bo.filetype`이 비어 있음 → `vim.filetype.match({ buf })`로 판별
-- 화면으로만 확인 가능한 항목 미검증: Yank 하이라이트 표시, `listchars` 문자 표시, `inccommand` 미리보기 창, `cursorline`
+- 화면 확인 완료 (2026-10-01, 사용자): Yank 하이라이트 표시, `listchars` 문자 표시, `inccommand` 미리보기 창, `cursorline`
