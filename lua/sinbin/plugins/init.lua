@@ -42,6 +42,10 @@ vim.pack.add({
   -- Completion popup with docs and signature help on top of built-in LSP.
   mini("completion"),
 
+  -- Treesitter (TASK-008)
+  -- Installs/updates parsers and queries; highlighting itself is built-in vim.treesitter.
+  { src = "https://github.com/nvim-treesitter/nvim-treesitter", version = "main" },
+
   -- Colorscheme: soft neon dark (tokyonight-moon), user choice.
   { src = "https://github.com/folke/tokyonight.nvim" },
 })
@@ -51,3 +55,4 @@ require("sinbin.plugins.ui")
 require("sinbin.plugins.editing")
 require("sinbin.plugins.search")
 require("sinbin.plugins.lsp")
+require("sinbin.plugins.treesitter")
