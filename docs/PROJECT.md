@@ -29,9 +29,9 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 | 편집·탐색 | Syntax, Treesitter, LSP, 자동완성, Definition/Reference, Rename, Code Action, Formatting, 파일·문자열·Symbol 검색 | Current (Phase 2~5) |
 | Git | 변경 파일, Diff, Hunk 단위 확인, Stage/Reset, Branch, Commit, 필요 시 LazyGit 연동 | Current (Phase 6) |
 | Terminal | Neovim 내부 Terminal (dev server, test, docker, git 등) | Current (Phase 7) |
-| Run / Test | 프로젝트 종류 감지 후 공통 키(`<leader>r`)로 실행 명령 자동 선택 (Next.js / Spring / Flutter / Go / Python …) | Planned |
-| Debug | Debugger 연동 | Planned |
-| AI Agent | Claude Code, Codex CLI 등 Terminal 기반 Agent를 Terminal/Panel에서 실행 | Planned |
+| Run / Test | 프로젝트 종류 감지 후 공통 키(`<leader>r`)로 실행 명령 자동 선택 (Next.js / Spring / Flutter / Go / Python …) | Current (Phase 8) |
+| Debug | Debugger 연동 | Current (Phase 9) |
+| AI Agent | Claude Code, Codex CLI 등 Terminal 기반 Agent를 Terminal/Panel에서 실행 | Current (Phase 10) |
 | UI / Layout | 목적별 Layout 전환 (Coding / Debug / Git / AI / Focus Mode) | Planned |
 | Cross-platform | Windows, Linux, macOS, WSL, SSH 환경에서 동일 Config | Planned |
 | 환경 재현 | `git clone` → install script → `nvim` | Planned |
@@ -55,8 +55,8 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 
 ## Capabilities
 
-- Current: 편집·탐색, Git, Terminal (상세: [USAGE.md](USAGE.md), 구조: [ARCHITECTURE.md](ARCHITECTURE.md))
-- Planned: Run / Test, Debug, AI Agent, UI / Layout, Cross-platform, 환경 재현
+- Current: 편집·탐색, Git, Terminal, Run / Test, Debug, AI Agent (상세: [USAGE.md](USAGE.md), 구조: [ARCHITECTURE.md](ARCHITECTURE.md))
+- Planned: UI / Layout, Cross-platform, 환경 재현
 
 ## Supported Platform
 
