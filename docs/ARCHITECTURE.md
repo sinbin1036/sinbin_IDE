@@ -9,17 +9,18 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 
 | 경로 | 책임 |
 |---|---|
-| `init.lua` | Neovim 진입점. 아래 모듈을 순서대로 로드 (keymaps → options → autocmds → commands → platform → plugins) |
+| `init.lua` | Neovim 진입점. 아래 모듈을 순서대로 로드 (keymaps → options → autocmds → commands → diagnostics → platform → plugins) |
 | `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap). Plugin 전용 Keymap은 `plugins/` 영역별 파일 |
 | `lua/sinbin/options.lua` | OS 중립 기본 Option (번호, indent, search, clipboard, undo, split, 표시, 긴 줄, inccommand) |
 | `lua/sinbin/autocmds.lua` | 전역 Autocmd (`sinbin` augroup 하나): Yank 하이라이트, 커서 위치 복원 |
 | `lua/sinbin/commands.lua` | 사용자 명령: `:TrimWhitespace` (저장 시 자동 실행 안 함) |
+| `lua/sinbin/diagnostics.lua` | 내장 `vim.diagnostic` 설정(virtual_text, 심각도 정렬, sign 아이콘, 이동 시 float)과 Plugin 무관 `<Leader>e` Keymap. Picker Keymap(`<Leader>ed`/`eD`)은 `plugins/search.lua` |
 | `lua/sinbin/platform/init.lua` | Platform Layer 진입점 ([D-003](DECISIONS.md)). OS 감지(`os`, `is_wsl`) 후 해당 OS 모듈 `setup()` 호출. OS 분기는 이 디렉터리에만 존재 |
 | `lua/sinbin/platform/{windows,linux,macos}.lua` | OS별 설정. `windows`: dartls `cmd`를 `dart.bat`로 지정 (TASK-007). 그 외 내용은 Phase 12 |
 | `lua/sinbin/plugins/init.lua` | Plugin 목록 (`vim.pack.add()` 한 곳, [D-007](DECISIONS.md)) 후 영역별 설정 모듈을 ui → editing → search → lsp → treesitter 순으로 로드 ([D-009](DECISIONS.md)) |
 | `lua/sinbin/plugins/ui.lua` | Colorscheme(tokyonight moon), mini.icons, mini.statusline, mini.notify, mini.starter, mini.clue |
 | `lua/sinbin/plugins/editing.lua` | mini.pairs, mini.surround 설정·Keymap ([D-008](DECISIONS.md)) |
-| `lua/sinbin/plugins/search.lua` | mini.pick, mini.extra, mini.files 설정 및 `<Leader>f`/`<Leader>s` Keymap |
+| `lua/sinbin/plugins/search.lua` | mini.pick, mini.extra, mini.files 설정 및 `<Leader>f`/`<Leader>s` Keymap, 진단 picker `<Leader>ed`/`<Leader>eD` |
 | `lua/sinbin/plugins/lsp.lua` | mason.nvim, mini.completion 설정, `vim.lsp.enable()` Server 목록 (nvim-lspconfig 설정 사용, [D-010](DECISIONS.md)), 자동완성 Keymap, LspAttach Keymap |
 | `lua/sinbin/plugins/treesitter.lua` | nvim-treesitter parser 설치 목록, FileType autocmd로 내장 `vim.treesitter.start()`, `PackChanged` 시 `:TSUpdate` ([D-011](DECISIONS.md)) |
 | Treesitter Parser (Repository 밖) | `stdpath('data')/site/parser`. `c` 등 내장 parser는 Neovim 설치 경로 |
