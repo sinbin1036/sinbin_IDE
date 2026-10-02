@@ -67,6 +67,14 @@
       "src": "https://github.com/nvim-mini/mini.surround",
       "version": "'stable'"
     },
+    "nvim-dap": {
+      "rev": "cfa2d58f4537aca6ca83e2de1a0d9f1491121264",
+      "src": "https://github.com/mfussenegger/nvim-dap"
+    },
+    "nvim-dap-view": {
+      "rev": "e766b3d8acef97e7e8b29f7f421aa4977b9978e1",
+      "src": "https://github.com/igorlfs/nvim-dap-view"
+    },
     "nvim-lspconfig": {
       "rev": "3e8d598d3b5f8338a41699c436e5fa11d2666cf0",
       "src": "https://github.com/neovim/nvim-lspconfig"

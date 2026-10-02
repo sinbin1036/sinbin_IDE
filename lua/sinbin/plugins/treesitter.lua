@@ -2,9 +2,10 @@
 -- highlighting is the built-in vim.treesitter. Indent and folding stay off (user choice).
 -- Requires the tree-sitter CLI, a C compiler, tar and curl on PATH.
 
--- `c` is not listed: its parser and queries ship with Neovim.
+-- `c` is installed too although Neovim ships a C parser: the bundled queries lack
+-- `locals`, which debug virtual text (nvim-dap-view, TASK-014) needs.
 local parsers = {
-  "typescript", "tsx", "javascript", "python", "java", "dart",
+  "c", "typescript", "tsx", "javascript", "python", "java", "dart",
   "json", "yaml", "toml",
 }
 

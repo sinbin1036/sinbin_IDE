@@ -53,6 +53,13 @@ vim.pack.add({
   -- Default branch: its tags (v0.38) are not semver, so vim.pack cannot use them as versions.
   { src = "https://github.com/dlyongemallo/diffview-plus.nvim" },
 
+  -- Debug (TASK-014)
+  -- DAP client: no built-in debugger.
+  { src = "https://github.com/mfussenegger/nvim-dap" },
+  -- Single bottom panel for variables, stack, breakpoints, console; also shows
+  -- variable values as virtual text (so no nvim-dap-virtual-text).
+  { src = "https://github.com/igorlfs/nvim-dap-view" },
+
   -- Colorscheme: soft neon dark (tokyonight-moon), user choice.
   { src = "https://github.com/folke/tokyonight.nvim" },
 })
@@ -64,3 +71,4 @@ require("sinbin.plugins.search")
 require("sinbin.plugins.lsp")
 require("sinbin.plugins.treesitter")
 require("sinbin.plugins.git")
+require("sinbin.plugins.debug")
