@@ -154,3 +154,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: mini 계열 일관성 일부 포기(제작자·설정 방식이 다른 Plugin 1개). lazygit은 외부 의존성 (설치 자동화는 Phase 13). Terminal 일반 UX는 Phase 7. diffview-plus의 tag(`v0.38`)는 semver가 아니라 vim.pack 버전 지정 불가 → 기본 branch 추적 (lock 파일로 revision 고정)
 - Related Task: TASK-011
 - Evidence: 사용자 선택 (2026-10-02), 임시 git 저장소 검증 (TASK-011)
+
+### D-014: Terminal은 내장 `jobstart(term = true)` 기반 자체 모듈, Windows Terminal Shell은 Git Bash
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 7. 하단 패널에서 dev server·test·git 명령을 실행하고, Phase 10에서 AI Agent CLI를 같은 방식으로 띄울 기반 필요. 'shell'이 nvim 실행 방법에 따라 달라짐 (Git Bash에서 실행 시 `$SHELL`의 bash, PowerShell/Windows Terminal에서 실행 시 `cmd.exe`)
+- Decision: `lua/sinbin/terminal.lua` 자체 모듈 (약 150줄, Plugin 없음). 번호별 하단 split Terminal(`<Leader>tt`, `N<Leader>tt`), floating Terminal(`<Leader>tf`), 명령 실행용 floating(`run_float`, lazygit이 사용), 숨겨도 프로세스 유지. Terminal 모드 탈출은 `<C-q>` (`<Esc>`는 Claude Code·lazygit이 쓰므로 매핑 안 함). Windows Terminal Shell은 Platform Layer에서 Git Bash(`bash --login -i`, git.exe 위치에서 탐색)로 지정하고 전역 'shell'은 변경하지 않음
+- Reason: 기능이 단순해 내장 API로 충분, lazygit floating 코드 공통화, Phase 10 Agent 실행에 재사용. Git Bash는 Linux/macOS와 같은 명령을 쓸 수 있어 "어떤 PC에서도 같은 조작" 목표에 맞음. 'shell'을 바꾸면 `:!`·`system()` 인용 규칙이 바뀌어 Plugin 동작에 영향 → Terminal에만 적용
+- Alternatives: toggleterm.nvim, snacks.nvim terminal, PowerShell 5.1/7, cmd, 전역 'shell' 변경
+- Consequences: Git이 없으면 'shell'로 fallback. `exepath("bash")`는 WSL launcher(`WindowsApps\bash.exe`)를 찾을 수 있어 git.exe 기준으로 탐색. Linux/macOS Terminal Shell 지정은 Phase 12
+- Related Task: TASK-012
+- Evidence: 사용자 선택 (2026-10-02), UI attach한 `nvim --embed` 시나리오 검증 (TASK-012)

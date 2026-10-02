@@ -2,8 +2,8 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 7 — Terminal 준비
-- **Status:** Phase 6 Git 완료 (gitsigns + diffview-plus + lazygit). 설치된 Plugin 17개 ([D-009](DECISIONS.md)~[D-013](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
+- **Current Phase:** Phase 8 — Run / Test 준비
+- **Status:** Phase 7 Terminal 완료 (자체 모듈, Windows Git Bash). 설치된 Plugin 17개 ([D-009](DECISIONS.md)~[D-014](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
 - Project 정의 ([TASK-001](tasks/completed/TASK-001-define-project.md))
@@ -17,6 +17,7 @@
 - Phase 5 Diagnostics 표시·이동·목록 ([TASK-009](tasks/completed/TASK-009-diagnostics.md))
 - Phase 5 진단 메시지 혼합 번역 ([TASK-010](tasks/completed/TASK-010-diagnostic-translate.md))
 - Phase 6 Git ([TASK-011](tasks/completed/TASK-011-git.md))
+- Phase 7 Terminal ([TASK-012](tasks/completed/TASK-012-terminal.md))
 
 ## In Progress
 - 없음
@@ -32,4 +33,4 @@
 없음
 
 ## Next Action
-Phase 7 (Terminal) Task 작성: 사용자와 범위 확정 (Terminal 창 위치·토글, 여러 Terminal, Shell 종류, AI Agent CLI 실행 위치와의 관계 D-002) → 내장 `:terminal`·`jobstart(term=true)` 우선 검토 후 Plugin 여부 결정. `<Leader>t` Terminal 그룹. lazygit floating 구현(`lua/sinbin/lazygit.lua`)과 공통화 여부 검토. 진단 번역 규칙은 쓰면서 계속 추가.
+Phase 8 (Run / Test) Task 작성: 사용자와 범위 확정 (대상 프로젝트 종류: Next.js/TS, Python, Spring/Java, Flutter, C 등, 실행·테스트·빌드 명령, 결과 표시 위치) → 프로젝트 감지 → `<Leader>r`(Run) / `<Leader>x`(Test)로 `terminal.lua`에서 실행하는 구조 검토. 진단 번역 규칙은 쓰면서 계속 추가.
