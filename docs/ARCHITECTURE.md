@@ -14,7 +14,9 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 | `lua/sinbin/options.lua` | OS 중립 기본 Option (번호, indent, search, clipboard, undo, split, 표시, 긴 줄, inccommand) |
 | `lua/sinbin/autocmds.lua` | 전역 Autocmd (`sinbin` augroup 하나): Yank 하이라이트, 커서 위치 복원 |
 | `lua/sinbin/commands.lua` | 사용자 명령: `:TrimWhitespace` (저장 시 자동 실행 안 함) |
-| `lua/sinbin/diagnostics.lua` | 내장 `vim.diagnostic` 설정(virtual_text, 심각도 정렬, sign 아이콘, 이동 시 float)과 Plugin 무관 `<Leader>e` Keymap. Picker Keymap(`<Leader>ed`/`eD`)은 `plugins/search.lua` |
+| `lua/sinbin/diagnostics/init.lua` | 내장 `vim.diagnostic` 설정(virtual_text, 심각도 정렬, sign 아이콘, 이동 시 float)과 Plugin 무관 `<Leader>e` Keymap. virtual_text·float의 `format`에서 혼합 번역 적용. Picker Keymap(`<Leader>ed`/`eD`)은 `plugins/search.lua` |
+| `lua/sinbin/diagnostics/translate.lua` | 진단 메시지 첫 줄을 규칙으로 혼합 번역 (표시 전용, 진단 데이터는 변경 안 함, [D-012](DECISIONS.md)) |
+| `lua/sinbin/diagnostics/rules_ko.lua` | 언어별 번역 규칙 목록 (Lua pattern → 치환문) |
 | `lua/sinbin/platform/init.lua` | Platform Layer 진입점 ([D-003](DECISIONS.md)). OS 감지(`os`, `is_wsl`) 후 해당 OS 모듈 `setup()` 호출. OS 분기는 이 디렉터리에만 존재 |
 | `lua/sinbin/platform/{windows,linux,macos}.lua` | OS별 설정. `windows`: dartls `cmd`를 `dart.bat`로 지정 (TASK-007). 그 외 내용은 Phase 12 |
 | `lua/sinbin/plugins/init.lua` | Plugin 목록 (`vim.pack.add()` 한 곳, [D-007](DECISIONS.md)) 후 영역별 설정 모듈을 ui → editing → search → lsp → treesitter 순으로 로드 ([D-009](DECISIONS.md)) |

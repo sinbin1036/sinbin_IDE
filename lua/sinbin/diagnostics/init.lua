@@ -1,12 +1,18 @@
 -- Diagnostics (TASK-009): built-in vim.diagnostic display and keymaps.
 -- Picker keymaps that need mini.extra live in plugins/search.lua.
+-- Messages are shown in mixed Korean (TASK-010); pickers and quickfix keep the original.
 
 local severity = vim.diagnostic.severity
+local translate = require("sinbin.diagnostics.translate").translate
 
 vim.diagnostic.config({
   severity_sort = true,
-  -- Message at the end of every line with a diagnostic (user choice).
-  virtual_text = { prefix = "●", spacing = 2 },
+  -- Message at the end of every line with a diagnostic (user choice). Translation only.
+  virtual_text = {
+    prefix = "●",
+    spacing = 2,
+    format = function(d) return translate(d.message) or d.message end,
+  },
   -- Nerd Font icons instead of the default E/W/I/H letters.
   signs = {
     text = {
@@ -16,7 +22,15 @@ vim.diagnostic.config({
       [severity.HINT] = "",
     },
   },
-  float = { border = "rounded", source = "if_many" },
+  -- Translation on top, original message below (for searching).
+  float = {
+    border = "rounded",
+    source = "if_many",
+    format = function(d)
+      local ko = translate(d.message)
+      return ko and (ko .. "\n" .. d.message) or d.message
+    end,
+  },
   -- ]d / [d also open the full message, since virtual_text can be cut off.
   jump = {
     on_jump = function(diagnostic, bufnr)

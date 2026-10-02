@@ -132,3 +132,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: parser는 lock 파일 밖 (`stdpath('data')/site/parser`). 새 장비에 `tree-sitter` CLI와 C compiler 필요 (Phase 12/13). Plugin 업데이트 시 parser도 갱신해야 함 (autocmd로 처리)
 - Related Task: TASK-008
 - Evidence: 사용자 선택 (2026-10-02), nvim-treesitter README (main), headless 검증 (TASK-008)
+
+### D-012: 진단 메시지는 표시 단계에서 규칙 기반 혼합 번역
+- Date: 2026-10-02
+- Status: Accepted
+- Context: 언어 서버 한국어 번역은 vtsls·basedpyright만 지원하고 전체 번역이며, jdtls·clangd·dartls·ruff는 영어만. 사용자는 "쉬운 용어는 영어, 어려운 말은 한국어, 짧은 끝맺음" 혼합 스타일을 5개 언어 공통으로 원함
+- Decision: 모든 서버에서 영어 원문을 받고, `vim.diagnostic.config()`의 `virtual_text.format` / `float.format`에서 첫 줄을 Lua pattern 규칙(`diagnostics/rules_ko.lua`)으로 치환. 줄 끝은 번역만, 메시지 창은 번역 + 원문. 규칙에 없으면 원문. picker·quickfix는 원문 유지. 이름 뒤에 고정 명사를 붙여 조사 오류 방지
+- Reason: 서버와 무관하게 일관된 스타일, 진단 데이터 불변이라 다른 기능(quickfix, picker, code action)에 영향 없음, 원문 병기로 검색 가능. 외부 서비스 없음
+- Alternatives: 서버 locale 설정(전체 번역, 2개 서버만), 한국어 번역 결과에 용어 치환, AI 번역, `publishDiagnostics` handler에서 메시지 자체 변경
+- Consequences: 규칙에 등록된 메시지만 번역되므로 자주 보는 메시지를 계속 추가해야 함. 서버 업데이트로 원문이 바뀌면 해당 규칙은 원문으로 fallback (에러 아님)
+- Related Task: TASK-010
+- Evidence: 사용자 결정 (2026-10-02), 실제 수집 메시지 104개 전부 번역 확인 (TASK-010)
