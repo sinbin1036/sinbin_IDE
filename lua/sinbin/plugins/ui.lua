@@ -11,7 +11,8 @@ require("mini.icons").setup()
 require("mini.statusline").setup()
 
 -- Replaces vim.notify with a floating notification window.
-require("mini.notify").setup()
+-- LSP progress messages are hidden (user choice): too noisy, especially jdtls.
+require("mini.notify").setup({ lsp_progress = { enable = false } })
 
 require("mini.starter").setup()
 
@@ -34,6 +35,7 @@ miniclue.setup({
     -- Leader groups from docs/PROJECT.md "Keymap 방향".
     { mode = "n", keys = "<Leader>f", desc = "+File" },
     { mode = "n", keys = "<Leader>s", desc = "+Search" },
+    { mode = { "n", "x" }, keys = "<Leader>c", desc = "+Code" },
     miniclue.gen_clues.square_brackets(),
     miniclue.gen_clues.builtin_completion(),
     miniclue.gen_clues.g(),

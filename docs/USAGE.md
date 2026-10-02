@@ -247,6 +247,9 @@ ma      현재 위치를 a로 표시
 | [mini.clue](https://github.com/nvim-mini/mini.clue) | 키 힌트 창 | `lua/sinbin/plugins/ui.lua` |
 | [mini.notify](https://github.com/nvim-mini/mini.notify) | 알림 창 (오른쪽 위) | `lua/sinbin/plugins/ui.lua` |
 | [mini.starter](https://github.com/nvim-mini/mini.starter) | 시작 화면 (파일 없이 `nvim` 실행 시) | `lua/sinbin/plugins/ui.lua` |
+| [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | 언어 Server 설정 모음 | `lua/sinbin/plugins/lsp.lua` |
+| [mason.nvim](https://github.com/mason-org/mason.nvim) | 언어 Server 설치 (`:Mason`) | `lua/sinbin/plugins/lsp.lua` |
+| [mini.completion](https://github.com/nvim-mini/mini.completion) | 자동완성 목록, 문서 창, 인자 힌트 | `lua/sinbin/plugins/lsp.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
 
@@ -349,6 +352,52 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 - 탐색기에서 편집만 하고 `=`를 누르지 않으면 디스크는 바뀌지 않는다.
 - 기본 탐색기 netrw(`:Ex`)도 그대로 쓸 수 있다.
 
+## LSP와 자동완성 (TypeScript, Python, Java, Dart, C)
+
+코드 파일을 열면 언어 Server가 자동으로 연결된다. 연결 상태는 `:checkhealth vim.lsp`.
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `K` | 설명(hover) 보기 (내장) |
+| N | `gd` | 정의로 이동 (`<C-o>`로 복귀) |
+| N | `grr` | 참조 찾기 (내장) |
+| N | `gri` | 구현으로 이동 (내장) |
+| N | `grn` | 이름 바꾸기 (내장) |
+| N | `gra` | Code Action (import 추가 등, 내장) |
+| N | `gO` | 문서 심볼 목록 (내장) |
+| N, V | `<Space>cf` | 포맷 (파일 전체 / 선택 범위) |
+| I | `<C-s>` | 함수 인자 힌트 (내장) |
+
+### 자동완성 (mini.completion)
+
+입력하면 잠시 후 목록이 자동으로 뜬다.
+
+| 키 | 동작 |
+|---|---|
+| `<Tab>` / `<S-Tab>` | 다음 / 이전 항목 |
+| `<CR>` | 선택한 항목 입력 (선택 없으면 줄바꿈) |
+| `<C-e>` | 목록 닫기 (내장) |
+
+- 항목을 고르면 옆에 문서 창이 뜬다. 함수 괄호 안에서는 인자 힌트가 뜬다.
+- snippet 항목(`S` 표시)은 입력 후 `<Tab>` / `<S-Tab>`으로 다음 칸 이동 (내장 `vim.snippet`).
+
+### 언어 Server 설치 (mason.nvim)
+
+| 작업 | 방법 |
+|---|---|
+| 목록·설치 화면 | `:Mason` (`i` 설치, `X` 제거, `U` 업데이트, `g?` 도움말) |
+| 명령으로 설치 | `:MasonInstall vtsls basedpyright ruff clangd jdtls` (새 장비에서 1회) |
+
+| 언어 | Server | 비고 |
+|---|---|---|
+| TypeScript / JavaScript | vtsls | `package.json` 또는 `tsconfig.json`이 있는 폴더 기준 |
+| Python | basedpyright + ruff | ruff가 lint·포맷 담당 |
+| Java | jdtls | JDK 21 이상 필요. 첫 실행은 수십 초 걸림 |
+| Dart / Flutter | dart language-server | Flutter SDK에 포함, 설치 불필요 |
+| C | clangd | |
+
+- 새 언어를 추가하려면 `:MasonInstall <이름>` 후 `lua/sinbin/plugins/lsp.lua`의 `vim.lsp.enable({ ... })`에 이름 추가.
+
 ## 명령
 
 | 명령 | 동작 |
@@ -373,7 +422,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 검색 | 소문자로만 검색하면 대소문자 무시, 대문자가 섞이면 구분 |
 | 색 테마 | tokyonight `moon` (네온 계열 다크). 바꾸려면 `ui.lua`의 `style`을 `storm`/`night`로 |
 | 시작 화면 | 파일 없이 `nvim` 실행 시 최근 파일·메뉴 표시. 글자 입력으로 좁히고 `<CR>` |
-| 알림 | 메시지가 오른쪽 위 창에 잠깐 표시 |
+| 알림 | 메시지가 오른쪽 위 창에 잠깐 표시. LSP 진행 상황(로딩·분석 중)은 표시하지 않음. 지난 알림은 `:lua MiniNotify.show_history()` |
 
 ## Plugin 관리
 

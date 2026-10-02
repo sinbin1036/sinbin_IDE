@@ -25,7 +25,7 @@
 | Lua Config (`init.lua`, `lua/`) | Startup 에러 확인 → 변경한 기능 수동 확인 |
 | Plugin 추가/제거 | Startup 에러 확인 → checkhealth (`vim.pack` 섹션) → `nvim-pack-lock.json` diff가 `plugins/init.lua` 변경과 일치하는지 확인 → 제거 시 `vim.pack.del()` 후 디스크에서 사라졌는지 확인 |
 | Keymap | 충돌 확인 (`:verbose map <key>`) → 동작 수동 확인 |
-| LSP / Formatter / Debugger | checkhealth (`vim.lsp` 섹션) → 대상 언어 파일에서 수동 확인 |
+| LSP / Formatter / Debugger | checkhealth (`vim.lsp` 섹션) → 대상 언어 샘플 프로젝트(root marker 포함)에서 attach·definition·hover·completion 확인 (`client:request_sync`로 headless 가능) |
 | Platform Layer | 해당 OS에서 Startup 확인. 검증 불가한 OS는 UNVERIFIED로 기록 |
 | Install script | 깨끗한 환경에서 실행 — UNVERIFIED (환경 없음) |
 | Docs | 상대 링크 실존 여부, 정보 중복 여부 |
@@ -44,6 +44,9 @@
 | ripgrep | 15.2.0 (winget `BurntSushi.ripgrep.MSVC`, 2026-10-01 설치. 이전 기록 14.1.1은 실제로는 PATH에 없었음) |
 | gcc (MSYS2) | 14.2.0 |
 | node / python / go | 22.19.0 / 3.13.3 / 1.25.3 |
+| Java / Maven | 27 / 3.9.16 |
+| Dart (Flutter SDK `C:\flutter`) | 3.10.4 |
+| LSP Server (Mason, 2026-10-02) | vtsls, basedpyright 1.40.1, ruff, clangd, jdtls |
 | fd, fzf, lazygit, make, tree-sitter CLI | 미설치 |
 | Nerd Font | JetBrainsMono Nerd Font 3.3.0 (winget `DEVCOM.JetBrainsMonoNerdFont`, Font 이름 `JetBrainsMono NF`, 2026-10-02 설치). Windows Terminal Font 지정은 사용자 설정 |
 | `%LOCALAPPDATA%\nvim` (Windows 기본 config 경로) | 이 Repository로의 Junction |
