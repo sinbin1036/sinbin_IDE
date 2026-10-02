@@ -165,3 +165,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: Git이 없으면 'shell'로 fallback. `exepath("bash")`는 WSL launcher(`WindowsApps\bash.exe`)를 찾을 수 있어 git.exe 기준으로 탐색. Linux/macOS Terminal Shell 지정은 Phase 12
 - Related Task: TASK-012
 - Evidence: 사용자 선택 (2026-10-02), UI attach한 `nvim --embed` 시나리오 검증 (TASK-012)
+
+### D-015: Run/Test는 자체 모듈로 프로젝트 감지 후 "run" Terminal에서 실행
+- Date: 2026-10-02
+- Status: Accepted
+- Context: Phase 8. 언어(TypeScript/Node, Flutter/Dart, Java/Maven, Python, C)와 무관하게 같은 키로 실행·빌드·테스트. Windows에서 npm·mvn·flutter는 확장자 없는 shell script와 `.cmd`/`.bat`이 함께 있어 직접 spawn 시 dartls와 같은 문제 가능
+- Decision: `lua/sinbin/run.lua` 자체 모듈. **파일 범위**(소문자 `<Leader>rr`/`rb`/`xf`, filetype별 명령)와 **프로젝트 범위**(대문자 `<Leader>rR`/`rB`, `<Leader>xx`, 현재 파일에서 가장 가까운 marker)를 키로 분리. 파일이 아닌 화면은 작업 폴더 기준, 작업 폴더에 marker가 없으면 한 단계 아래 하위 프로젝트를 `vim.ui.select`로 선택. mini.files `g.`로 작업 폴더 변경 (`gc`는 내장 주석 키·`<Leader>gc`와 혼동되어 변경). 실행 시 `▶ 명령 (폴더/)` 알림. 명령은 shell command line으로 만들어 `terminal.exec("run")`(전용 하단 Terminal, 출력 유지, 재실행 시 교체)에서 실행. Windows는 Platform Layer의 `terminal_exec`(`bash -c`)로 실행. 프로젝트별 덮어쓰기는 `<root>/.sinbin/run.json`(프로젝트 `run`/`build`/`test`, 파일 `run_file`/`build_file`/`test_file`, `{file}` 치환). Node 도구는 `packageManager` 필드 → lock 파일 중 설치된 도구 → npm 순. 빌드 에러 quickfix 연동은 보류
+- Reason: Terminal 모듈(D-014)에 감지·명령 선택만 추가하면 됨. overseer.nvim은 현재 필요(단일 실행·재실행·중지)보다 큼. bash 경유로 OS·도구별 실행 파일 차이를 Platform Layer에 격리
+- Alternatives: overseer.nvim, 내장 `:make` + `:compiler` + quickfix, neotest (테스트 단위 UI), 범위 구분 없는 단일 `<Leader>rr` (초기 구현, 사용자가 "모호하다"고 보고해 분리)
+- Consequences: 감지 규칙은 run.lua에 직접 추가해야 함. `.sinbin/run.json`은 저장소의 명령을 키 입력 시 실행하므로 신뢰하는 저장소에서만 사용. Git Bash가 없으면 'shell'(cmd.exe)로 실행되어 sh 인용이 맞지 않을 수 있음 (Phase 12)
+- Related Task: TASK-013
+- Evidence: 사용자 선택 (2026-10-02), 샘플 프로젝트 감지·실행 검증 (TASK-013)

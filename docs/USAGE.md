@@ -349,6 +349,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | `L` | 파일 열고 탐색기 닫기 |
 | 글자 편집 | 이름 바꾸기, 새 줄에 이름 입력 = 새 파일 (`/`로 끝나면 폴더), `dd` = 삭제 |
 | `=` | 편집 내용 실제 적용 (확인 창 표시) |
+| `g.` | 커서의 폴더(파일이면 그 폴더)를 **작업 폴더**로 (`cd`). "여기(.)를 작업 폴더로". 탐색기 이동만으로는 작업 폴더가 바뀌지 않는다 |
 | `g?` | 도움말 |
 | `q` | 닫기 |
 
@@ -496,7 +497,7 @@ git 저장소의 파일을 열면 줄 번호 옆에 변경 표시(`┃` 추가·
 | `enter` | 파일·커밋 상세 (diff) |
 | `q` | 종료 (Neovim으로 돌아옴) |
 
-- `<Space>gv` / `<Space>gl`을 쓸 수 없는 상황이면 이유를 알려 준다: `git 저장소 아님`, `파일 버퍼 아님`, `커밋 이력 없음 (아직 commit 안 된 파일)`.
+- `<Space>gv` / `<Space>gl` / `<Space>gh` / `<Space>gc` / `<Space>gB`를 쓸 수 없는 상황이면 이유를 알려 준다: `git 저장소 아님`, `파일 버퍼 아님`, `커밋 이력 없음 (아직 commit 안 된 파일)`.
 - 외부 도구: lazygit. Windows는 `winget install JesseDuffield.lazygit`.
 - lazygit을 닫으면 열린 파일이 자동으로 다시 읽힌다 (checkout, reset 등 반영).
 
@@ -516,6 +517,77 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 - Shell에서 `exit`하면 그 Terminal 창과 버퍼가 닫힌다.
 - `<Esc>`는 Terminal 안 프로그램(Claude Code, lazygit 등)에 그대로 전달된다.
 - Windows Shell은 Git Bash. nvim을 PowerShell에서 실행해도 같다 (Neovim의 `:!` 명령은 기존 'shell' 그대로).
+
+## Run / Test
+
+**소문자 = 현재 파일, 대문자 = 프로젝트.** 결과는 하단 "run" Terminal에 나온다.
+- 파일 명령(`rr`/`rb`/`xf`): 커서가 run Terminal로 가서 바로 입력할 수 있다 (`input()` 같은 입력 받는 코드). 끝나면 Normal 모드가 되어 출력을 그대로 볼 수 있고, `<C-w>k`로 코드 창에 돌아간다.
+- 프로젝트 명령(`rR`/`rB`/`xx`): 커서는 편집하던 창에 남는다 (dev server를 띄워 두고 계속 편집).
+실행할 때마다 알림에 `▶ 명령  (폴더/)`가 떠서 무엇이 어디서 도는지 보인다.
+
+| 대상 | 키 | 동작 |
+|---|---|---|
+| 현재 파일 | `<Space>rr` | 이 파일 실행 |
+| 현재 파일 | `<Space>rb` | 이 파일 빌드(컴파일) |
+| 현재 파일 | `<Space>xf` | 이 파일 테스트 |
+| 프로젝트 | `<Space>rR` | 프로젝트 실행 (dev server, 앱) |
+| 프로젝트 | `<Space>rB` | 프로젝트 빌드 |
+| 프로젝트 | `<Space>xx` | 프로젝트 전체 테스트 |
+| | `<Space>rl` | 마지막 명령 다시 실행 |
+| | `<Space>rs` | 실행 중인 명령 중지 |
+| | `<Space>rt` | 쓸 수 있는 명령 목록 (`[파일]` / `[프로젝트]`) → 골라 실행 |
+
+### 현재 파일 명령
+
+| 파일 | `rr` 실행 | `rb` 빌드 | `xf` 테스트 |
+|---|---|---|---|
+| Python | `python 파일` | 없음 (컴파일 언어 아님) | `python -m pytest 파일` |
+| C | gcc 컴파일 후 실행 | `gcc` 컴파일 (실행 파일은 소스 옆) | 없음 |
+| JavaScript | `node 파일` | 없음 | `test -- 파일` (package.json에 test script 있을 때) |
+| TypeScript | `node --experimental-transform-types 파일` (Node 22) | 없음 (타입 검사는 LSP) | 위와 같음 |
+| TSX / JSX | 단독 실행 안 됨 → `<Space>rR` | 없음 | 위와 같음 |
+| Dart | `dart run 파일` | `dart compile exe 파일` | `dart test 파일` |
+| Dart (Flutter 프로젝트) | `flutter run -t 파일` | 없음 | `flutter test 파일` |
+| Java (Maven 프로젝트) | 이 클래스의 `main` 실행 (`mvn exec:java`) | 없음 | `mvn test -Dtest=클래스` |
+| Java (단일 파일) | `java 파일` | 없음 | 없음 |
+
+- TypeScript 파일 실행은 단일 파일용. 확장자 없이 다른 `.ts`를 import하는 코드는 프로젝트 script(`<Space>rR`)로 실행.
+- 첫 Maven 실행은 plugin 다운로드로 오래 걸릴 수 있다.
+
+### 프로젝트 명령
+
+현재 파일에서 가장 가까운 프로젝트 파일 기준. front/back처럼 프로젝트가 여러 개면 열려 있는 파일이 속한 쪽.
+
+| 프로젝트 (가장 가까운 파일) | `rR` 실행 | `rB` 빌드 | `xx` 테스트 |
+|---|---|---|---|
+| `package.json` (도구 선택은 아래) | `dev`, 없으면 `start` script | `build` script | `test` script |
+| `pubspec.yaml` (Flutter) | `flutter run` (기기 선택) | `<Space>rt`에서 대상 선택 | `flutter test` |
+| `pubspec.yaml` (Dart) | `dart run` | 없음 | `dart test` |
+| `pom.xml` | Spring Boot면 `mvn spring-boot:run` | `mvn package` | `mvn test` |
+| `pyproject.toml` / `requirements.txt` / `setup.py` | 루트의 `main.py` / `app.py` / `manage.py runserver` | 없음 | `python -m pytest` |
+| `Makefile` / `CMakeLists.txt` | 없음 | `make` / `cmake --build` (make, cmake 설치 필요) | `make test` |
+
+- Node 도구 선택: package.json의 `packageManager` → lock 파일(pnpm → yarn → bun → npm 순) 중 **설치된 도구**만 → 없으면 npm. 건너뛴 이유는 표시된다 (예: `node (npm; yarn.lock 있지만 도구 미설치)`).
+- 파일이 아닌 화면(`nvim .`의 탐색기, 시작 화면, Terminal 창)에서는 **현재 작업 폴더** 기준. 작업 폴더에 프로젝트 파일이 없으면 한 단계 아래 폴더들에서 찾아 **어느 프로젝트를 실행할지 고르는 목록**을 띄운다 (예: front / back).
+- 작업 폴더는 탐색기에서 `g.`로 바꿀 수 있다 (탐색기 표). 지금 작업 폴더는 `:pwd`.
+- 명령이 없으면 이유를 알려 준다 (예: `Python은 빌드 없음`, `프로젝트 감지 안 됨 (파일 실행: <Space>rr)`).
+- "run" Terminal은 `<Space>tl` 목록에서 다시 볼 수 있다.
+
+### 프로젝트별로 명령 바꾸기 (`.sinbin/run.json`)
+
+프로젝트 루트에 `.sinbin/run.json`을 두면 적은 항목만 이 명령으로 바뀐다. 명령은 Shell 명령 한 줄 (Windows는 Git Bash).
+`run` / `build` / `test`는 프로젝트, `run_file` / `build_file` / `test_file`은 현재 파일용 (`{file}`은 현재 파일 경로).
+
+```json
+{
+  "run": "pnpm run dev -- --port 3001",
+  "build": "pnpm run build",
+  "test": "pnpm vitest run",
+  "test_file": "pnpm vitest run {file}"
+}
+```
+
+- 키를 누르면 이 파일의 명령이 그대로 실행되므로, 믿을 수 있는 저장소에서만 쓴다.
 
 ## 명령
 
