@@ -26,9 +26,10 @@
 - 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
+- Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), branch `feat/installer`, PR 전)
 
 ## In Progress
-- Phase 13 Windows 설치 스크립트 `setup.ps1` ([TASK-021](tasks/active/TASK-021-installer.md)): 구현·검증 완료 (임시 데이터 폴더로 새 설치 52/52), 실제 터미널 화면·대화형 Runtime 선택 사용자 확인 대기 (branch `feat/installer`)
+- 없음
 
 ## Blocked
 - 없음
@@ -55,7 +56,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-021](tasks/active/TASK-021-installer.md) Phase 13 Windows 설치 스크립트
+없음 (Phase 13 남은 범위 결정 대기)
 
 ## Next Action
-TASK-021 사용자 확인(Windows Terminal에서 `setup.ps1` 실행 화면, Runtime 번호 선택) → 완료 처리·PR. 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
+`feat/installer` PR 생성·merge (TASK-021). 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
