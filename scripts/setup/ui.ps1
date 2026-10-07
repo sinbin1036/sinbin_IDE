@@ -22,8 +22,9 @@ $script:MARK_SKIP = "$DIM─$RESET"
 
 $script:PAL_LOGO = @(@(0, 255, 200), @(0, 120, 255), @(170, 0, 255))
 $script:PAL_HEAD = @(@(0, 255, 200), @(0, 120, 255), @(170, 0, 255))
-$script:PAL_BAR = @(@(255, 95, 109), @(255, 195, 113), @(71, 207, 115), @(0, 212, 255))
-$script:PAL_DONE = @(@(0, 242, 96), @(5, 117, 230))
+# Bars use the logo's hues too: neighbouring hues stay clear when mixed (a warm -> cool
+# rainbow turns muddy olive in the middle) and running / finished bars look the same.
+$script:PAL_BAR = $PAL_LOGO
 $script:PAL_FAIL = @(@(255, 80, 80), @(255, 160, 60))
 
 function Write-Ui([string]$s) { [Console]::Out.Write($s) }
@@ -47,7 +48,8 @@ function Enable-VirtualTerminal {
 function Rgb($c) { "$ESC[38;2;$($c[0]);$($c[1]);$($c[2])m" }
 
 function Get-GradAt($stops, [double]$t) {
-  $t = [Math]::Max(0, [Math]::Min(1, $t))
+  # Double literals: with an int first argument PowerShell picks Min(int, int) and rounds $t.
+  $t = [Math]::Max(0.0, [Math]::Min(1.0, $t))
   $s = $t * ($stops.Count - 1)
   $i = [Math]::Min([Math]::Floor($s), $stops.Count - 2)
   $f = $s - $i

@@ -356,7 +356,7 @@ function Install-Plugins {
     return
   }
   $note = if ($newCount) { "새로 $newCount · 기존 $($st.Items.Count - $newCount)" } else { '모두 설치되어 있음' }
-  $line = "  $MARK_OK {0,-20} $(Format-Bar 100 (Get-BarWidth) $PAL_DONE) {1,-7} " -f 'vim.pack', "$($st.Items.Count)/$($st.Items.Count)"
+  $line = "  $MARK_OK {0,-20} $(Format-Bar 100 (Get-BarWidth) $PAL_BAR) {1,-7} " -f 'vim.pack', "$($st.Items.Count)/$($st.Items.Count)"
   Write-Ui ($CL + $line + $GREEN + $note + $RESET + "`n")
   $script:Have['plugins'] = $true
 }
@@ -437,7 +437,7 @@ function Show-Summary {
 
   Write-Ui "`n"
   $title = if ($CheckOnly) { 'SINBIN IDE CHECK' } elseif ($fails.Count) { 'SINBIN IDE SETUP INCOMPLETE' } else { 'SINBIN IDE READY' }
-  $pal = if ($fails.Count) { $PAL_FAIL } else { $PAL_DONE }
+  $pal = if ($fails.Count) { $PAL_FAIL } else { $PAL_BAR }
   $bar = Format-Bar (100 * $ok / [Math]::Max(1, $total)) ((Get-BarWidth) + 6) $pal
   Write-Ui ("  " + (Format-Grad "■ $title" $pal) + "`n")
   Write-Ui ("  $bar $ok/$total`n")
