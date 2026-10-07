@@ -2,8 +2,8 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 11 — Custom UI / Layout 준비
-- **Status:** Phase 10 AI Agent 완료 (Claude Code·Codex 오른쪽 창, `Alt+a` 왕복). 설치된 Plugin 19개 ([D-009](DECISIONS.md)~[D-017](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
+- **Current Phase:** Phase 11 — Custom UI / Layout
+- **Status:** Phase 10 AI Agent 완료 (Claude Code·Codex 오른쪽 창, `Alt+a` 왕복). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
 - Project 정의 ([TASK-001](tasks/completed/TASK-001-define-project.md))
@@ -23,7 +23,8 @@
 - Phase 10 AI Coding Agent Integration ([TASK-015](tasks/completed/TASK-015-ai-agent.md))
 
 ## In Progress
-- 없음
+- [TASK-016](tasks/active/TASK-016-ui-layout.md): **1·2·3단계 구현·검증·QA 완료, 사용자 피드백 1차 반영(상태바 색 구역·pull/push, 시작 시 오른쪽 Terminal, [D-020](DECISIONS.md)), 사용자 테스트 중** ([D-018](DECISIONS.md), [D-019](DECISIONS.md)). 1단계 배치(bufferline 탭, winbar 경로, 하단 패널 탭, 상태바, Outline·Files, Git 표시, 명령 팔레트) / 2단계 창 이동(열기·이동·숨기기 규칙, Terminal 자동 입력, `Alt+h/j/k/l`) / 3단계 VS Code 키(`Ctrl+P`, `Ctrl+B`, `` Ctrl+` ``)
+- [TASK-017](tasks/active/TASK-017-ime-auto-switch.md): Windows 한/영 자동 전환 구현·검증(빌드·상태 읽기), 실제 전환 사용자 확인 대기 ([D-022](DECISIONS.md))
 
 ## Blocked
 - 없음
@@ -32,10 +33,23 @@
 - Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
+- Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 가능 ('shell'=bash, 'shellcmdflag'=`/s /c`, TASK-016 QA에서 발견, Phase 12)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
+## Remaining Phases
+- **11 Custom UI / Layout** (진행 중, TASK-016) → 12 Cross-platform Setup → 13 Installer / Bootstrap 자동화 → 14 안정화 및 최적화
+- 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
+
+## Deferred
+- 빌드 에러 quickfix 연동 (TASK-013)
+- 목적별 Mode 전환 Coding / Debug / Git / AI / Focus (Phase 11 기본 배치 이후 별도 Task)
+- claudecode.nvim Claude 전용 IDE 연동 (D-017, 필요 시)
+- 브라우저(Chrome) 프론트엔드 디버깅 (TASK-014)
+- 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
+
 ## Current Active Task
-없음
+- [TASK-016](tasks/active/TASK-016-ui-layout.md) — VS Code식 기본 배치 + 창 이동 체계 (구현 완료, 사용자 테스트 중)
+- [TASK-017](tasks/active/TASK-017-ime-auto-switch.md) — Windows 한/영 자동 전환 (구현 완료, 실제 전환 사용자 확인 대기)
 
 ## Next Action
-Phase 11 (Custom UI / Layout) Task 작성: 사용자와 범위 확정 — PROJECT 목표 Layout(탐색기 / 코드 / 진단·심볼·Git / 하단 Terminal·Agent·Test), 목적별 Mode(Coding / Debug / Git / AI / Focus), 창 이동 체계 재설계(TASK-015에서 넘긴 임시 `Alt+a`, `<Leader>a*` 토글이 보이는 창을 숨기는 문제, 마우스·`<C-w>` 진입 시 자동 입력 모드). 보류: 빌드 에러 quickfix 연동(TASK-013). 진단 번역 규칙은 쓰면서 계속 추가.
+사용자 테스트: TASK-017 실제 한/영 전환(Agent에서 한글 → `Alt+a`로 코드 창 → 영어로), TASK-016 남은 항목(`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P`·`` Alt+` `` 전달, 마우스, 아이콘). 문제 없으면 TASK-016·017 완료 처리 → 커밋·PR (브랜치 `feat/ui-layout`, 미커밋).

@@ -38,6 +38,9 @@ function M.setup(platform)
   -- Python launcher name (Linux/macOS usually only have python3).
   platform.python = "python"
 
+  -- Korean IME Han/Eng state for sinbin.ime (TASK-017).
+  platform.ime = require("sinbin.platform.windows_ime")
+
   -- Suffix of compiled executables (Debug, TASK-014).
   platform.exe_suffix = ".exe"
   -- Python venv executables directory (Linux/macOS: bin).

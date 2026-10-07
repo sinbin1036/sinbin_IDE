@@ -8,6 +8,13 @@ require("mason").setup()
 require("mini.completion").setup()
 -- Kind icons in the completion popup.
 MiniIcons.tweak_lsp_kind()
+-- Symbol kinds keep plain names: aerial (Outline) uses them as filter keys and
+-- highlight group names ("AerialClass"), which cannot contain icons.
+for name, id in pairs(vim.lsp.protocol.SymbolKind) do
+  if type(name) == "string" then
+    vim.lsp.protocol.SymbolKind[id] = name
+  end
+end
 
 vim.lsp.config("*", { capabilities = MiniCompletion.get_lsp_capabilities() })
 
@@ -22,10 +29,20 @@ vim.lsp.enable({
   "jdtls", -- Java (needs JDK 21+ on PATH)
 })
 
--- Completion popup: <Tab>/<S-Tab> move, <CR> accepts the selected item.
+-- Completion popup: <Tab>/<S-Tab> move, <CR> accepts the selected item. Without the
+-- popup they keep the built-in jump between snippet placeholders (`foo(a, b)`: a -> b).
 local map = vim.keymap.set
-map("i", "<Tab>", [[pumvisible() ? "\<C-n>" : "\<Tab>"]], { expr = true, desc = "Next completion item" })
-map("i", "<S-Tab>", [[pumvisible() ? "\<C-p>" : "\<S-Tab>"]], { expr = true, desc = "Previous completion item" })
+for key, dir in pairs({ ["<Tab>"] = 1, ["<S-Tab>"] = -1 }) do
+  map({ "i", "s" }, key, function()
+    if vim.fn.pumvisible() == 1 then
+      return dir == 1 and "<C-n>" or "<C-p>"
+    end
+    if vim.snippet.active({ direction = dir }) then
+      return ("<Cmd>lua vim.snippet.jump(%d)<CR>"):format(dir)
+    end
+    return key
+  end, { expr = true, desc = dir == 1 and "Next completion item / snippet field" or "Previous completion item / snippet field" })
+end
 -- Replaces the mini.pairs <CR> mapping, so fall back to it when nothing is selected.
 map("i", "<CR>", function()
   if vim.fn.complete_info({ "selected" }).selected ~= -1 then

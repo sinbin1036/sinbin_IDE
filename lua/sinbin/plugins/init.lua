@@ -23,8 +23,11 @@ vim.pack.add({
   mini("files"),
 
   -- UI (TASK-006)
-  -- File icons used by pick/files/statusline.
+  -- File icons used by pick/files/tabline/statusline.
   mini("icons"),
+  -- Open buffers as tabs at the top with diagnostics, close buttons, reorder, pin (TASK-016).
+  -- Last push 2025-01 (v4.9.1); mini.tabline is the fallback if it breaks (D-018).
+  { src = "https://github.com/akinsho/bufferline.nvim" },
   -- Statusline with mode, file info, diagnostics.
   mini("statusline"),
   -- Shows next possible keys after a prefix such as <Leader>.
@@ -39,6 +42,8 @@ vim.pack.add({
   { src = "https://github.com/neovim/nvim-lspconfig" },
   -- Installs LSP servers the same way on every OS.
   { src = "https://github.com/mason-org/mason.nvim" },
+  -- Current file's LSP/Treesitter symbols as a foldable tree in the left sidebar (TASK-016).
+  { src = "https://github.com/stevearc/aerial.nvim" },
   -- Completion popup with docs and signature help on top of built-in LSP.
   mini("completion"),
 
@@ -68,6 +73,7 @@ vim.pack.add({
 require("sinbin.plugins.ui")
 require("sinbin.plugins.editing")
 require("sinbin.plugins.search")
+require("sinbin.plugins.sidebar")
 require("sinbin.plugins.lsp")
 require("sinbin.plugins.treesitter")
 require("sinbin.plugins.git")

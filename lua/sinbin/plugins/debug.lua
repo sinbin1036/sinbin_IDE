@@ -10,6 +10,18 @@ require("dap-view").setup({
     sections = { "scopes", "watches", "breakpoints", "threads", "exceptions", "repl", "console" },
     default_section = "scopes",
   },
+  -- Bottom, same height as the bottom panel; right of the panel when it is open (TASK-016).
+  windows = {
+    size = function() return require("sinbin.layout").bottom_height() end,
+    anchor = function() return require("sinbin.layout").panel_win() end,
+    -- Next to the panel dap-view takes 'columns' - terminal.size columns: half the panel.
+    terminal = {
+      size = function()
+        local panel = require("sinbin.layout").panel_win()
+        return panel and vim.o.columns - math.floor(vim.api.nvim_win_get_width(panel) / 2) or 0.5
+      end,
+    },
+  },
   -- Open with a session, close when it ends.
   auto_toggle = true,
   -- Values at the end of lines while stopped, like `x = 3`.
@@ -323,7 +335,16 @@ map("n", "<Leader>dn", dap.step_over, { desc = "Step over" })
 map("n", "<Leader>di", dap.step_into, { desc = "Step into" })
 map("n", "<Leader>do", dap.step_out, { desc = "Step out" })
 map("n", "<Leader>dq", dap.terminate, { desc = "Terminate" })
-map("n", "<Leader>du", function() require("dap-view").toggle() end, { desc = "Toggle debug panel" })
+-- Hidden -> open, visible elsewhere -> focus, focused -> close (TASK-016).
+map("n", "<Leader>du", function()
+  for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+    if vim.w[win].dapview_win and win ~= vim.api.nvim_get_current_win() then
+      vim.api.nvim_set_current_win(win)
+      return
+    end
+  end
+  require("dap-view").toggle()
+end, { desc = "Debug panel" })
 map({ "n", "x" }, "<Leader>de", function() require("dap-view").hover() end, { desc = "Evaluate expression" })
 -- VS Code style function keys.
 map("n", "<F5>", start_or_continue, { desc = "Debug: start / continue" })

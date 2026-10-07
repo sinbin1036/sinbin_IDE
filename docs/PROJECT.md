@@ -87,6 +87,7 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 <leader>f File       <leader>s Search    <leader>e Error/Diagnostic
 <leader>g Git        <leader>t Terminal  <leader>a AI Agent
 <leader>r Run        <leader>x Test      <leader>d Debug
+<leader>c Code       <leader>b Buffer/Tab
 ```
 
 ## Roadmap
@@ -103,6 +104,17 @@ Phase 5  Diagnostics                     Phase 13 Installer / Bootstrap 자동�
 Phase 6  Git                             Phase 14 안정화 및 최적화
 Phase 7  Terminal
 ```
+
+### 남은 Phase 계획 (Planned)
+
+진행 상태는 [PROGRESS.md](PROGRESS.md). 아래는 남은 Phase의 예정 범위이며 확정은 각 Phase Task에서 한다.
+
+| Phase | 예정 범위 |
+|---|---|
+| 11 Custom UI / Layout | [TASK-016](tasks/active/TASK-016-ui-layout.md): VS Code식 기본 배치(1단계 구현됨, [D-018](DECISIONS.md)) → 창 이동 체계(TASK-015 인계: 임시 `Alt+a`, 토글이 보이는 창을 숨기는 문제, Terminal 진입 시 자동 입력 모드) → VS Code 단축키 일부. 이후 별도 Task: 목적별 Mode 전환(Coding / Debug / Git / AI / Focus) |
+| 12 Cross-platform Setup | Linux / macOS / WSL / SSH용 Platform Layer 채우기: Terminal Shell(`terminal_shell`, `terminal_exec`), `python`, `exe_suffix`, `venv_bin`, Dart/Flutter 경로, clipboard provider(SSH·WSL), config 연결 방식(Windows Junction에 대응하는 symlink, D-005). OS별 실제 검증 |
+| 13 Installer / Bootstrap 자동화 | `git clone` → install script → `nvim` (D-004). config 연결, 외부 CLI 설치(ripgrep, tree-sitter CLI, lazygit, Nerd Font, gdb 등 OS별 패키지 관리자), Mason 패키지 목록(vtsls, basedpyright, ruff, clangd, jdtls, debugpy, js-debug-adapter, java-debug-adapter), Treesitter parser, `vim.pack` lock 복원. Dependency 분류(Required / Optional / Language-specific / Platform-specific) 확정 |
+| 14 안정화 및 최적화 | 시작 속도 측정·개선(`vim.pack`은 lazy loading 없음), 업데이트 정책(`vim.pack.update`, Mason, `:TSUpdate`), checkhealth 정리, 에러 처리·안내 메시지 점검, 문서 정리 |
 
 ## Core Terminology
 

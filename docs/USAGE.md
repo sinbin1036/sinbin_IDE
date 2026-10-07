@@ -20,7 +20,7 @@ Plugin 선택 이유는 [DECISIONS.md](DECISIONS.md), 모듈 구조는 [ARCHITEC
 
 ```
 nvim 파일명        파일 열기 (없으면 새로 만듦)
-nvim .             현재 디렉터리 목록 열기 (내장 파일 탐색기 netrw)
+nvim .             현재 디렉터리를 파일 탐색기(mini.files)로 열기
 ```
 
 | 명령 | 동작 |
@@ -240,10 +240,12 @@ ma      현재 위치를 a로 표시
 | [mini.surround](https://github.com/nvim-mini/mini.surround) | 감싸는 문자 추가·삭제·교체 | `lua/sinbin/plugins/editing.lua` |
 | [mini.pick](https://github.com/nvim-mini/mini.pick) | 파일·내용·버퍼·도움말 검색 창 | `lua/sinbin/plugins/search.lua` |
 | [mini.extra](https://github.com/nvim-mini/mini.extra) | 추가 검색 창 (최근 파일) | `lua/sinbin/plugins/search.lua` |
-| [mini.files](https://github.com/nvim-mini/mini.files) | 파일 탐색기 (폴더를 버퍼처럼 편집) | `lua/sinbin/plugins/search.lua` |
+| [mini.files](https://github.com/nvim-mini/mini.files) | 파일 탐색기 (폴더를 버퍼처럼 편집, Git 상태 색) | `lua/sinbin/plugins/sidebar.lua` |
+| [aerial.nvim](https://github.com/stevearc/aerial.nvim) | Outline: 현재 파일의 클래스·함수·변수 트리 | `lua/sinbin/plugins/sidebar.lua` |
 | [tokyonight.nvim](https://github.com/folke/tokyonight.nvim) | 색 테마 (`moon`) | `lua/sinbin/plugins/ui.lua` |
 | [mini.icons](https://github.com/nvim-mini/mini.icons) | 파일 아이콘 (Nerd Font 필요) | `lua/sinbin/plugins/ui.lua` |
-| [mini.statusline](https://github.com/nvim-mini/mini.statusline) | 하단 상태바 | `lua/sinbin/plugins/ui.lua` |
+| [mini.statusline](https://github.com/nvim-mini/mini.statusline) | 하단 상태바 (내용은 `lua/sinbin/statusline.lua`) | `lua/sinbin/plugins/ui.lua` |
+| [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | 위쪽 탭 바 (열린 파일) | `lua/sinbin/plugins/ui.lua` |
 | [mini.clue](https://github.com/nvim-mini/mini.clue) | 키 힌트 창 | `lua/sinbin/plugins/ui.lua` |
 | [mini.notify](https://github.com/nvim-mini/mini.notify) | 알림 창 (오른쪽 위) | `lua/sinbin/plugins/ui.lua` |
 | [mini.starter](https://github.com/nvim-mini/mini.starter) | 시작 화면 (파일 없이 `nvim` 실행 시) | `lua/sinbin/plugins/ui.lua` |
@@ -257,6 +259,87 @@ ma      현재 위치를 a로 표시
 | [diffview-plus.nvim](https://github.com/dlyongemallo/diffview-plus.nvim) | 여러 파일 변경 검토, 파일 이력 (diffview.nvim 유지보수 fork) | `lua/sinbin/plugins/git.lua` |
 
 Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugin 관리](#plugin-관리) 참조.
+
+## 화면 배치 (VS Code식)
+
+```
+┌─────────┬──────────────────────────────┬────────────┐
+│         │ a.lua  b.lua ×  c.lua        │            │ 탭 바 (열린 파일)
+│ Outline ├──────────────┬───────────────┤            │
+│ (필요할 │ lua > a.lua  │ lua > c.lua   │ Terminal | │ 창마다 파일 경로 / 오른쪽 영역 탭
+│  때만)  │  코드 창 1    │  코드 창 2     │ Claude Code│
+│         ├──────────────┴───────────────┤ (오른쪽 영역)│
+│         │ Terminal 1 │ Terminal 2 │ Run│            │ 하단 패널
+└─────────┴──────────────────────────────┴────────────┘
+ NORMAL │ main +3 ~1 │ 에러 2 경고 1 │ 작업폴더    ▶ Run │ Claude │ python │ 12:5
+```
+
+- **코드 창 여러 개:** 내장 창 분할 `<C-w>v`(좌우) / `<C-w>s`(위아래). 탭 바는 모든 창이 같이 쓴다.
+- **하단 패널:** Terminal·Run이 한 창을 같이 쓰고 위쪽 탭으로 전환(클릭 가능). 디버그 중에는 디버그 패널이 그 오른쪽 절반. 코드 아래에만 있고 Outline·Agent 아래로는 내려가지 않는다.
+- **Terminal 영역에는 Terminal만:** 오른쪽 영역·하단 패널에 커서가 있을 때 파일을 열어도(탭 클릭, `<Space>ff`, 탐색기, `Ctrl+O`) 파일은 마지막에 쓰던 코드 창에 열리고 그 영역은 Terminal 그대로 (VS Code와 같음).
+- **탭 페이지(오른쪽 위 `1 2 3`):** Neovim의 화면 전체 작업 공간. 이 배치는 탭 페이지 하나를 기준으로 하므로 평소에는 쓰지 않는다 (diffview `<Space>gv`는 자체 탭 페이지를 열고 `q`로 닫음). 생겼다면 `:tabonly`(현재 것만 남김) / `:tabclose`.
+- **오른쪽 영역:** 창 하나에 Terminal·Claude Code·Codex가 탭으로 (위쪽 탭 클릭 또는 각 키로 전환). **시작하면 일반 Terminal이 열린다** (Agent는 자동 실행 안 함, 커서는 코드 창). git commit 메시지 편집·diff 모드·Neovim 안의 Neovim에서는 열지 않는다.
+- **왼쪽 영역:** Files(`<Space>fe`)와 Outline(`<Space>co`)이 번갈아 쓴다. 아래 [Outline](#outline-현재-파일-구조) 참조.
+- **상태바 (화면 전체 한 줄, VS Code 상태바 형식):**
+  ```
+   NORMAL    main*    0↓ 1↑    ⊗ 2  ⚠ 1    sinbin_IDE          ▶ Run   Claude Code    Ln 12, Col 5    python
+  ```
+  - 모드: 진한 배경 + 흰 굵은 글자 (`NORMAL` 파랑, `INSERT` 초록, `VISUAL` 보라, `REPLACE` 빨강, `COMMAND` 노랑, `TERMINAL` 청록)
+  - 브랜치: 커밋 안 한 변경이 있으면 `*` (VS Code와 같음)
+  - pull/push: `0↓ 1↑` = 받을 commit 0개 / 올릴 commit 1개. 원격 브랜치가 없으면 `publish`. 마지막 fetch/pull 기준 원격 상태와 비교 (자동 fetch 안 함). Terminal·lazygit·`:!` 명령 뒤, Neovim으로 돌아올 때 다시 읽는다
+  - 에러 / 경고 개수: 항상 표시 (0도 표시), 빨강 / 노랑
+  - 작업 폴더 이름
+  - 오른쪽: 실행 중일 때만 색 배지 `▶ Run`(초록) · `Debug`(정지 중이면 `Debug 정지`) · `Claude Code`/`Codex`(보라) · `Ln 줄, Col 열` · 파일 타입
+  - **디버그 중에는 상태바 전체가 주황색** (VS Code와 같음)
+  - 변경 줄 수(`+3 ~1`)는 상태바에 없다 → 줄 번호 옆 표시와 `]h`/`<Space>gp`
+- **종료:** `:q`는 창 하나를 닫는다. 마지막 코드 창에서 `:q`(`:wq`, `ZZ`)하면 Outline·하단 패널·오른쪽 영역도 함께 닫혀 Neovim이 종료된다 (탭 페이지가 여럿이면 그 탭 페이지만). 저장 안 된 파일이 있으면 종료되지 않고 `E37`/`E162`로 알려 준다 (`:w`/`:wa` 후 다시, 버리려면 `:qa!`). Terminal·패널 창에서 `:q`는 그 창만 닫는다. `:q`가 아닌 방법(`<C-w>c` 등)으로 마지막 코드 창을 닫으면 그 자리에 빈 코드 창이 남는다.
+- **하단 패널 높이·양쪽 폭**은 직접 바꾼 크기가 유지된다. `:copen`·`:help` 창이 열려도 패널은 줄어들지 않는다.
+- **한/영 자동 전환 (Windows):** 코드 창에 들어가면 한글 입력 상태일 때만 영어로 바꾼다 (Microsoft 한국어 IME 유지, 한/영 상태만). 이미 영어면 그대로, Agent·Terminal 창은 건드리지 않음. 창을 옮길 때만 동작 (계속 확인하지 않음). 처음 쓸 때 도우미 프로그램을 한 번 빌드한다 (`.NET Framework` `csc.exe`, Windows 기본 포함).
+
+### 탭 (bufferline)
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N | `]b` / `[b` | 다음 / 이전 탭 |
+| N | `<Space>bd` | 탭 닫기 (창은 그대로, 직전 파일로 바뀜. 저장 안 된 파일은 확인: `s` 저장 / `d` 버리기 / `c`·`<Esc>` 취소) |
+| N | `<Space>bo` | 다른 탭 모두 닫기 |
+| N | `<Space>bp` | 탭마다 글자 표시 → 글자로 바로 이동 |
+| N | `<Space>bP` | 탭 고정 / 해제 (고정 탭은 왼쪽에) |
+| N | `<Space>b]` / `<Space>b[` | 탭 순서 오른쪽 / 왼쪽으로 이동 |
+| 마우스 | 클릭 / `×` 또는 가운데 클릭 | 전환 / 닫기 |
+
+- 탭에 에러·경고 아이콘과 개수가 붙는다. 저장 안 된 파일은 `●`.
+- 내장 `:bd`는 그 파일을 보던 창까지 닫으므로 `<Space>bd`를 쓴다.
+
+### 창 이동
+
+**규칙 (모든 영역 키 공통):** 숨겨져 있으면 열고 그 창으로 / 보이는데 다른 창에 있으면 그 창으로 이동 / 이미 그 창에 있으면 숨김.
+적용: `<Space>tt`(Terminal), `<Space>tp`(하단 패널), `<Space>ac`/`ax`/`at`(오른쪽 영역), `<Space>co`(Outline), `<Space>du`(디버그 패널).
+
+| 모드 | 키 | 동작 |
+|---|---|---|
+| N, T | `Alt+h` / `Alt+j` / `Alt+k` / `Alt+l` | 왼쪽 / 아래 / 위 / 오른쪽 창으로 (Terminal 입력 중에도 바로) |
+| N, T | `Alt+a` | 코드 창 ↔ 오른쪽 영역 왕복 ([AI Agent](#ai-agent-claude-code-codex)) |
+| N, T | `Alt+z` | 오른쪽 영역 전체 화면 ↔ 원래 배치 |
+| N / N·T | `<Space>tp` / `` Alt+` `` | 하단 패널 전체 열기 / 이동 / 숨기기 (다시 열면 마지막에 보던 Terminal) |
+
+- **Terminal 창에 들어가면 자동으로 입력 모드** (키·`<C-w>`·마우스 모두). 끝난 Run 결과 창만 Normal 모드로 남는다 (다음 키에 창이 닫히지 않게).
+- Terminal 입력 중에는 `<Space>` 키가 프로그램에 입력되므로, 숨기려면 `<C-q>`(Normal 모드) → `<Space>tt`, 또는 `` Alt+` ``.
+- Windows Terminal은 `Alt+화살표`를 자기 창 분할 이동에 쓰므로 `Alt+h/j/k/l`을 쓴다.
+
+### VS Code 단축키
+
+| 키 | 동작 | Leader 키 | Windows Terminal 전달 |
+|---|---|---|---|
+| `Ctrl+P` | 파일 찾기 (N) | `<Space>ff` | 됨 (일반 제어 문자) |
+| `Ctrl+B` | 왼쪽 영역 열기 / 닫기 — 마지막에 쓴 Files 또는 Outline (N) | `<Space>fe` / `<Space>co` | 됨 (일반 제어 문자) |
+| `` Alt+` `` | 하단 패널 열기 / 이동 / 숨기기 (N, T) — VS Code의 `` Ctrl+` `` 대신 | `<Space>tp` | 됨 (Alt 조합). `` Ctrl+` ``는 Windows Terminal이 아무것도 보내지 않아 채택 안 함 |
+| `Ctrl+Shift+P` | — (채택 안 함) | `<Space>sc` 명령 팔레트 | 안 됨: Windows Terminal 자체 명령 팔레트 |
+| `Ctrl+Shift+F` | — (채택 안 함) | `<Space>sg` 내용 검색 | 안 됨: Windows Terminal 찾기 (설정 파일에도 지정됨) |
+
+- `Ctrl+P`는 내장 Normal `<C-p>`(위로 한 줄 = `k`), `Ctrl+B`는 내장 한 화면 위로 스크롤을 대체한다 (스크롤은 `<C-u>`).
+- Terminal 안 프로그램에는 `Alt+h/j/k/l`·`Alt+a`·`` Alt+` ``·`<C-q>`가 전달되지 않는다 (Neovim이 먼저 씀). bash의 `Alt+l`(단어를 소문자로) 정도만 영향.
+- 같은 기능의 두 키(별칭)는 의도된 것: `Ctrl+P` = `<Space>ff`, `Ctrl+B` ≈ `<Space>fe`/`<Space>co`, `` Alt+` `` = `<Space>tp`, `F5`/`F10`/`F11`/`F12` = `<Space>dc`/`dn`/`di`/`do`. 전체 Keymap은 `<Space>sk`로 검색.
 
 ## 편집
 
@@ -322,11 +405,14 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | N | `<Space>ff` | 파일 이름 검색 |
 | N | `<Space>fb` | 열린 버퍼 전환 |
 | N | `<Space>fr` | 최근 파일 |
-| N | `<Space>fe` | 파일 탐색기 열기 / 닫기 (현재 파일 위치에서 열림) |
+| N | `<Space>fe` | 파일 탐색기 열기 / 닫기 (현재 파일 위치에서 열림, Outline이 열려 있으면 바꿔서 엶) |
 | N | `<Space>sg` | 프로젝트 내용 검색 (입력하는 대로 결과 갱신) |
 | N | `<Space>sw` | 커서 아래 단어로 내용 검색 |
 | N | `<Space>sh` | 도움말 검색 |
 | N | `<Space>sr` | 마지막 검색 창 다시 열기 |
+| N | `<Space>ss` | 프로젝트 전체 심볼 검색 (입력하는 대로 LSP에 질의, 현재 파일 구조는 Outline) |
+| N | `<Space>sc` | 명령 팔레트: 명령 검색 → `<CR>` 실행 |
+| N | `<Space>sk` | Keymap 검색 (키·설명으로) |
 
 `<Space>`만 누르고 기다리면 가능한 키 목록이 아래에 뜬다 (mini.clue). `g`, `z`, `[`, `]`, `<C-w>`, `"`, `'`도 같다.
 
@@ -337,7 +423,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 글자 입력 | 결과 좁히기 (fuzzy) |
 | `<C-n>` / `<C-p>` | 아래 / 위 항목 |
 | `<CR>` | 열기 |
-| `<C-v>` / `<C-s>` / `<C-t>` | 세로 분할 / 가로 분할 / 새 탭으로 열기 |
+| `<C-v>` / `<C-s>` | 세로 분할 / 가로 분할로 열기 (새 탭 페이지로 여는 `<C-t>`는 끔) |
 | `<Tab>` | 미리보기 토글 |
 | `<C-x>` → `<M-CR>` | 여러 개 표시 후 한꺼번에 열기 (quickfix) |
 | `<C-Space>` | 현재 결과 안에서 다시 검색 (refine) |
@@ -352,11 +438,28 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 글자 편집 | 이름 바꾸기, 새 줄에 이름 입력 = 새 파일 (`/`로 끝나면 폴더), `dd` = 삭제 |
 | `=` | 편집 내용 실제 적용 (확인 창 표시) |
 | `g.` | 커서의 폴더(파일이면 그 폴더)를 **작업 폴더**로 (`cd`). "여기(.)를 작업 폴더로". 탐색기 이동만으로는 작업 폴더가 바뀌지 않는다 |
+| `<Tab>` | Outline으로 바꾸기 |
 | `g?` | 도움말 |
 | `q` | 닫기 |
 
+- Git 상태: 파일·폴더 **이름 자체에 색** (수정·이름 바뀜 노랑, 추가·새 파일 초록, 충돌 빨강) + 오른쪽 끝에 `M` 수정 / `A` 추가 / `U` 새 파일(추적 안 함) / `R` 이름 바뀜 / `!` 충돌. 안에 변경이 있는 폴더는 그 색 + `•`. 탐색기를 열 때마다 새로 읽는다.
 - 탐색기에서 편집만 하고 `=`를 누르지 않으면 디스크는 바뀌지 않는다.
 - 기본 탐색기 netrw(`:Ex`)도 그대로 쓸 수 있다.
+
+### Outline (현재 파일 구조)
+
+현재 파일의 클래스·메서드·함수·변수를 계층으로 보여 주는 왼쪽 창 (aerial.nvim). LSP가 연결되면 LSP, 아니면 Treesitter(Markdown 제목 등) 기준. 다른 파일로 가면 따라 바뀐다. 커서가 들어 있는 심볼(가장 안쪽)이 강조되고 Outline 커서도 따라간다 (심볼 사이 빈 줄에서는 강조 없음). 심볼이 없는 파일은 `심볼 없음` (이유는 `:AerialInfo`).
+
+| 키 | 동작 |
+|---|---|
+| `<Space>co` | Outline 열기 / 닫기 (Files가 열려 있으면 바꿔서 엶) |
+| `j` / `k` | 아래 / 위 |
+| `h` / `l` | 접기 / 펼치기 (`H` / `L`: 아래까지 전부) |
+| `<CR>` | 그 코드 위치로 이동 |
+| `{` / `}` | 이전 / 다음 심볼 |
+| `<Tab>` | Files로 바꾸기 |
+| `q` | 닫기 |
+| `g?` | 전체 키 목록 |
 
 ## LSP와 자동완성 (TypeScript, Python, Java, Dart, C)
 
@@ -385,7 +488,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | `<C-e>` | 목록 닫기 (내장) |
 
 - 항목을 고르면 옆에 문서 창이 뜬다. 함수 괄호 안에서는 인자 힌트가 뜬다.
-- snippet 항목(`S` 표시)은 입력 후 `<Tab>` / `<S-Tab>`으로 다음 칸 이동 (내장 `vim.snippet`).
+- snippet 항목(`S` 표시)은 입력 후 `<Tab>` / `<S-Tab>`으로 다음 칸 이동 (내장 `vim.snippet`). 완성 목록이 떠 있으면 목록 이동이 먼저, 둘 다 아니면 보통 Tab.
 
 ### 언어 Server 설치 (mason.nvim)
 
@@ -432,7 +535,6 @@ LSP가 찾은 에러·경고는 줄 끝에 `● 메시지`로, 줄 번호 옆에
 | N | `<Space>ee` | 커서 위치 에러 메시지 창 (내장 `<C-w>d`와 같음) |
 | N | `<Space>ed` | 현재 파일 에러 목록 (검색 창) |
 | N | `<Space>eD` | 열린 파일 전체 에러 목록 (검색 창) |
-| N | `<Space>eq` | 에러를 quickfix 목록으로 → `]q` / `[q`로 이동, `:copen`으로 목록 창 |
 | N | `<Space>et` | 에러 표시 켜기 / 끄기 |
 
 - 메시지 창은 커서를 움직이면 닫힌다.
@@ -451,7 +553,7 @@ LSP가 찾은 에러·경고는 줄 끝에 `● 메시지`로, 줄 번호 옆에
 |---|---|
 | 줄 끝 | 번역만 |
 | 메시지 창 (`]d`, `<Space>ee`) | 번역 + 아래에 영어 원문 (검색용) |
-| 목록 (`<Space>ed`, `<Space>eq`) | 영어 원문 |
+| 목록 (`<Space>ed`, `<Space>eD`) | 영어 원문 |
 
 - 규칙에 없는 메시지는 영어 원문 그대로 나온다.
 - 규칙 추가: `lua/sinbin/diagnostics/rules_ko.lua`에 `{ "원문 Lua pattern", "치환문" }` 한 줄 추가. 메시지 창의 영어 원문을 복사해 패턴으로 만들면 된다 (`.`, `(`, `)`, `-`, `?` 앞에는 `%`). 구체적인 패턴을 일반 패턴보다 위에 둔다.
@@ -509,14 +611,16 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 
 | 모드 | 키 | 동작 |
 |---|---|---|
-| N | `<Space>tt` | 하단 Terminal 열기 / 숨기기 |
+| N | `<Space>tt` | 하단 패널에 Terminal 열기 / 이동 / 숨기기 ([창 규칙](#창-이동), 다른 Terminal이 보이는 중이면 그 자리에서 전환) |
+| N | `<Space>tp` / N·T `` Alt+` `` | 하단 패널 전체 열기 / 이동 / 숨기기 |
 | N | `2<Space>tt`, `3<Space>tt` … | 2번, 3번 Terminal (따로 동작) |
 | N | `<Space>tf` | floating Terminal 열기 / 숨기기 (잠깐 명령 하나 실행할 때) |
-| N | `<Space>tl` | 열린 Terminal 목록 → 골라서 하단에 표시 |
-| T | `<C-q>` | Terminal 입력 → Normal 모드 (스크롤, 복사, `<C-w>`로 창 이동) |
-| N (Terminal 창) | `i` 또는 `a` | 다시 Terminal 입력 |
+| 마우스 | 하단 패널 위쪽 탭 클릭 | 그 Terminal / Run으로 전환 |
+| T | `<C-q>` | Terminal 입력 → Normal 모드 (스크롤, 복사). 창 이동은 입력 중에도 `Alt+h/j/k/l` |
+| N (Terminal 창) | `i` 또는 `a` | 다시 Terminal 입력 (다른 창에서 들어오면 자동) |
 
-- Shell에서 `exit`하면 그 Terminal 창과 버퍼가 닫힌다.
+- 하단 Terminal과 Run 결과는 하단 패널 창 하나를 같이 쓰고, 패널 위쪽 탭(`Terminal 1  Terminal 2  run: ...`)으로 보인다.
+- Shell에서 `exit`하면 그 Terminal이 닫힌다 (패널에 다른 Terminal이 있으면 그것을 보여 줌).
 - `<Esc>`는 Terminal 안 프로그램(Claude Code, lazygit 등)에 그대로 전달된다.
 - Windows Shell은 Git Bash. nvim을 PowerShell에서 실행해도 같다 (Neovim의 `:!` 명령은 기존 'shell' 그대로).
 
@@ -573,7 +677,7 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 - 파일이 아닌 화면(`nvim .`의 탐색기, 시작 화면, Terminal 창)에서는 **현재 작업 폴더** 기준. 작업 폴더에 프로젝트 파일이 없으면 한 단계 아래 폴더들에서 찾아 **어느 프로젝트를 실행할지 고르는 목록**을 띄운다 (예: front / back).
 - 작업 폴더는 탐색기에서 `g.`로 바꿀 수 있다 (탐색기 표). 지금 작업 폴더는 `:pwd`.
 - 명령이 없으면 이유를 알려 준다 (예: `Python은 빌드 없음`, `프로젝트 감지 안 됨 (파일 실행: <Space>rr)`).
-- "run" Terminal은 `<Space>tl` 목록에서 다시 볼 수 있다.
+- "run" Terminal은 하단 패널의 `Run` 탭으로 다시 볼 수 있다 (`<Space>tp`).
 
 ### 프로젝트별로 명령 바꾸기 (`.sinbin/run.json`)
 
@@ -593,7 +697,7 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 
 ## Debug (nvim-dap)
 
-breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(끝나면 자동으로 닫힘), 멈춘 동안 코드 줄 끝에 변수 값(`total = 3`)이 보인다.
+breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(하단 패널이 열려 있으면 그 오른쪽 절반, 끝나면 자동으로 닫힘), 멈춘 동안 코드 줄 끝에 변수 값(`total = 3`)이 보인다.
 
 | 모드 | 키 | 동작 |
 |---|---|---|
@@ -604,7 +708,7 @@ breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(끝나
 | N | `<Space>di` 또는 `F11` | 함수 안으로 들어가기 |
 | N | `<Space>do` 또는 `F12` | 함수 밖으로 나가기 |
 | N | `<Space>dq` | 디버그 종료 |
-| N | `<Space>du` | 디버그 패널 열기 / 닫기 |
+| N | `<Space>du` | 디버그 패널 열기 / 이동 / 닫기 ([창 규칙](#창-이동)) |
 | N, V | `<Space>de` | 커서 아래(또는 선택한) 식의 값 보기 |
 
 - Windows Terminal은 `F11`을 전체 화면 전환에 쓰므로 Neovim에 전달되지 않을 수 있다 → `<Space>di` 사용.
@@ -624,20 +728,20 @@ breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(끝나
 
 ## AI Agent (Claude Code, Codex)
 
-Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 세로 창에서 돈다. 숨겨도 대화는 이어진다.
+Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈다. 오른쪽 영역은 창 하나에 Terminal·Claude Code·Codex가 탭으로 있고(시작 시 Terminal), Agent를 켜면 같은 창의 새 탭으로 열린다. 숨겨도 대화는 이어진다.
 
 | 모드 | 키 | 동작 |
 |---|---|---|
-| N, T | `Alt+a` | **코드 창 ↔ Agent 창 왕복.** 코드에서 누르면 Agent로 가서 바로 입력(숨겨져 있으면 열고, 꺼져 있으면 마지막 Agent·처음엔 Claude 실행), Agent에서 누르면 원래 코드 창으로 |
-| N | `<Space>ac` | Claude Code 열기 / 숨기기 |
-| N | `<Space>ax` | Codex 열기 / 숨기기 |
-| N | `<Space>aa` | 마지막으로 쓴 Agent 열기 / 숨기기 |
+| N, T | `Alt+a` | **코드 창 ↔ 오른쪽 영역 왕복.** 코드에서 누르면 오른쪽 영역에 보이는 것(Terminal / Agent)으로 가서 바로 입력. 숨겨져 있으면 실행 중인 Agent → 오른쪽 Terminal 순으로 다시 열고, 아무것도 없으면 마지막 Agent(처음엔 Claude) 실행. 오른쪽 영역에서 누르면 원래 코드 창으로 |
+| N | `<Space>ac` | Claude Code 열기 / 이동 / 숨기기 ([창 규칙](#창-이동)) |
+| N | `<Space>ax` | Codex 열기 / 이동 / 숨기기 |
+| N | `<Space>at` | 오른쪽 영역 Terminal 열기 / 이동 / 숨기기 |
+| N, T / N | `Alt+z` / `<Space>az` | **오른쪽 영역 전체 화면** ↔ 원래 배치 (위쪽 탭 바·상태바는 보임, 오른쪽 영역 탭 그대로, 폭은 원래대로 돌아옴). 전체 화면에서 `Alt+a`는 전체 화면을 끝내고 코드 창으로 |
 | N | `<Space>af` | 현재 파일을 Agent 입력창에 넣기 (`@경로 `) |
 | V | `<Space>as` | 선택한 줄 범위를 Agent 입력창에 넣기 (`@경로#L10-20 `) |
 
 - `<Space>af` / `<Space>as`는 입력만 하고 Enter는 누르지 않는다. 커서가 Agent로 옮겨 가니 이어서 질문을 쓰면 된다. 예: `@src/user.ts#L10-20 이 함수 리팩터링해줘`
-- Agent 창 안: `<Esc>`는 Agent에 전달된다. 코드 창으로는 `Alt+a` (또는 `<C-q>` → `<C-w>h`). 쓰던 입력은 Agent 창에 그대로 남는다.
-- `Alt+a`는 Phase 11(UI/Layout 재설계) 전까지 쓰는 임시 이동 키다.
+- Agent 창 안: `<Esc>`는 Agent에 전달된다. 코드 창으로는 `Alt+a` 또는 `Alt+h`. 쓰던 입력은 Agent 창에 그대로 남는다.
 - Agent는 현재 파일의 git 저장소 루트에서 시작한다 (없으면 작업 폴더).
 - Agent가 파일을 고치면 열린 버퍼가 자동으로 다시 읽힌다. 바뀐 내용은 `<Space>gv`(전체 변경 검토), `]h` / `<Space>gp`(변경 묶음)로 본다.
 - Codex는 폴더를 처음 열 때 "Trust this folder?" 확인이 나온다.
