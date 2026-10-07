@@ -275,3 +275,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 설정은 장비마다 따로 (Phase 13 설치 시 기본값). 들여쓰기는 전역 값만 바꾸므로 이미 연 파일·filetype 설정에는 적용 안 됨. 시작 관련 항목은 재시작 후. 새 설정 항목은 `settings.list`에 추가하고 해당 모듈에서 `get()`
 - Related Task: TASK-019
 - Evidence: UI attach한 `nvim --embed` RPC로 패널 조작·저장·재시작 유지·깨진 JSON·시작 시 Terminal/Agent 확인 (2026-10-07)
+
+### D-025: Linux/macOS config는 symlink 연결, SSH clipboard는 복사 전용 OSC 52, Windows 'shell'은 cmd.exe 고정
+- Date: 2026-10-07
+- Status: Accepted
+- Context: TASK-020 (Phase 12). D-005가 미룬 Linux/macOS config 연결 방식, SSH·WSL clipboard, Git Bash에서 실행 시 `:!`·`system()` 깨짐 ('shell'만 `$SHELL`의 bash, 나머지 옵션은 cmd.exe용)
+- Decision: Linux/macOS/WSL은 `~/.config/nvim` → Repository symlink (자동화는 Phase 13). SSH 접속 중(`SSH_CONNECTION`/`SSH_TTY`)에는 `vim.g.clipboard`를 복사만 OSC 52, 붙여넣기는 이 Neovim에서 마지막으로 복사한 내용. WSL은 Neovim 기본 감지(`win32yank.exe`). Windows는 'shell'이 cmd가 아니면 `cmd.exe`(`COMSPEC`)로 되돌림, Terminal 창은 계속 Git Bash
+- Reason: 사용자 선택 (모두 추천안). Windows Terminal은 OSC 52 읽기를 지원하지 않아 내장 osc52 붙여넣기는 응답을 기다리다 시간 초과. 내장 provider는 'clipboard'가 비어 있을 때만 OSC 52를 자동 사용하는데 이 Config는 `unnamedplus`. 'shell'을 cmd.exe로 두면 PowerShell·Git Bash 어디서 실행해도 동작이 같음
+- Alternatives: config를 `~/.config/nvim`에 직접 clone, `NVIM_APPNAME` / 복사·붙여넣기 모두 OSC 52, SSH clipboard 처리 안 함 / WSL에서 `clip.exe` + PowerShell 직접 지정 / Git Bash에서 bash 유지 + 'shellcmdflag' 등을 bash에 맞춤
+- Consequences: SSH에서 밖에서 복사한 내용은 터미널 붙여넣기(Ctrl+Shift+V)로. OSC 52를 지원하지 않는 터미널에서는 SSH 복사가 로컬로 안 감. macOS는 미검증
+- Related Task: TASK-020
+- Evidence: WSL Ubuntu 24.04 + Neovim v0.12.5에서 win32yank 양방향 복사, pty(`script`)에서 SSH 모드 `yy` → OSC 52 시퀀스 내용 일치, Git Bash에서 `system('echo hi')` 수정 전후 (2026-10-07)

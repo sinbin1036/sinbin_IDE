@@ -162,6 +162,8 @@ Vim 편집은 **동사(operator) + 대상(motion 또는 text object)** 조합이
 - 이 설정은 **시스템 클립보드를 공유**한다. `y`로 복사한 것을 다른 프로그램에서 `Ctrl+V`로, 반대로 밖에서 복사한 것을 `p`로 붙여넣을 수 있다.
 - 주의: `d`, `x`, `c`로 지운 내용도 클립보드에 들어간다. 클립보드를 덮어쓰지 않고 지우려면 `"_` (블랙홀 레지스터)를 붙인다: `"_dd`, `"_diw`.
 - `Y`는 줄 끝까지 복사 (`y$`와 같음).
+- WSL: Windows 클립보드와 공유 (Windows Neovim에 들어 있는 `win32yank.exe`가 PATH에 보이면 자동).
+- SSH 접속 중: `y`로 복사한 내용은 터미널(OSC 52)을 거쳐 **내 PC 클립보드**로 간다. `p`는 이 Neovim에서 마지막으로 복사한 내용만 붙여넣으므로, 내 PC에서 복사한 것은 터미널 붙여넣기(`Ctrl+Shift+V`)로 넣는다.
 
 ## 10. 파일, 버퍼, 창
 
@@ -521,7 +523,8 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 상태 확인 | `:checkhealth nvim-treesitter` |
 | 현재 위치 구조 보기 | `:InspectTree` (내장) |
 
-- parser 설치에는 `tree-sitter` CLI와 C compiler(gcc)가 필요하다. Windows는 `winget install tree-sitter.tree-sitter-cli`.
+- parser 설치에는 `tree-sitter` CLI와 C compiler(gcc)가 필요하다. Windows는 `winget install tree-sitter.tree-sitter-cli`. Linux는 [GitHub release](https://github.com/tree-sitter/tree-sitter/releases)의 `tree-sitter-linux-x64.gz`를 풀어 PATH에 둔다.
+- `tree-sitter` CLI가 없으면 시작할 때 "tree-sitter CLI 없음" 경고만 한 번 뜨고 parser 설치는 건너뛴다 (구문 강조는 Neovim 기본 parser가 있는 언어만).
 
 ## 에러·경고 (Diagnostics)
 
@@ -622,7 +625,8 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 - 하단 Terminal과 Run 결과는 하단 패널 창 하나를 같이 쓰고, 패널 위쪽 탭(`Terminal 1  Terminal 2  run: ...`)으로 보인다.
 - Shell에서 `exit`하면 그 Terminal이 닫힌다 (패널에 다른 Terminal이 있으면 그것을 보여 줌).
 - `<Esc>`는 Terminal 안 프로그램(Claude Code, lazygit 등)에 그대로 전달된다.
-- Windows Shell은 Git Bash. nvim을 PowerShell에서 실행해도 같다 (Neovim의 `:!` 명령은 기존 'shell' 그대로).
+- Windows Shell은 Git Bash. nvim을 PowerShell에서 실행해도 같다. Neovim의 `:!` 명령은 어디서 실행하든 `cmd.exe`.
+- Linux / macOS / WSL Shell은 `$SHELL` (보통 bash / zsh).
 
 ## Run / Test
 

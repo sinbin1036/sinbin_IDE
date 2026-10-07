@@ -27,17 +27,18 @@
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 
 ## In Progress
-- Phase 12 Cross-platform Setup ([TASK-020](tasks/active/TASK-020-cross-platform.md)): 범위·방식 결정, 구현 중 (branch `feat/cross-platform`)
+- Phase 12 Cross-platform Setup ([TASK-020](tasks/active/TASK-020-cross-platform.md)): 구현·검증 완료 (Windows Git Bash, WSL, SSH 모드), 실제 SSH 접속 사용자 확인 대기 (branch `feat/cross-platform`)
 
 ## Blocked
 - 없음
 
 ## Unverified
 - 시작 화면 실제 Windows Terminal 표시 (gradient 색·블록 글자·시작 시간, TASK-018은 harness 검증만)
-- Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
+- macOS, WSL 아닌 Linux (TASK-020은 WSL Ubuntu만 검증)
+- 실제 SSH 접속에서 OSC 52 복사가 로컬 클립보드로 가는지 (TASK-020은 pty 출력으로만 확인)
+- WSL의 LSP·Debug(Mason)·ripgrep·lazygit (WSL에 미설치)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
-- Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 (재현됨 2026-10-07, TASK-020에서 수정)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
 ## Remaining Phases
@@ -55,4 +56,4 @@
 [TASK-020](tasks/active/TASK-020-cross-platform.md) Phase 12 Cross-platform Setup
 
 ## Next Action
-TASK-020 결정 항목(Git Bash 'shell' 보정, WSL·SSH clipboard 방식, WSL 검증용 Neovim 설치) 사용자 결정 → Windows Git Bash 보정부터 구현 → Linux/WSL → SSH 순으로 구현·검증.
+TASK-020 실제 SSH 접속 확인(사용자: Windows Terminal에서 SSH로 접속한 nvim에서 `yy` → 내 PC `Ctrl+V`) → 완료 처리·PR. 그다음 Phase 13 Installer / Bootstrap 자동화 Task (TASK-021): PROJECT "남은 Phase 계획" 13번 + config symlink·tree-sitter CLI 설치 ([D-025](DECISIONS.md)).

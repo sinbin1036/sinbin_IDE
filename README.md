@@ -25,7 +25,14 @@ New-Item -ItemType Junction -Path "$env:LOCALAPPDATA\nvim" -Target "<repository 
 nvim .
 ```
 
-Linux / macOS: 미정 (Phase 12).
+Linux / macOS / WSL (Neovim 0.12+ 필요, macOS는 미검증). `~/.config/nvim`을 symlink로 연결한다:
+
+```bash
+ln -s "<repository 경로>" ~/.config/nvim
+nvim .
+```
+
+구문 강조 parser 설치에는 `tree-sitter` CLI와 C compiler가 필요하다 ([docs/USAGE.md](docs/USAGE.md)). 설치 자동화는 Phase 13.
 
 ## 문서
 
