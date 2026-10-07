@@ -16,9 +16,11 @@ function M.run()
     return
   end
 
-  vim.cmd.tabnew()
-  local buf = vim.api.nvim_get_current_buf()
+  -- A scratch buffer, not :tabnew's empty file buffer: entering a file buffer opens the
+  -- right area shell after the start screen (sinbin.agent), which the setup tab should not.
+  local buf = vim.api.nvim_create_buf(false, true)
   vim.bo[buf].bufhidden = "wipe"
+  vim.cmd("tab sbuffer " .. buf)
   vim.fn.jobstart(cmd, {
     term = true,
     cwd = root,

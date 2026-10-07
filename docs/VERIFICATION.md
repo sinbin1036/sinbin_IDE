@@ -26,6 +26,7 @@
 주의: WSL 검증은 Windows 쪽에서 `printf '<명령>' | wsl.exe -d Ubuntu-24.04 -- bash -l`로 실행 (인자로 넘기면 `$변수`가 Windows 쪽 Shell에서 풀림). 실제 TUI 시작은 `script -qfc "nvim ..." /dev/null` pty로 띄우고 `defer_fn`으로 상태를 파일에 기록 후 `qa!` — 이때 `E1568`(DSR 응답 없음)은 pty 때문이라 무시. SSH 모드 OSC 52는 같은 pty 출력에서 `\e]52;c;` 검색 (2026-10-07 확인).
 주의: `mini.notify`는 알림을 다음 event loop에서 추가하므로 같은 명령 안에서 `get_all()`하면 비어 있음 (`+sleep` 뒤에 확인).
 주의: `setup.ps1` 출력을 파일로 받으면 spinner 갱신(`\r`, `ESC[2K`, `ESC[nF`)이 모두 남는다. 최종 화면은 이 세 가지를 재생하는 스크립트로 복원해서 확인 (Python은 `open(..., newline='')`로 읽어야 `\r`이 줄바꿈으로 바뀌지 않음). 실제 터미널 모양은 사용자 확인. 실패 표시는 `. .\setup.ps1`(dot-source, 함수만 정의) 후 없는 winget ID로 `Install-Tool` 호출해 확인 (2026-10-07).
+주의: 이 작업 환경이 Neovim Terminal 안이면 `NVIM` 환경 변수가 자식 nvim에 전달되어 시작 시 오른쪽 영역이 열리지 않는다 (Neovim 안의 Neovim 처리). 시작 동작 검증 시 자식 실행 전에 `NVIM`을 지운다 (2026-10-07 확인).
 주의: autocmd 안의 `:checktime`은 안전한 시점까지 미뤄진다 (`:h :checktime`). headless 스크립트 안에서는 실행되지 않으므로 `nvim --embed`를 RPC로 조작해 확인한다.
 
 ## 변경 종류별

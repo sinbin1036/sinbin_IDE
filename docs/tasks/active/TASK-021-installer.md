@@ -80,6 +80,7 @@
 - `:Setup`(`commands.lua`, Plugin보다 먼저 로드) + 시작 화면 `s 설치 / 점검` → `lua/sinbin/setup.lua`가 Platform Layer `setup_cmd`(Windows만)를 새 탭 Terminal에서 실행. 내장 `jobstart`만 사용 (Plugin 로드 실패 시 `sinbin.terminal`도 로드 안 됨)
 - 위험 발견·방지: config 경로(Junction)로 실행하면 `$Root`가 링크 경로라 Config link 단계가 "다른 곳을 가리킴"으로 판단해 링크를 백업하고 자기 자신을 가리키는 Junction을 만들 수 있었음 → Neovim은 `fs_realpath` 경로를 넘기고, `setup.ps1`은 링크 경로에서 실행된 경우 "여기서 실행됨"으로 처리
 - 검증: 일반 시작 에러 없음, `:Setup` 등록, `setup_cmd` = `powershell ... -File C:/.../sinbin_IDE/setup.ps1`(실제 경로) / Junction 경로로 `-CheckOnly` 실행 → `config link Junction (여기서 실행됨)`, Junction 대상 그대로 / headless에서 `:Setup` → 탭 2개, terminal 버퍼, exit 0, 완료 알림, `q` 매핑, 로그상 8단계 모두 `present` / git을 PATH에서 빼고 빈 데이터 폴더로 시작 → `vim.pack` "No git executable" 에러, `:Setup` 있음·`setup_cmd` 있음·`sinbin.terminal` 미로드·mini.starter 없음
+- 사용자 확인 (2026-10-07): 시작 화면에서 `:Setup` 하면 설치 탭에 오른쪽 Terminal도 열림 → `tabnew`의 빈 일반 버퍼가 시작 화면 뒤 첫 파일 진입(BufEnter 1회용, `agent.lua`)으로 처리된 것. scratch 버퍼로 탭을 연 뒤 Terminal로 바꿈 → UI attach `nvim --embed`: 수정 전 탭2 `[terminal:powershell, terminal:bash]` / 수정 후 `[terminal:powershell]`, 이후 탭1에서 파일 열면 오른쪽 Shell 열림 (`:Setup` 없을 때와 같음)
 - 미검증: 실제 화면에서 `:Setup` Terminal 표시(headless는 Terminal 버퍼 내용이 비어 로그로만 확인), Plugin 없는 상태에서 `:Setup` 끝까지 실행
 
 ## 검증 (2026-10-07, 이 PC)
