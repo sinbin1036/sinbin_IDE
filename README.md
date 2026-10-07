@@ -10,7 +10,12 @@ Windows / Linux / macOS / WSL / SSH에서 동일한 조작 방식을 목표로 �
 
 ## 현재 상태
 
-Phase 1 완료 (Core Config, Plugin Manager `vim.pack`), Phase 2 준비. 상세: [docs/PROGRESS.md](docs/PROGRESS.md)
+Phase 0~13 완료, Phase 14 안정화 진행 중. 상세: [docs/PROGRESS.md](docs/PROGRESS.md)
+
+- 편집·검색·파일 탐색, LSP·자동완성, Treesitter 구문 강조, 진단(한국어 혼합 번역)
+- Git(변경 표시·전체 변경 검토·lazygit), Terminal, Run / Test, Debug (C·Python·JS/TS·Dart·Flutter·Java)
+- AI Agent(Claude Code·Codex)를 오른쪽 영역에서 실행, VS Code식 화면 배치, 시작 화면, 설정 패널
+- Windows 설치·업데이트 스크립트 (`setup.ps1`, Neovim 안에서 `:Setup` / `:Setup update`)
 
 ## 주요 기술
 
@@ -26,7 +31,7 @@ cd sinbin_IDE
 powershell -ExecutionPolicy Bypass -File .\setup.ps1
 ```
 
-Neovim·Git·ripgrep·fd, tree-sitter CLI·C compiler·lazygit·Nerd Font, config Junction(`%LOCALAPPDATA%\nvim`), Plugin, Treesitter parser, LSP·디버거(Mason)를 확인하고 없는 것만 설치한다. 언어 Runtime(Python / Node.js / Java)은 물어볼 때 고르거나 `-With python,node`로 지정한 것만 설치한다. `-CheckOnly`는 설치 없이 확인만 한다. 자세한 내용은 [docs/USAGE.md](docs/USAGE.md) "설치".
+Neovim·Git·ripgrep·fd, tree-sitter CLI·C compiler·lazygit·Nerd Font, config Junction(`%LOCALAPPDATA%\nvim`), Plugin, Treesitter parser, LSP·디버거(Mason)를 확인하고 없는 것만 설치한다. 언어 Runtime(Python / Node.js / Java)은 물어볼 때 고르거나 `-With python,node`로 지정한 것만 설치한다. `-CheckOnly`는 설치 없이 확인만 한다. `-Update`(Neovim 안에서 `:Setup update`)는 Plugin·Treesitter parser·LSP/디버거를 새 버전으로 올린다. 자세한 내용은 [docs/USAGE.md](docs/USAGE.md) "설치".
 
 Linux / macOS / WSL (Neovim 0.12+ 필요, macOS는 미검증). `~/.config/nvim`을 symlink로 연결한다:
 
@@ -35,7 +40,7 @@ ln -s "<repository 경로>" ~/.config/nvim
 nvim .
 ```
 
-구문 강조 parser 설치에는 `tree-sitter` CLI와 C compiler가 필요하다 ([docs/USAGE.md](docs/USAGE.md)). Linux / macOS 설치 스크립트는 아직 없음.
+구문 강조 parser 설치에는 `tree-sitter` CLI와 C compiler가 필요하다 ([docs/USAGE.md](docs/USAGE.md)). Linux / macOS 설치 스크립트는 없음 (보류).
 
 ## 문서
 
