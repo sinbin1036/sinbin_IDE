@@ -1,6 +1,6 @@
 # TASK-023: Phase 14 안정화 및 최적화
 
-- **Status:** In Progress (2026-10-07) — 1번 checkhealth 정리 완료, 2번 시작 속도 구현·검증 완료(사용자 확인 대기), 3번 업데이트 구현·검증 완료, 4번 안내 메시지·문서 완료 — 사용자 확인 대기
+- **Status:** Done (2026-10-07) — 4개 항목 완료, 사용자 확인(시작 화면 시간 표시, 디버그·diffview 첫 사용, `:Setup update` 실제 실행 → Plugin 3개 업데이트, lock 커밋)
 - **Goal:** 매일 쓰는 데 거슬리는 부분을 줄인다. 시작을 빠르게, 업데이트를 명령 하나로, checkhealth를 의미 있는 경고만 남게, 도구가 없거나 실패할 때 안내를 분명하게, 문서를 현재 상태에 맞게.
 
 ## Background
@@ -58,7 +58,8 @@
 - `pynvim` UI attach: `<Space>db` → dap·dap-view 로드, breakpoint sign 1개 / `<Space>du` → 디버그 패널 창 / `<Space>gv` → diffview 로드, 탭 페이지 2개, `q` → 1개 / 처음부터 `:DiffviewOpen` → 열림, `:DiffviewClose` → 닫힘
 - Python 실제 디버그(`x = 1; y = x + 2; print(y)`, 2번째 줄 breakpoint): `F5` → 설정 선택 창(mini.pick, 설정 2개) → `<CR>` → session 정지(`stopped_thread_id` 1). 변경 전 `main`에서도 같은 흐름
 - 일반 시작 `nvim --headless +qa` 에러 없음
-- 미검증: 실제 화면에서 시작 화면 아래 시작 시간 표시값, C·Java·Node·Dart 디버그(로드 경로는 같음)
+- 사용자 확인 (2026-10-07): 시작 화면 시간 표시, 디버그 키·`<Space>gv` 첫 사용
+- 미검증: C·Java·Node·Dart 디버그 (로드 경로는 Python과 같음)
 
 ## 3. 업데이트 `:Setup update` / `setup.ps1 -Update` (2026-10-07)
 ### 결정 (사용자, 추천안 선택)
@@ -81,7 +82,7 @@
 - 두 실행 모두 basedpyright·debugpy 실패: `WinError 206 파일 이름이 너무 깁니다` — 시험용 임시 경로가 길어서 Python venv 경로 한도 초과(실제 `%LOCALAPPDATA%\nvim-data`에서는 TASK-021에서 52/52 성공). 실패 표시·요약은 정상 동작
 - 시험이 바꾼 저장소 `nvim-pack-lock.json`은 `git checkout`으로 되돌림 (사용자 실제 Plugin 폴더는 건드리지 않음)
 - `setup_cmd(root, true)` = `powershell ... -File <root>/setup.ps1 -Update`, `:Setup ` 인자 완성 `{ "update" }`, `setup.ps1` 문법 오류 0, UTF-8 BOM 유지
-- 미검증: Neovim 안에서 실제 `:Setup update` 실행 화면(사용자 Plugin이 실제로 업데이트되므로 사용자 확인 때)
+- 사용자 확인 (2026-10-07): Neovim 안에서 `:Setup update` 실행 → gitsigns·nvim-lspconfig·nvim-treesitter 업데이트, 재시작 후 확인, `nvim-pack-lock.json` 커밋
 
 ## 4. 안내 메시지·문서 (2026-10-07)
 ### 점검 (외부 도구가 없을 때)

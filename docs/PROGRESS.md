@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 14 — 안정화 및 최적화 (진행 중)
+- **Current Phase:** Phase 14 — 안정화 및 최적화 (완료, PR 전). 계획된 Phase 모두 완료
 - **Status:** Phase 13 Installer 완료 (Windows `setup.ps1`, PR #19, Linux/macOS 스크립트는 Deferred). 자잘한 개선 TASK-022 (PR #20). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -28,9 +28,10 @@
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
 - Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), PR #19)
 - 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
+- Phase 14 안정화: checkhealth 정리, 시작 속도(디버거·diffview 지연 로드, 약 75ms), `:Setup update`, 안내 메시지·README ([TASK-023](tasks/completed/TASK-023-stabilization.md), branch `feat/stabilization`, PR 전)
 
 ## In Progress
-- Phase 14 안정화 ([TASK-023](tasks/active/TASK-023-stabilization.md), branch `feat/stabilization`): 범위 확정(checkhealth → 시작 속도 → 업데이트 명령(`:Setup update`) → 안내 메시지·문서). 1번 checkhealth 정리 완료(WARNING 17 → 9, 남은 것은 Mason 선택 도구), 2번 시작 속도 완료(디버거·diffview 지연 로드, 상태줄 git 갱신 지연: 같은 부하에서 약 75ms 단축, 남는 `.git/index.lock` 문제 수정), 3번 `:Setup update`(Plugin·parser·Mason 업데이트, 외부 도구 제외, lock 커밋은 안내만) 완료, 4번 안내 메시지·문서(LSP Server 없음 안내, 설치 안내 문구, README 현재 상태) 완료, 사용자 확인 대기
+- 없음
 
 ## Blocked
 - 없음
@@ -44,9 +45,10 @@
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
 - 실제 새 Windows PC에서 `setup.ps1` (TASK-021은 이 PC + 임시 Neovim 데이터 폴더로 검증: Neovim·Git·Runtime winget 설치·UAC, WinLibs gcc PATH, winget 없는 PC 미검증)
 - TASK-022 실제 화면: 강제 종료 확인 창 모양·버튼 색, 빈 편집기 안내 모양, 실제 `claude`·`codex`와 함께 쓸 때 (pynvim UI attach로만 검증)
+- TASK-023 지연 로드 후 C·Java·Node·Dart 디버그 (Python만 확인, 로드 경로는 같음)
 
 ## Remaining Phases
-- **14 안정화 및 최적화** (진행 중)
+- 없음 (Phase 14까지 완료)
 - 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
 
 ## Deferred
@@ -58,7 +60,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-023](tasks/active/TASK-023-stabilization.md) Phase 14 안정화 및 최적화
+없음
 
 ## Next Action
-TASK-023 사용자 확인(시작 화면 시간 표시, 디버그·diffview 첫 사용, `:Setup update` 실제 실행) → 완료 처리·PR (USAGE는 현재 구조 유지, 사용자 결정).
+`feat/stabilization` PR merge (TASK-023). 그다음 계획된 Phase는 없음 → 쓰면서 나오는 개선 / Deferred 항목(빌드 에러 quickfix, 목적별 Mode 전환, Linux/macOS 설치 스크립트 등) 중 선택.
