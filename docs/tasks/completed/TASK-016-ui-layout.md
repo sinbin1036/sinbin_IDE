@@ -1,6 +1,6 @@
 # TASK-016: Phase 11 Custom UI / Layout — VS Code식 기본 배치
 
-- **Status:** Active (2026-10-02) — 1·2·3단계 구현·검증 완료, 사용자 전체 테스트 대기 (2026-10-06)
+- **Status:** Done (2026-10-07) — PR #15 merge, 남은 화면 항목 사용자 확인 완료 (2026-10-07)
 - **Goal:** VS Code와 비슷한 화면 배치(왼쪽 파일 트리, 위쪽 탭, 하단 통합 패널, 오른쪽 Agent, 경로 표시)를 기본으로 만들고, 사용자가 써 보며 커스터마이징할 출발점을 만든다. 조작 키는 기존 Vim 방식(`<Space>` Leader)을 유지한다.
 
 ## Background
@@ -246,6 +246,11 @@ PROJECT 목표 Layout(탐색기 / 코드 / 진단·심볼·Git / 하단 Terminal
 - Keymap 확인: `<M-z>`, `<Space>az` 비어 있음 (n/t/i)
 - 검증: 오른쪽 50열(사용자가 바꾼 폭) → `Alt+z` 160×37 전체 화면(탭 `Terminal`) → `<C-q>` `<Space>ac` → 같은 전체 화면에 탭 `Terminal  Claude Code` → `Alt+z` → 50열로 복귀 / 코드 창에서 `<Space>az` / 전체 화면에서 `Alt+a` → 복귀 + 코드 창 / 화면 120×30 → 120×27로 따라감 / 오른쪽 Terminal 없음 → 동작 없음(알림). checkhealth ERROR 0
 - 구현 중 발견·수정: 전체 화면(float)에서 Agent로 바뀌면 탭 winbar가 사라짐 (floating 창은 winbar 제외) → 전체 화면 창만 예외
+
+### 완료 (2026-10-07)
+- PR #15 merge (`b84b580`, 기능별 15개 commit)
+- 사용자 확인 (2026-10-07, merge 후): Windows Terminal에서 `Alt+z`·`` Alt+` ``·`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P` 동작, 마우스(탭·패널 탭 클릭), Nerd Font·codicon 아이콘 표시 → 미검증 항목 없음
+- 이후 별도 Task: 목적별 Mode 전환 (Deferred), Git Bash에서 `:!` 깨짐 (Phase 12)
 
 ## Steps
 1. Decisions 확인 → 레이아웃 설계 확정 (Q1~Q4, 2026-10-06 완료)
