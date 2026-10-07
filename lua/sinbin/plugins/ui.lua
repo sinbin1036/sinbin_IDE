@@ -35,8 +35,18 @@ require("bufferline").setup({
       return table.concat(parts, " ")
     end,
     show_close_icon = false,
-    -- No tab for directory buffers (`nvim .` shows the folder in mini.files).
-    custom_filter = function(buf) return vim.fn.isdirectory(vim.api.nvim_buf_get_name(buf)) == 0 end,
+    -- No tab for directory buffers (`nvim .` shows the folder in mini.files), nor for
+    -- the empty [No Name] buffer of a new code window (TASK-022): it gets a tab once
+    -- something is typed in it.
+    custom_filter = function(buf)
+      local name = vim.api.nvim_buf_get_name(buf)
+      if name == "" then
+        return vim.bo[buf].modified
+          or vim.api.nvim_buf_line_count(buf) > 1
+          or vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] ~= ""
+      end
+      return vim.fn.isdirectory(name) == 0
+    end,
     always_show_bufferline = true,
     -- Tabs start right of the Outline sidebar.
     offsets = { { filetype = "aerial", text = "Outline", text_align = "left", separator = true } },
