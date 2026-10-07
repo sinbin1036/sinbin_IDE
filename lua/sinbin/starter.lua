@@ -119,7 +119,12 @@ local function items()
     if dir ~= cwd then
       list[#list + 1] = {
         name = ("%d  %s"):format(#list - #ACTIONS + 1, (vim.fn.fnamemodify(dir, ":~"):gsub("\\", "/"))),
-        action = function() vim.fn.chdir(dir) end,
+        -- Into the project: the start screen goes away (an empty code window in its
+        -- place), so its keys (q = quit) no longer apply (TASK-022).
+        action = function()
+          vim.fn.chdir(dir)
+          vim.schedule(function() vim.cmd.enew() end)
+        end,
         section = "Recent Projects",
       }
     end
