@@ -47,7 +47,6 @@ vim.diagnostic.config({
 local map = vim.keymap.set
 
 map("n", "<Leader>ee", vim.diagnostic.open_float, { desc = "Diagnostic under cursor" })
-map("n", "<Leader>eq", vim.diagnostic.setqflist, { desc = "Diagnostics to quickfix" })
 map("n", "<Leader>et", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle diagnostics" })
