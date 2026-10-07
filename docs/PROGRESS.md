@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 12 — Cross-platform Setup (시작 전)
+- **Current Phase:** Phase 12 — Cross-platform Setup (진행 중)
 - **Status:** Phase 11 Custom UI / Layout 완료 (VS Code식 배치·창 이동·VS Code 키, PR #15). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -24,9 +24,10 @@
 - Phase 11 Custom UI / Layout ([TASK-016](tasks/completed/TASK-016-ui-layout.md))
 - Windows 한/영 자동 전환 ([TASK-017](tasks/completed/TASK-017-ime-auto-switch.md))
 - 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
+- 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 
 ## In Progress
-- 설정 패널 ([TASK-019](tasks/active/TASK-019-settings-panel.md)): 구현·검증 완료, 실제 화면 사용자 확인 대기 (branch `feat/settings-panel`)
+- Phase 12 Cross-platform Setup ([TASK-020](tasks/active/TASK-020-cross-platform.md)): 범위·방식 결정, 구현 중 (branch `feat/cross-platform`)
 
 ## Blocked
 - 없음
@@ -36,11 +37,11 @@
 - Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
-- Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 가능 ('shell'=bash, 'shellcmdflag'=`/s /c`, TASK-016 QA에서 발견, Phase 12)
+- Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 (재현됨 2026-10-07, TASK-020에서 수정)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
 ## Remaining Phases
-- **12 Cross-platform Setup** (다음) → 13 Installer / Bootstrap 자동화 → 14 안정화 및 최적화
+- **12 Cross-platform Setup** (진행 중) → 13 Installer / Bootstrap 자동화 → 14 안정화 및 최적화
 - 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
 
 ## Deferred
@@ -51,7 +52,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-019](tasks/active/TASK-019-settings-panel.md) 설정 패널
+[TASK-020](tasks/active/TASK-020-cross-platform.md) Phase 12 Cross-platform Setup
 
 ## Next Action
-TASK-019 사용자 화면 확인 → 완료 처리. 그다음 Phase 12 Cross-platform Setup Task 작성 (TASK-020): PROJECT "남은 Phase 계획" 12번 범위 (Linux / macOS / WSL / SSH Platform Layer: Terminal Shell, `python`, `exe_suffix`, `venv_bin`, Dart/Flutter 경로, clipboard provider, config 연결) + Git Bash에서 Neovim 실행 시 `:!` 깨짐. 한/영 자동 전환은 Windows 전용으로 두고 다른 OS는 범위 판단.
+TASK-020 결정 항목(Git Bash 'shell' 보정, WSL·SSH clipboard 방식, WSL 검증용 Neovim 설치) 사용자 결정 → Windows Git Bash 보정부터 구현 → Linux/WSL → SSH 순으로 구현·검증.

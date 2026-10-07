@@ -1,6 +1,6 @@
 # TASK-019: 설정 패널 (Settings)
 
-- **Status:** In Progress (2026-10-07) — 구현·harness 검증 완료, 실제 화면 사용자 확인 대기
+- **Status:** Done (2026-10-07) — PR #17 merge, 실제 화면 사용자 확인 완료 (2026-10-07)
 - **Goal:** 자주 바꾸는 설정을 코드 수정 없이 가운데 뜨는 패널에서 바꾸고, 다음 실행에도 유지한다.
 
 ## Background
@@ -55,7 +55,7 @@ UI attach한 `nvim --embed -n` RPC:
 - 고급: Plugin·LSP·Treesitter 상태 → `:checkhealth` 새 탭 페이지(ERROR 0), `q`로 닫힘 / 초기화(확인 함수 대체) → 파일 삭제, 기본값, 패널 다시 열림
 - 주의: 시작 시 Agent 확인 중 PATH의 가짜 `claude` 대신 Git Bash가 실제 Claude Code를 실행함 (입력 없이 Neovim 종료와 함께 끝남, 남은 프로세스 없음 확인)
 - 테스트로 만든 `settings.json` 삭제, `projects.txt` 변화 없음
-- **사용자 확인 필요:** 실제 Windows Terminal에서 패널 모양, 배경 투명
+- 사용자 확인 (2026-10-07, merge 후): 실제 Windows Terminal에서 설정 패널 화면 확인 → 미검증 항목 없음
 
 ## Acceptance Criteria
 - `:Settings` / `<Space>,` / 시작 화면 `c`로 패널이 열림
