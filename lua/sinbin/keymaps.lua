@@ -15,3 +15,9 @@ vim.keymap.set("x", "J", ":m '>+1<CR>gv=gv", { silent = true, desc = "Move selec
 vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move selection up" })
 vim.keymap.set("x", "<", "<gv", { desc = "Indent left, keep selection" })
 vim.keymap.set("x", ">", ">gv", { desc = "Indent right, keep selection" })
+
+-- Window moves (TASK-016): Alt+h/j/k/l, also straight out of a terminal, so programs
+-- in it keep Ctrl+h/j/k/l. Windows Terminal binds only Alt+arrows (pane focus).
+for key, dir in pairs({ h = "h", j = "j", k = "k", l = "l" }) do
+  vim.keymap.set({ "n", "t" }, "<M-" .. key .. ">", "<Cmd>wincmd " .. dir .. "<CR>", { desc = "Window " .. dir })
+end
