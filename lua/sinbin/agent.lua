@@ -157,9 +157,19 @@ function M.jump()
 end
 
 --- The right area's plain shell: open / move / hide like the other area keys.
+--- Its tab is named Agent: the right area is the agent area (TASK-022).
 --- @param background? boolean start without taking the cursor
 function M.toggle_shell(background)
-  terminal.toggle(SHELL, "right", { name = "Terminal", cwd = root_dir(), background = background })
+  terminal.toggle(SHELL, "right", { name = "Agent", cwd = root_dir(), background = background })
+end
+
+--- Entering a project from the start screen (TASK-022): the right area's shell starts
+--- again in the new working directory (the old one ends). Agents keep running.
+function M.enter_project()
+  terminal.close(SHELL)
+  if settings.get("startup_terminal") then
+    M.toggle_shell(true)
+  end
 end
 
 --- The right area at startup: shell and / or the default agent (settings panel), the

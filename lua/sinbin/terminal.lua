@@ -218,8 +218,11 @@ function M.toggle(id, kind, opts)
     cmd = exec and exec(opts.cmd) or opts.cmd
   end
   local buf = start(cmd, kind, function(b)
-    -- `exit` in the shell / the program quit: drop the window and buffer.
-    terms[id] = nil
+    -- `exit` in the shell / the program quit: drop the window and buffer. Not the
+    -- entry when M.close() already replaced it with a new terminal of the same id.
+    if terms[id] and terms[id].buf == b then
+      terms[id] = nil
+    end
     close_buffer(b)
   end, opts.cwd, opts.background)
   terms[id] = { buf = buf, kind = kind, name = opts.name or (kind == "float" and "float" or ("Terminal " .. id)) }
@@ -366,6 +369,16 @@ function M.exec(id, cmd, opts)
     vim.cmd.startinsert()
   elseif prev ~= win and vim.api.nvim_win_is_valid(prev) then
     vim.api.nvim_set_current_win(prev)
+  end
+end
+
+--- Ends terminal `id` now (its windows show another terminal of the area or close), so
+--- the same id can start again right away.
+function M.close(id)
+  local term = terms[id]
+  terms[id] = nil
+  if is_alive(term) then
+    close_buffer(term.buf)
   end
 end
 

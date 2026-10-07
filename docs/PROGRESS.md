@@ -26,7 +26,8 @@
 - 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
-- Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), branch `feat/installer`, PR 전)
+- Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), PR #19)
+- 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
 
 ## In Progress
 - 없음
@@ -43,6 +44,7 @@
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
 - 실제 새 Windows PC에서 `setup.ps1` (TASK-021은 이 PC + 임시 Neovim 데이터 폴더로 검증: Neovim·Git·Runtime winget 설치·UAC, WinLibs gcc PATH, winget 없는 PC 미검증)
 - Linux / macOS 설치 스크립트 없음 (helper `nvim_setup.lua`는 재사용 가능)
+- TASK-022 실제 화면: 강제 종료 확인 창 모양·버튼 색, 빈 편집기 안내 모양, 실제 `claude`·`codex`와 함께 쓸 때 (pynvim UI attach로만 검증)
 
 ## Remaining Phases
 - **13 Installer / Bootstrap 자동화** (진행 중) → 14 안정화 및 최적화
@@ -59,4 +61,4 @@
 없음 (Phase 13 남은 범위 결정 대기)
 
 ## Next Action
-`feat/installer` PR 생성·merge (TASK-021). 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
+Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
