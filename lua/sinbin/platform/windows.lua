@@ -1,4 +1,4 @@
--- Platform settings for windows. General setup is implemented in Phase 12 (Cross-platform Setup).
+-- Platform settings for windows.
 
 local M = {}
 
@@ -19,6 +19,13 @@ local function git_bash()
 end
 
 function M.setup(platform)
+  -- Started from Git Bash, Neovim takes 'shell' from $SHELL (bash.exe) but keeps the
+  -- cmd.exe 'shellcmdflag' etc., so :! and system() break ("/s: No such file").
+  -- Use cmd.exe as when started from PowerShell; terminal windows use Git Bash below.
+  if not vim.o.shell:lower():find("cmd") then
+    vim.o.shell = vim.env.COMSPEC or "cmd.exe"
+  end
+
   -- The Flutter SDK ships an extensionless `dart` shell script next to `dart.bat`.
   -- exepath() picks the script, which cannot be spawned on Windows (ENOENT).
   vim.lsp.config("dartls", { cmd = { "dart.bat", "language-server", "--protocol=lsp" } })

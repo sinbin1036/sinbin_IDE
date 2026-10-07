@@ -9,8 +9,16 @@ local parsers = {
   "json", "yaml", "toml",
 }
 
--- Async, and a no-op for parsers that are already installed.
-require("nvim-treesitter").install(parsers)
+-- Async, and a no-op for parsers that are already installed. Without the tree-sitter
+-- CLI every missing parser fails to build on each startup, so warn once instead.
+local installed = require("nvim-treesitter").get_installed("parsers")
+local missing = vim.tbl_filter(function(p) return not vim.list_contains(installed, p) end, parsers)
+if #missing == 0 or vim.fn.executable("tree-sitter") == 1 then
+  require("nvim-treesitter").install(parsers)
+else
+  vim.notify(("tree-sitter CLI 없음: 구문 강조 parser %d개 설치 건너뜀 (%s)"):format(
+    #missing, table.concat(missing, ", ")), vim.log.levels.WARN)
+end
 
 local group = vim.api.nvim_create_augroup("sinbin_treesitter", { clear = true })
 
