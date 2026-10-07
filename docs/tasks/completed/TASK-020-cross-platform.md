@@ -1,6 +1,6 @@
 # TASK-020: Phase 12 Cross-platform Setup
 
-- **Status:** In Progress (2026-10-07) — 구현·검증 완료, 실제 SSH 접속 사용자 확인 대기
+- **Status:** Done (2026-10-07) — PR #18 merge. 실제 SSH 접속은 미검증으로 남김 (PROGRESS Unverified)
 - **Goal:** Windows 밖(Linux / macOS / WSL / SSH)에서도 같은 Config가 에러 없이 켜지고 같은 조작으로 쓰이도록 Platform Layer([D-003](../../DECISIONS.md))를 채운다. Windows의 Git Bash 실행 문제도 고친다.
 
 ## Background

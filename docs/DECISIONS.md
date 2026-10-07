@@ -286,3 +286,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: SSH에서 밖에서 복사한 내용은 터미널 붙여넣기(Ctrl+Shift+V)로. OSC 52를 지원하지 않는 터미널에서는 SSH 복사가 로컬로 안 감. macOS는 미검증
 - Related Task: TASK-020
 - Evidence: WSL Ubuntu 24.04 + Neovim v0.12.5에서 win32yank 양방향 복사, pty(`script`)에서 SSH 모드 `yy` → OSC 52 시퀀스 내용 일치, Git Bash에서 `system('echo hi')` 수정 전후 (2026-10-07)
+
+### D-026: Windows 설치는 `setup.ps1` + winget, 화면은 실제 이벤트로만 갱신, Runtime은 선택 설치
+- Date: 2026-10-07
+- Status: Accepted
+- Context: TASK-021 (Phase 13). 새 Windows PC 최초 설치. 사용자 요구: busy.js 스타일 화면, 이미 있는 항목은 확인만, Runtime 강제 설치 금지, polling·가짜 로그 없이 실제 진행만 표시
+- Decision: 저장소 루트 `setup.ps1`(Windows PowerShell 5.1 호환) → 도구는 winget, Plugin·parser·Mason은 설정된 Neovim을 headless로 실행하는 OS 중립 helper(`scripts/setup/nvim_setup.lua`)가 항목별 이벤트(`@@sinbin|...`)를 출력. 외부 명령은 C# `Process` 래퍼가 출력 줄·종료를 `AutoResetEvent`로 알리고, 메인 루프는 이벤트에 깨어나 화면 갱신(100ms timeout은 spinner 회전만). progress bar는 실제 개수(완료/전체, vim.pack n/N)만. Runtime(Python / Node.js / Java)은 대화형 선택 또는 `-With`로 고른 것만 설치, Mason 패키지는 필요한 Runtime이 있을 때만. 실패해도 끝까지 진행하고 요약
+- Reason: winget은 Windows 10/11 기본 탑재, 패키지 ID 확인됨. winget은 리다이렉트 시 진행률을 출력하지 않아 %를 만들면 가짜가 됨 → winget 항목은 spinner + 실제 출력 줄. helper를 Lua로 두면 Linux/macOS 설치 스크립트가 같은 단계를 재사용
+- Alternatives: Scoop / Chocolatey (추가 설치 필요), Node 스크립트(busy.js 그대로, 하지만 새 PC에 Node 없음), `Register-ObjectEvent` + `Wait-Event`(timeout 최소 1초라 spinner 불가), Runtime 기본 설치
+- Consequences: winget 없는 PC는 설치 단계 실패로 표시 (App Installer 필요). Neovim·Git·Runtime은 UAC 창이 뜰 수 있음. 실행은 `-ExecutionPolicy Bypass`. `.ps1`은 UTF-8 BOM 유지 필요. Flutter는 winget 패키지가 없어 수동 안내만
+- Related Task: TASK-021
+- Evidence: 임시 `XDG_*` 데이터 폴더로 새 설치 52/52 READY 58.8s·재실행 5.4s, 없는 winget ID·Mason 패키지로 실패 표시 확인 (2026-10-07)

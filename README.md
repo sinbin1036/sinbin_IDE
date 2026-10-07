@@ -18,12 +18,15 @@ Neovim (Lua), Git, ripgrep 등 CLI Tool, Terminal 기반 AI Coding Agent
 
 ## 실행 / 개발
 
-Windows (Neovim 0.12+ 필요). 이 Repository를 Neovim config 경로에 Junction으로 연결한다:
+Windows: 저장소를 받은 폴더에서 설치 스크립트를 실행한다 (winget 필요, Windows PowerShell 5.1 이상).
 
 ```powershell
-New-Item -ItemType Junction -Path "$env:LOCALAPPDATA\nvim" -Target "<repository 경로>"
-nvim .
+git clone https://github.com/sinbin1036/sinbin_IDE.git   # Git이 없으면 GitHub에서 ZIP으로 받기
+cd sinbin_IDE
+powershell -ExecutionPolicy Bypass -File .\setup.ps1
 ```
+
+Neovim·Git·ripgrep·fd, tree-sitter CLI·C compiler·lazygit·Nerd Font, config Junction(`%LOCALAPPDATA%\nvim`), Plugin, Treesitter parser, LSP·디버거(Mason)를 확인하고 없는 것만 설치한다. 언어 Runtime(Python / Node.js / Java)은 물어볼 때 고르거나 `-With python,node`로 지정한 것만 설치한다. `-CheckOnly`는 설치 없이 확인만 한다. 자세한 내용은 [docs/USAGE.md](docs/USAGE.md) "설치".
 
 Linux / macOS / WSL (Neovim 0.12+ 필요, macOS는 미검증). `~/.config/nvim`을 symlink로 연결한다:
 
@@ -32,7 +35,7 @@ ln -s "<repository 경로>" ~/.config/nvim
 nvim .
 ```
 
-구문 강조 parser 설치에는 `tree-sitter` CLI와 C compiler가 필요하다 ([docs/USAGE.md](docs/USAGE.md)). 설치 자동화는 Phase 13.
+구문 강조 parser 설치에는 `tree-sitter` CLI와 C compiler가 필요하다 ([docs/USAGE.md](docs/USAGE.md)). Linux / macOS 설치 스크립트는 아직 없음.
 
 ## 문서
 

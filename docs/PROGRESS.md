@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 12 — Cross-platform Setup (진행 중)
+- **Current Phase:** Phase 13 — Installer / Bootstrap 자동화 (진행 중)
 - **Status:** Phase 11 Custom UI / Layout 완료 (VS Code식 배치·창 이동·VS Code 키, PR #15). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -25,9 +25,10 @@
 - Windows 한/영 자동 전환 ([TASK-017](tasks/completed/TASK-017-ime-auto-switch.md))
 - 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
+- Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
 
 ## In Progress
-- Phase 12 Cross-platform Setup ([TASK-020](tasks/active/TASK-020-cross-platform.md)): 구현·검증 완료 (Windows Git Bash, WSL, SSH 모드), 실제 SSH 접속 사용자 확인 대기 (branch `feat/cross-platform`)
+- Phase 13 Windows 설치 스크립트 `setup.ps1` ([TASK-021](tasks/active/TASK-021-installer.md)): 구현·검증 완료 (임시 데이터 폴더로 새 설치 52/52), 실제 터미널 화면·대화형 Runtime 선택 사용자 확인 대기 (branch `feat/installer`)
 
 ## Blocked
 - 없음
@@ -39,10 +40,11 @@
 - WSL의 LSP·Debug(Mason)·ripgrep·lazygit (WSL에 미설치)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
-- lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
+- 실제 새 Windows PC에서 `setup.ps1` (TASK-021은 이 PC + 임시 Neovim 데이터 폴더로 검증: Neovim·Git·Runtime winget 설치·UAC, WinLibs gcc PATH, winget 없는 PC 미검증)
+- Linux / macOS 설치 스크립트 없음 (helper `nvim_setup.lua`는 재사용 가능)
 
 ## Remaining Phases
-- **12 Cross-platform Setup** (진행 중) → 13 Installer / Bootstrap 자동화 → 14 안정화 및 최적화
+- **13 Installer / Bootstrap 자동화** (진행 중) → 14 안정화 및 최적화
 - 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
 
 ## Deferred
@@ -53,7 +55,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-020](tasks/active/TASK-020-cross-platform.md) Phase 12 Cross-platform Setup
+[TASK-021](tasks/active/TASK-021-installer.md) Phase 13 Windows 설치 스크립트
 
 ## Next Action
-TASK-020 실제 SSH 접속 확인(사용자: Windows Terminal에서 SSH로 접속한 nvim에서 `yy` → 내 PC `Ctrl+V`) → 완료 처리·PR. 그다음 Phase 13 Installer / Bootstrap 자동화 Task (TASK-021): PROJECT "남은 Phase 계획" 13번 + config symlink·tree-sitter CLI 설치 ([D-025](DECISIONS.md)).
+TASK-021 사용자 확인(Windows Terminal에서 `setup.ps1` 실행 화면, Runtime 번호 선택) → 완료 처리·PR. 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.

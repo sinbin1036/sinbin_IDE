@@ -6,10 +6,14 @@
 
 Repository Root = Neovim config 디렉터리. Windows에서는 `%LOCALAPPDATA%\nvim` Junction으로 연결 ([D-005](DECISIONS.md)).
 Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하며, 문서 파일은 무시된다.
+`setup.ps1`·`scripts/setup/`은 설치 스크립트로, Neovim이 로드하지 않는다 (helper `nvim_setup.lua`만 설치 중 `luafile`로 실행).
 
 | 경로 | 책임 |
 |---|---|
 | `init.lua` | Neovim 진입점. 시작 시각 기록(`vim.g.sinbin_start`, 시작 화면 표시용) 후 아래 모듈을 순서대로 로드 (keymaps → settings → options → autocmds → commands → diagnostics → platform → plugins → terminal → run → lazygit → agent → ime) |
+| `setup.ps1` | Windows 설치 진입점 ([TASK-021](tasks/active/TASK-021-installer.md)): Preflight → Core tools → Build & helper tools → Language runtimes(선택) → Config link(Junction) → Neovim plugins → Treesitter parsers → Mason. 항목마다 확인 후 없는 것만 winget / helper로 설치, 결과(설치·있음·건너뜀·실패 + 단계)를 모아 요약. 의존 단계는 앞 단계 결과(`$Have`)로 건너뜀. dot-source 시 함수만 정의 |
+| `scripts/setup/ui.ps1`, `proc.ps1` | 설치 화면(busy.js 스타일 gradient·spinner·bar·로고, 한글 폭 계산) / 외부 명령 실행기 (C# `Process` 래퍼: 출력 줄·종료를 queue + `AutoResetEvent`로 알림, 끝은 `Exited` 이벤트 기준) |
+| `scripts/setup/nvim_setup.lua` | 설치용 Neovim headless helper (OS 중립): `SINBIN_SETUP_STEP` = plugins / parsers / mason 단계를 실행하고 항목마다 `@@sinbin\|event\|name\|info` 출력. parser 목록은 `plugins/treesitter.lua` 반환값 |
 | `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap, 창 이동 `Alt+h/j/k/l` [D-019](DECISIONS.md)). Plugin 전용 Keymap은 `plugins/` 영역별 파일 |
 | `lua/sinbin/settings.lua` | 사용자 설정 ([D-024](DECISIONS.md)): 항목 목록(분류·이름·선택지·기본값·바로 적용 함수·적용 시점), 기본값과 다른 값만 `stdpath('data')/sinbin/settings.json`에 저장·읽기(잘못된 값 무시), `get`/`set`/`reset`, 테마 적용(`apply_theme`), 파일 직접 저장 시 다시 읽기(BufWritePost). 각 모듈은 load 시 `get()`으로 읽음 |
 | `lua/sinbin/settings_ui.lua` | 설정 패널: 가운데 floating 창, 분류별 항목·값, `j`/`k`·`<CR>`/`Space`·`h`/`l`·`q`, 고급 항목은 패널을 닫은 뒤 실행. `<Leader>,`(keymaps)·`:Settings`(commands)·시작 화면 `c` |
@@ -34,7 +38,7 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 | `lua/sinbin/platform/windows_ime.lua`, `ime_helper.cs` | Windows IME 도우미: C# 소스를 `csc.exe`로 `stdpath("data")/sinbin/ime-helper.exe`에 빌드·실행, 전경 창이 터미널 프로세스일 때만 한글 → 영어 |
 | `lua/sinbin/statusline.lua` | mini.statusline 내용과 색 ([D-020](DECISIONS.md)), VS Code 상태바 형식: 모드(진한 색) · 브랜치(`*` 변경 있음) · pull/push · 에러/경고 · 작업 폴더 / 실행 중 배지 Run·Debug·Agent · `Ln, Col` · 파일 타입. 저장소 상태(`rev-list`·`branch --show-current`·`status --porcelain`)는 비동기로 읽어 cache, 디버그 중 상태바 전체 주황 |
 | `lua/sinbin/plugins/lsp.lua` | mason.nvim, mini.completion 설정(완성 kind 아이콘, SymbolKind 이름은 원래대로 — aerial 필터·highlight 이름), `vim.lsp.enable()` Server 목록 (nvim-lspconfig 설정 사용, [D-010](DECISIONS.md)), 자동완성 Keymap, LspAttach Keymap |
-| `lua/sinbin/plugins/treesitter.lua` | nvim-treesitter parser 설치 목록, FileType autocmd로 내장 `vim.treesitter.start()`, `PackChanged` 시 `:TSUpdate` ([D-011](DECISIONS.md)). 빠진 parser가 있는데 `tree-sitter` CLI가 없으면 설치 대신 경고 1회 (TASK-020) |
+| `lua/sinbin/plugins/treesitter.lua` | nvim-treesitter parser 설치 목록, FileType autocmd로 내장 `vim.treesitter.start()`, `PackChanged` 시 `:TSUpdate` ([D-011](DECISIONS.md)). 빠진 parser가 있는데 `tree-sitter` CLI가 없으면 설치 대신 경고 1회 (TASK-020). `SINBIN_SETUP` 환경 변수가 있으면 시작 시 설치 안 함, parser 목록을 `return { parsers }` (TASK-021) |
 | `lua/sinbin/plugins/git.lua` | gitsigns.nvim 설정(변경 표시, hunk, inline blame), diffview-plus 설정(전체 변경 검토, 파일 이력, `q` 닫기), `<Leader>g` Keymap, mini.extra git picker ([D-013](DECISIONS.md)) |
 | `lua/sinbin/terminal.lua` | Terminal 창 (`jobstart` `term = true`, [D-014](DECISIONS.md)): 영역마다 창 하나 + winbar 탭(클릭 전환) — **하단 패널**(번호별 Shell, Run, [D-018](DECISIONS.md)) / **오른쪽 영역**(Shell `side`, Agent, [D-020](DECISIONS.md)), floating Shell Terminal, 커서 이동 없이 시작(`background`), 오른쪽 영역 전체 화면(`toggle_zoom`: 오른쪽 열을 닫고 같은 Terminal을 편집 영역 전체 float로, `Alt+z`/`<Leader>az`), 오른쪽 세로 창 프로그램 Terminal(`toggle(id, "right", { cmd })`), 숨겨도 프로세스 유지, `focus`/`send`(입력창에 텍스트 입력), 영역 키 규칙(숨김 → 열기 / 보임 → 이동 / 현재 → 숨김)·하단 패널 전체 `toggle_panel`(`<Leader>tp`, `` Alt+` ``)·Terminal 진입 시 자동 입력 모드 ([D-019](DECISIONS.md)), 명령 실행용 floating(`run_float`)·하단(`exec`/`stop`/`job_running`), `<Leader>tt`/`tf`, Terminal 모드 `<C-q>`. Shell은 `platform.terminal_shell` 또는 'shell' |
 | `lua/sinbin/run.lua` | Run/Build/Test를 **파일 범위**(`<Leader>rr`/`rb`/`xf`, filetype별 명령)와 **프로젝트 범위**(`<Leader>rR`/`rB`/`xx`, 가장 가까운 marker의 프로젝트)로 실행. 파일이 아니면 작업 폴더 기준, 없으면 하위 프로젝트 선택(`vim.ui.select`). `.sinbin/run.json` 덮어쓰기, `terminal.exec("run")` ([D-015](DECISIONS.md)) |

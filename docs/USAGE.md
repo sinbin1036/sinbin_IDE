@@ -234,6 +234,32 @@ ma      현재 위치를 a로 표시
 
 - Leader: `<Space>` / LocalLeader: `\`
 
+## 설치 (Windows, setup.ps1)
+
+새 PC에서 저장소를 받은 뒤 저장소 폴더에서 실행한다. 다시 실행해도 되고, 이미 있는 것은 버전만 확인하고 넘어간다.
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\setup.ps1              # 확인 + 없는 것 설치
+powershell -ExecutionPolicy Bypass -File .\setup.ps1 -With python,node   # Runtime도 설치
+powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly    # 확인만
+```
+
+| 단계 | 내용 |
+|---|---|
+| Core tools | Git(Git Bash 포함), Neovim 0.12+(낮으면 업그레이드), ripgrep, fd |
+| Build & helper tools | tree-sitter CLI, C compiler(gcc / clang, 없으면 WinLibs gcc·gdb), lazygit, JetBrainsMono Nerd Font |
+| Language runtimes | Python, Node.js, Java(JDK 21), Flutter/Dart: **강제 설치 안 함**. 없으면 번호로 고르거나(`-NoPrompt`면 묻지 않음) `-With`로 지정. Flutter는 수동 설치 안내만 |
+| Config link | `%LOCALAPPDATA%\nvim` → 저장소 Junction. 다른 폴더가 있으면 `nvim.backup-<시각>`으로 옮긴 뒤 연결 |
+| Neovim plugins | `vim.pack`이 lock 파일 revision으로 설치 (진행률 bar) |
+| Treesitter parsers | parser 10개 병렬 설치 (tree-sitter CLI·C compiler 없으면 건너뜀) |
+| LSP / Debug (Mason) | clangd 항상, vtsls·js-debug-adapter는 Node.js, basedpyright·ruff·debugpy는 Python, jdtls·java-debug-adapter는 Java가 있을 때만 |
+
+- 화면: ✔ 설치됨 / 이미 설치됨, ─ 건너뜀(이유), ✖ 실패(단계 › 항목 › 작업, 종료 코드, 마지막 출력 몇 줄)
+- 끝에 `SINBIN IDE READY`(실패 0) 또는 `SETUP INCOMPLETE`, 새로 설치·이미 있음·건너뜀·실패 수, 총 소요 시간. 실패가 있으면 종료 코드 1
+- 전체 출력은 `%TEMP%\sinbin-setup-<시각>.log`
+- winget은 진행률(%)을 주지 않으므로 winget 설치 줄은 spinner + winget이 출력한 마지막 줄 + 경과 시간만 보인다. Neovim·Git·Runtime 설치 중 관리자 권한(UAC) 창이 뜰 수 있다
+- 설치 후 PATH는 새 터미널부터 적용된다 (스크립트 안에서는 바로 다시 읽어 사용)
+
 ## 설치된 Plugin
 
 | Plugin | 하는 일 | 설정 위치 |

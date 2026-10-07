@@ -13,6 +13,8 @@
 | `nvim --headless "+verbose map <Space>" "+qa"` | Keymap 충돌 및 정의 위치 확인 | 확인됨 (2026-10-01) |
 | `nvim --headless "+lua io.write(vim.inspect(vim.pack.get(nil,{info=false})))" "+qa"` | `vim.pack` 관리 Plugin 목록·revision 확인 | 확인됨 (2026-10-01) |
 | `nvim --headless "+lua vim.pack.del({'<name>'})" "+qa"` | Plugin을 디스크에서 제거 (목록에서 먼저 지운 뒤) | 확인됨 (2026-10-01) |
+| `powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly` | 설치 스크립트로 도구·Runtime·config link 확인만 (설치 안 함) | 확인됨 (2026-10-07) |
+| `XDG_DATA_HOME=<임시> XDG_STATE_HOME=<임시> XDG_CACHE_HOME=<임시> powershell ... setup.ps1 -NoPrompt` | 쓰던 Neovim 데이터를 건드리지 않고 Plugin·parser·Mason 새 설치 흐름 확인 (Windows Neovim도 `XDG_*`를 따름: `<임시>/nvim-data`) | 확인됨 (2026-10-07) |
 
 주의: Repository 안이 아닌 임시 디렉터리에서 실행하면 열린 파일의 영향 없이 Config만 검증된다.
 주의: `mini.pick` picker는 입력을 기다리며 block되므로 headless에서 실행하지 않는다. picker 화면은 사용자 확인으로 검증.
@@ -23,6 +25,7 @@
 주의: 화면 배치 검증 (2026-10-06 확인)은 자식에서 `nvim_eval_statusline`(tabline/winbar/statusline 실제 표시 문자열)·`winlayout()`·창 크기를 읽는다. 자식에서 `set messagesopt=wait:0,history:500`로 hit-enter prompt를 막고 `:messages`로 에러 확인 (prompt에 걸리면 RPC 요청이 멈춤, `nvim_get_mode().blocking`으로 감지).
 주의: WSL 검증은 Windows 쪽에서 `printf '<명령>' | wsl.exe -d Ubuntu-24.04 -- bash -l`로 실행 (인자로 넘기면 `$변수`가 Windows 쪽 Shell에서 풀림). 실제 TUI 시작은 `script -qfc "nvim ..." /dev/null` pty로 띄우고 `defer_fn`으로 상태를 파일에 기록 후 `qa!` — 이때 `E1568`(DSR 응답 없음)은 pty 때문이라 무시. SSH 모드 OSC 52는 같은 pty 출력에서 `\e]52;c;` 검색 (2026-10-07 확인).
 주의: `mini.notify`는 알림을 다음 event loop에서 추가하므로 같은 명령 안에서 `get_all()`하면 비어 있음 (`+sleep` 뒤에 확인).
+주의: `setup.ps1` 출력을 파일로 받으면 spinner 갱신(`\r`, `ESC[2K`, `ESC[nF`)이 모두 남는다. 최종 화면은 이 세 가지를 재생하는 스크립트로 복원해서 확인 (Python은 `open(..., newline='')`로 읽어야 `\r`이 줄바꿈으로 바뀌지 않음). 실제 터미널 모양은 사용자 확인. 실패 표시는 `. .\setup.ps1`(dot-source, 함수만 정의) 후 없는 winget ID로 `Install-Tool` 호출해 확인 (2026-10-07).
 주의: autocmd 안의 `:checktime`은 안전한 시점까지 미뤄진다 (`:h :checktime`). headless 스크립트 안에서는 실행되지 않으므로 `nvim --embed`를 RPC로 조작해 확인한다.
 
 ## 변경 종류별
