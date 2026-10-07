@@ -156,8 +156,9 @@ end
 -- At startup the right area opens with a plain shell, not an agent (user choice,
 -- TASK-016). Not for git commit messages, diff mode, a Neovim inside a Neovim terminal
 -- (lazygit's editor) or without a UI.
+local group = vim.api.nvim_create_augroup("sinbin_agent", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {
-  group = vim.api.nvim_create_augroup("sinbin_agent", { clear = true }),
+  group = group,
   desc = "Right area shell at startup",
   once = true,
   callback = function()
@@ -165,11 +166,28 @@ vim.api.nvim_create_autocmd("VimEnter", {
     if #vim.api.nvim_list_uis() == 0 or vim.env.NVIM or vim.o.diff or ft == "gitcommit" or ft == "gitrebase" then
       return
     end
-    M.toggle_shell(true)
-    -- The start screen centers its content on the narrower window.
-    if vim.bo.filetype == "ministarter" then
-      MiniStarter.refresh()
+    if ft ~= "ministarter" then
+      M.toggle_shell(true)
+      return
     end
+    -- Not on the start screen (TASK-018): the shell opens with the first file, in its
+    -- project. Skipped if the right area was opened meanwhile (<Leader>ac from the start screen).
+    vim.api.nvim_create_autocmd("BufEnter", {
+      group = group,
+      desc = "Right area shell after the start screen",
+      callback = function()
+        if vim.bo.buftype ~= "" or vim.api.nvim_win_get_config(0).relative ~= "" then
+          return
+        end
+        -- Scheduled: not while the file's window is still being set up.
+        vim.schedule(function()
+          if not require("sinbin.layout").right_win() then
+            M.toggle_shell(true)
+          end
+        end)
+        return true
+      end,
+    })
   end,
 })
 

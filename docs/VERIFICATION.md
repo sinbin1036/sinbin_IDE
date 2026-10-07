@@ -19,6 +19,7 @@
 주의: 외부 CLI를 설치한 직후에는 기존 Shell의 PATH가 갱신되지 않는다. 새 Terminal에서 확인.
 주의: 디버그 검증은 `nvim --embed --headless -n`(UI attach) RPC로 breakpoint → 시작 → 정지 위치 → step → `scopes`/`variables` 요청 → 종료를 확인한다. 끝난 뒤 adapter 프로세스가 남지 않았는지도 확인.
 주의: RPC 조작 client는 임시 venv의 `pynvim` (`python -m venv <임시>/venv` → `pip install pynvim`, 시스템 Python에는 설치 안 함) — `pynvim.attach("child", argv=["nvim","--embed","--headless","-n"])` → `ui_attach`. Neovim을 controller로 `jobstart(rpc)` + `nvim_ui_attach`하면 자식이 바로 종료됨 (redraw 알림 처리 불가, 2026-10-06 확인).
+주의: 시작 시(VimEnter) 동작은 `nvim --embed -n`(`--headless` 없이)으로 확인한다. `--headless`를 붙이면 UI attach 전에 VimEnter가 지나가 `nvim_list_uis()`가 비어 있음 (2026-10-07 확인).
 주의: 화면 배치 검증 (2026-10-06 확인)은 자식에서 `nvim_eval_statusline`(tabline/winbar/statusline 실제 표시 문자열)·`winlayout()`·창 크기를 읽는다. 자식에서 `set messagesopt=wait:0,history:500`로 hit-enter prompt를 막고 `:messages`로 에러 확인 (prompt에 걸리면 RPC 요청이 멈춤, `nvim_get_mode().blocking`으로 감지).
 주의: autocmd 안의 `:checktime`은 안전한 시점까지 미뤄진다 (`:h :checktime`). headless 스크립트 안에서는 실행되지 않으므로 `nvim --embed`를 RPC로 조작해 확인한다.
 

@@ -254,3 +254,13 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Related Task: TASK-017
 - Evidence: 빌드·상태 읽기·전경 프로세스 제한 확인, 실제 전환 사용자 확인 (2026-10-07)
 
+### D-023: 시작 화면은 mini.starter 유지 + content hook 하나로 배치, 최근 프로젝트는 작업 폴더 변경마다 목록 파일에
+- Date: 2026-10-07
+- Status: Accepted
+- Context: TASK-018. 첫 화면을 SINBIN 대형 로고(gradient) + 미니멀 런처로. 최근 프로젝트 3~5개를 숫자 키로
+- Decision: Plugin 추가 없이 mini.starter의 item·query·키 처리를 그대로 쓰고, header/footer는 비우고 content hook 하나가 전체 배치(로고 글자마다 unit + 열별 highlight, Actions 2열, 가운데 정렬)를 만든다. 최근 프로젝트는 시작 폴더와 전역 `DirChanged`를 `stdpath('data')/sinbin/projects.txt`에 기록 (사용자 B안)
+- Reason: D-009(mini 계열 기본 UI) 유지, 새 Plugin 불필요. B안은 파일을 열지 않은 프로젝트도 남음 (A안 `v:oldfiles`에서 git root 추출은 파일을 연 적 있어야 함)
+- Alternatives: snacks.nvim dashboard / alpha-nvim / dashboard-nvim (Plugin 추가), 직접 만든 버퍼(키 처리 재구현), 최근 프로젝트 A안(`v:oldfiles`)
+- Consequences: 목록 파일은 저장소 밖. 시작 화면에서 프로젝트를 고르면 작업 폴더만 바뀜 (이미 열린 오른쪽 영역 Terminal은 원래 폴더). Action 키는 Keymap을 따라가므로 Keymap을 바꾸면 자동 반영. 시작 화면에서는 오른쪽 영역 Shell을 열지 않고 첫 파일을 열 때 엶 (사용자 요청, [D-020](#d-020-상태바는-vs-code식-색-구역--pullpush-오른쪽-영역은-탭-창-하나로-시작-시-일반-terminal)의 시작 시 Shell 보완)
+- Related Task: TASK-018
+- Evidence: UI attach한 `nvim --embed` RPC로 화면 내용·highlight·키 동작 확인 (2026-10-07)

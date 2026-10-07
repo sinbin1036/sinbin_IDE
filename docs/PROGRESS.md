@@ -23,6 +23,7 @@
 - Phase 10 AI Coding Agent Integration ([TASK-015](tasks/completed/TASK-015-ai-agent.md))
 - Phase 11 Custom UI / Layout ([TASK-016](tasks/completed/TASK-016-ui-layout.md))
 - Windows 한/영 자동 전환 ([TASK-017](tasks/completed/TASK-017-ime-auto-switch.md))
+- 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
 
 ## In Progress
 - 없음
@@ -31,6 +32,7 @@
 - 없음
 
 ## Unverified
+- 시작 화면 실제 Windows Terminal 표시 (gradient 색·블록 글자·시작 시간, TASK-018은 harness 검증만)
 - Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
@@ -49,7 +51,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-없음 — 다음은 Phase 12 Task 작성
+없음 — 다음은 TASK-019 설정 패널
 
 ## Next Action
-Phase 12 Cross-platform Setup Task 작성 (TASK-018): PROJECT "남은 Phase 계획" 12번 범위 (Linux / macOS / WSL / SSH Platform Layer: Terminal Shell, `python`, `exe_suffix`, `venv_bin`, Dart/Flutter 경로, clipboard provider, config 연결) + Git Bash에서 Neovim 실행 시 `:!` 깨짐. 한/영 자동 전환은 Windows 전용으로 두고 다른 OS는 범위 판단.
+설정 패널 TASK-019 (시작 화면 `c`, `:Settings`, `<Space>,`, `settings.json` 저장). 그다음 Phase 12 Cross-platform Setup Task 작성 (TASK-020): PROJECT "남은 Phase 계획" 12번 범위 (Linux / macOS / WSL / SSH Platform Layer: Terminal Shell, `python`, `exe_suffix`, `venv_bin`, Dart/Flutter 경로, clipboard provider, config 연결) + Git Bash에서 Neovim 실행 시 `:!` 깨짐. 한/영 자동 전환은 Windows 전용으로 두고 다른 OS는 범위 판단.
