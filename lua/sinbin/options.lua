@@ -41,3 +41,6 @@ opt.breakindent = true
 
 -- Live preview of :substitute in a split
 opt.inccommand = "split"
+
+-- One statusline for the whole screen, like VS Code (TASK-016)
+opt.laststatus = 3
