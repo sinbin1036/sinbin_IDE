@@ -132,10 +132,12 @@ local function refresh(force)
   end)
 end
 
+-- Deferred (timer): starting the git processes takes about 20ms on Windows, which would
+-- otherwise delay the first screen and every buffer switch (TASK-023).
 vim.api.nvim_create_autocmd({ "VimEnter", "BufEnter", "DirChanged", "BufWritePost", "CursorHold" }, {
   group = group,
   desc = "Statusline repository state",
-  callback = function() refresh(false) end,
+  callback = function() vim.defer_fn(function() refresh(false) end, 0) end,
 })
 -- Commits, pulls and pushes happen in a terminal (lazygit, shell), `:!git` or outside
 -- Neovim: read again right away.
@@ -196,8 +198,9 @@ local GAP = "   "
 
 function M.active()
   local mode, mode_hl = MiniStatusline.section_mode({ trunc_width = 120 })
-  local ok, dap = pcall(require, "dap")
-  local session = ok and dap.session() or nil
+  -- Only once the debugger is loaded (it loads on the first debug key, TASK-023).
+  local dap = package.loaded["dap"]
+  local session = dap and dap.session() or nil
   local D = session and "D" or ""
   local bar = "%#SinbinStlBar" .. D .. "#"
 

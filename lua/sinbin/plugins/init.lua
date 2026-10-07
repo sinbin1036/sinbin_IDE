@@ -67,6 +67,16 @@ vim.pack.add({
 
   -- Colorscheme: soft neon dark (tokyonight-moon), user choice.
   { src = "https://github.com/folke/tokyonight.nvim" },
+}, {
+  -- vim.pack has no lazy loading (D-007). These are packadd-ed on first use instead
+  -- (plugins/debug.lua, plugins/git.lua) to keep them out of the startup time
+  -- (TASK-023); the rest load as by default during startup (packadd!).
+  load = function(plug)
+    local lazy = { ["nvim-dap"] = true, ["nvim-dap-view"] = true, ["diffview-plus.nvim"] = true }
+    if not lazy[plug.spec.name] then
+      vim.cmd.packadd({ plug.spec.name, bang = true })
+    end
+  end,
 })
 
 -- UI first: colorscheme and icons must exist before other modules draw.

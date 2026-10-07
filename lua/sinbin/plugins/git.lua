@@ -30,15 +30,30 @@ gitsigns.setup({
   end,
 })
 
--- `q` closes diffview from any of its windows (no default close key).
-local close = { "n", "q", "<Cmd>DiffviewClose<CR>", { desc = "Close diffview" } }
-require("diffview").setup({
-  keymaps = {
-    view = { close },
-    file_panel = { close },
-    file_history_panel = { close },
-  },
-})
+-- diffview loads on first use, not at startup (TASK-023, plugins/init.lua).
+local function load_diffview()
+  if package.loaded["diffview"] then
+    return
+  end
+  vim.cmd.packadd("diffview-plus.nvim")
+  -- `q` closes diffview from any of its windows (no default close key).
+  local close = { "n", "q", "<Cmd>DiffviewClose<CR>", { desc = "Close diffview" } }
+  require("diffview").setup({
+    keymaps = {
+      view = { close },
+      file_panel = { close },
+      file_history_panel = { close },
+    },
+  })
+end
+-- Typed :Diffview* commands before the first load: load, then run the real command
+-- (diffview's own plugin file replaces these).
+for _, name in ipairs({ "DiffviewOpen", "DiffviewFileHistory", "DiffviewClose", "DiffviewToggle" }) do
+  vim.api.nvim_create_user_command(name, function(ctx)
+    load_diffview()
+    vim.cmd(name .. " " .. ctx.args)
+  end, { nargs = "*", desc = "diffview (loads it first)" })
+end
 
 -- Check before opening diffview, which otherwise reports these cases with an English error.
 local function notify(msg)
@@ -71,6 +86,7 @@ end
 
 local map = vim.keymap.set
 map("n", "<Leader>gv", function()
+  load_diffview()
   if require("diffview.lib").get_current_view() then
     vim.cmd("DiffviewClose")
   elseif git_root(false) then
@@ -79,6 +95,7 @@ map("n", "<Leader>gv", function()
 end, { desc = "Review all changes" })
 map("n", "<Leader>gl", function()
   if git_root(true) then
+    load_diffview()
     vim.cmd("DiffviewFileHistory %")
   end
 end, { desc = "Current file history" })
