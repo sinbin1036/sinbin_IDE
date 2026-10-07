@@ -546,7 +546,8 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | 작업 | 방법 |
 |---|---|
 | 목록·설치 화면 | `:Mason` (`i` 설치, `X` 제거, `U` 업데이트, `g?` 도움말) |
-| 명령으로 설치 | `:MasonInstall vtsls basedpyright ruff clangd jdtls` (새 장비에서 1회) |
+| 명령으로 설치 | `:MasonInstall vtsls basedpyright ruff clangd jdtls` (새 장비에서 1회, `:Setup`도 설치함) |
+| 업데이트 | `:Setup update` (Plugin·parser와 함께) 또는 `:Mason`에서 `U` |
 
 | 언어 | Server | 비고 |
 |---|---|---|
@@ -556,6 +557,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 | Dart / Flutter | dart language-server | Flutter SDK에 포함, 설치 불필요 |
 | C | clangd | |
 
+- 파일을 열었는데 그 언어의 Server가 설치되어 있지 않으면 한 번 알려 준다 (예: `Python 언어 서버(basedpyright) 없음 … 설치: :MasonInstall basedpyright 또는 :Setup`). 없으면 자동완성·진단·정의 이동이 동작하지 않는다.
 - 새 언어를 추가하려면 `:MasonInstall <이름>` 후 `lua/sinbin/plugins/lsp.lua`의 `vim.lsp.enable({ ... })`에 이름 추가.
 
 ## 구문 강조 (Treesitter)
@@ -769,7 +771,7 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 
 | 언어 | 디버그 방식 (`F5` 목록) | 필요한 것 |
 |---|---|---|
-| C | 현재 파일 (`gcc -g`로 컴파일 후 gdb) / 실행 파일 지정 | MSYS2 gdb (설치됨) |
+| C | 현재 파일 (`gcc -g`로 컴파일 후 gdb) / 실행 파일 지정 | gcc·gdb (`:Setup`이 없으면 WinLibs 설치) |
 | Python | 현재 파일 / pytest 현재 파일 | `:MasonInstall debugpy` |
 | JavaScript / TypeScript | 현재 파일 (Node, TS는 Node 22 TS 실행) / 실행 중인 node 프로세스에 attach | `:MasonInstall js-debug-adapter` |
 | Dart | 현재 파일 | Dart/Flutter SDK |
@@ -798,6 +800,7 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 - Agent는 현재 파일의 git 저장소 루트에서 시작한다 (없으면 작업 폴더).
 - Agent가 파일을 고치면 열린 버퍼가 자동으로 다시 읽힌다. 바뀐 내용은 `<Space>gv`(전체 변경 검토), `]h` / `<Space>gp`(변경 묶음)로 본다.
 - Codex는 폴더를 처음 열 때 "Trust this folder?" 확인이 나온다.
+- 설치(Node.js 필요): Claude Code `npm install -g @anthropic-ai/claude-code`, Codex `npm install -g @openai/codex`. 없을 때 키를 누르면 이 명령을 알려 준다.
 
 ## 설정 패널
 

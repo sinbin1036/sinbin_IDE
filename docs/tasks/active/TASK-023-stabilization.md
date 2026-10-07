@@ -1,6 +1,6 @@
 # TASK-023: Phase 14 안정화 및 최적화
 
-- **Status:** In Progress (2026-10-07) — 1번 checkhealth 정리 완료, 2번 시작 속도 구현·검증 완료(사용자 확인 대기), 3번 업데이트 구현·검증 완료, 4번 안내 메시지·문서 전
+- **Status:** In Progress (2026-10-07) — 1번 checkhealth 정리 완료, 2번 시작 속도 구현·검증 완료(사용자 확인 대기), 3번 업데이트 구현·검증 완료, 4번 안내 메시지·문서 완료 — 사용자 확인 대기
 - **Goal:** 매일 쓰는 데 거슬리는 부분을 줄인다. 시작을 빠르게, 업데이트를 명령 하나로, checkhealth를 의미 있는 경고만 남게, 도구가 없거나 실패할 때 안내를 분명하게, 문서를 현재 상태에 맞게.
 
 ## Background
@@ -83,5 +83,21 @@
 - `setup_cmd(root, true)` = `powershell ... -File <root>/setup.ps1 -Update`, `:Setup ` 인자 완성 `{ "update" }`, `setup.ps1` 문법 오류 0, UTF-8 BOM 유지
 - 미검증: Neovim 안에서 실제 `:Setup update` 실행 화면(사용자 Plugin이 실제로 업데이트되므로 사용자 확인 때)
 
+## 4. 안내 메시지·문서 (2026-10-07)
+### 점검 (외부 도구가 없을 때)
+- 이미 안내 있음: tree-sitter CLI(시작 시 경고), Agent CLI, lazygit, git 저장소 아님·커밋 이력 없음(diffview), 디버그 adapter 없음(F5), Run 명령 없음, 한/영 전환 도우미 빌드 실패
+- 안내 없음 → 추가: **LSP Server 미설치**. `vim.lsp`는 실행 파일이 없으면 Server를 시작하지 않고 자체 로그에만 남김 → 자동완성·진단이 왜 안 되는지 알 수 없음
+- ripgrep·fd 없음: mini.pick이 git / 기본 도구로 대체해 동작 → 안내 추가 안 함
+### 변경
+- `plugins/lsp.lua`: FileType마다 그 filetype을 담당하는 Server의 실행 파일(`vim.lsp.config[name].cmd[1]`, jdtls는 cmd가 함수라 `jdtls`)이 없으면 Server마다 한 번 `Python 언어 서버(basedpyright) 없음: 자동완성·진단·이동 꺼짐. 설치: :MasonInstall basedpyright (Python 필요) 또는 :Setup`. OS 분기 없음 (dartls 실행 파일은 Platform Layer가 정한 cmd)
+- 문구 고침: Agent CLI 없음 → 실제 설치 명령(`npm install -g @anthropic-ai/claude-code` / `@openai/codex`, Node.js 필요). lazygit 없음 → 영어 문구를 한국어로, 설치 방법(Windows `:Setup`, Linux/macOS 패키지 관리자). tree-sitter CLI 없음 → `설치: :Setup` 추가. C 디버그 gdb 없음 → `MSYS2 gdb 설치 필요`(지금은 WinLibs) 대신 `설치: :Setup (WinLibs gcc·gdb)`. 오른쪽 영역 비었을 때 → `<Space>at Terminal` 대신 `<Space>at Agent Shell`(TASK-022 탭 이름)
+- README "현재 상태": "Phase 1 완료, Phase 2 준비" → Phase 0~13 완료·Phase 14 진행 중 + 주요 기능 4줄, 설치 절에 `-Update`, Linux/macOS 스크립트 "보류"
+- USAGE: C 디버그 필요한 것(MSYS2 → gcc·gdb, `:Setup`), Mason 절에 업데이트 행·`:Setup` 언급·Server 없을 때 안내, AI Agent 절에 설치 명령
+- 하지 않음: USAGE 전체 재구성(약 880줄, 튜토리얼 + 기능별 참고). 사용자 결정(2026-10-07): 틀린 내용만 고치고 지금 구조 유지 (튜토리얼 분리 안 함)
+### 검증
+- Server 없음 흉내(`vim.fn.executable`을 basedpyright-langserver·jdtls에 0 반환하도록 바꿔 시작): `.py` → Python 안내, `.java` → Java 안내, `.dart` → 안내 없음(dart.bat 있음) / 같은 파일을 여러 번 열어도 Server마다 1번(알림 2개) / 실제 환경(모두 설치)에서는 `.py`·`.java` 안내 없음
+- CLI 없음 흉내(claude·codex·lazygit): `Claude Code 없음 (설치: npm install -g @anthropic-ai/claude-code, Node.js 필요)`, `Codex 없음 (설치: npm install -g @openai/codex, Node.js 필요)`, lazygit 안내
+- 일반 시작 `nvim --headless +qa` 에러 없음
+
 ## Related Files
-`lua/sinbin/options.lua`, `lua/sinbin/plugins/{lsp,init,debug,debug_config,git}.lua`, `lua/sinbin/statusline.lua`, `lua/sinbin/files_git.lua`, `setup.ps1`, `scripts/setup/nvim_setup.lua`, `lua/sinbin/{setup,commands}.lua`, `lua/sinbin/platform/windows.lua`, `docs/VERIFICATION.md`
+`lua/sinbin/options.lua`, `lua/sinbin/plugins/{lsp,init,debug,debug_config,git}.lua`, `lua/sinbin/statusline.lua`, `lua/sinbin/files_git.lua`, `setup.ps1`, `scripts/setup/nvim_setup.lua`, `lua/sinbin/{setup,commands}.lua`, `lua/sinbin/platform/windows.lua`, `lua/sinbin/{agent,lazygit,terminal}.lua`, `lua/sinbin/plugins/treesitter.lua`, `README.md`, `docs/USAGE.md`, `docs/VERIFICATION.md`

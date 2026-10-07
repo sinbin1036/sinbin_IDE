@@ -30,7 +30,7 @@
 - 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
 
 ## In Progress
-- Phase 14 안정화 ([TASK-023](tasks/active/TASK-023-stabilization.md), branch `feat/stabilization`): 범위 확정(checkhealth → 시작 속도 → 업데이트 명령(`:Setup update`) → 안내 메시지·문서). 1번 checkhealth 정리 완료(WARNING 17 → 9, 남은 것은 Mason 선택 도구), 2번 시작 속도 완료(디버거·diffview 지연 로드, 상태줄 git 갱신 지연: 같은 부하에서 약 75ms 단축, 남는 `.git/index.lock` 문제 수정), 3번 `:Setup update`(Plugin·parser·Mason 업데이트, 외부 도구 제외, lock 커밋은 안내만) 완료, 사용자 확인 대기
+- Phase 14 안정화 ([TASK-023](tasks/active/TASK-023-stabilization.md), branch `feat/stabilization`): 범위 확정(checkhealth → 시작 속도 → 업데이트 명령(`:Setup update`) → 안내 메시지·문서). 1번 checkhealth 정리 완료(WARNING 17 → 9, 남은 것은 Mason 선택 도구), 2번 시작 속도 완료(디버거·diffview 지연 로드, 상태줄 git 갱신 지연: 같은 부하에서 약 75ms 단축, 남는 `.git/index.lock` 문제 수정), 3번 `:Setup update`(Plugin·parser·Mason 업데이트, 외부 도구 제외, lock 커밋은 안내만) 완료, 4번 안내 메시지·문서(LSP Server 없음 안내, 설치 안내 문구, README 현재 상태) 완료, 사용자 확인 대기
 
 ## Blocked
 - 없음
@@ -61,4 +61,4 @@
 [TASK-023](tasks/active/TASK-023-stabilization.md) Phase 14 안정화 및 최적화
 
 ## Next Action
-TASK-023 사용자 확인(시작 화면 시간 표시, 디버그·diffview 첫 사용, `:Setup update` 실제 실행) → 4번 안내 메시지·문서(README 현재 상태, USAGE 정리, 도구 없을 때 안내 점검).
+TASK-023 사용자 확인(시작 화면 시간 표시, 디버그·diffview 첫 사용, `:Setup update` 실제 실행) → 완료 처리·PR (USAGE는 현재 구조 유지, 사용자 결정).
