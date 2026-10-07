@@ -27,7 +27,7 @@
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
 - Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), PR #19)
-- 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), branch `feat/small-tweaks`, PR 전)
+- 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
 
 ## In Progress
 - 없음
@@ -61,4 +61,4 @@
 없음 (Phase 13 남은 범위 결정 대기)
 
 ## Next Action
-`feat/small-tweaks` PR merge (TASK-022). 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
+Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
