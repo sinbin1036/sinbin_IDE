@@ -3,7 +3,7 @@
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
 - **Current Phase:** Phase 11 — Custom UI / Layout
-- **Status:** Phase 10 AI Agent 완료 (Claude Code·Codex 오른쪽 창, `Alt+a` 왕복). 설치된 Plugin 19개 ([D-009](DECISIONS.md)~[D-017](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
+- **Status:** Phase 10 AI Agent 완료 (Claude Code·Codex 오른쪽 창, `Alt+a` 왕복). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
 - Project 정의 ([TASK-001](tasks/completed/TASK-001-define-project.md))
@@ -23,7 +23,8 @@
 - Phase 10 AI Coding Agent Integration ([TASK-015](tasks/completed/TASK-015-ai-agent.md))
 
 ## In Progress
-- [TASK-016](tasks/active/TASK-016-ui-layout.md): Task 작성·Decisions 확정(추천안) 완료. 구현은 다음 세션 (1단계부터)
+- [TASK-016](tasks/active/TASK-016-ui-layout.md): **1·2·3단계 구현·검증·QA 완료, 사용자 피드백 1차 반영(상태바 색 구역·pull/push, 시작 시 오른쪽 Terminal, [D-020](DECISIONS.md)), 사용자 테스트 중** ([D-018](DECISIONS.md), [D-019](DECISIONS.md)). 1단계 배치(bufferline 탭, winbar 경로, 하단 패널 탭, 상태바, Outline·Files, Git 표시, 명령 팔레트) / 2단계 창 이동(열기·이동·숨기기 규칙, Terminal 자동 입력, `Alt+h/j/k/l`) / 3단계 VS Code 키(`Ctrl+P`, `Ctrl+B`, `` Ctrl+` ``)
+- [TASK-017](tasks/active/TASK-017-ime-auto-switch.md): Windows 한/영 자동 전환 구현·검증(빌드·상태 읽기), 실제 전환 사용자 확인 대기 ([D-022](DECISIONS.md))
 
 ## Blocked
 - 없음
@@ -32,6 +33,7 @@
 - Linux / macOS / WSL / SSH 환경 (Platform 감지 분기 포함)
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
+- Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 가능 ('shell'=bash, 'shellcmdflag'=`/s /c`, TASK-016 QA에서 발견, Phase 12)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
 ## Remaining Phases
@@ -46,7 +48,8 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-016](tasks/active/TASK-016-ui-layout.md) — VS Code식 기본 배치 (트리·탭·하단 패널·Agent·경로) + 창 이동 체계
+- [TASK-016](tasks/active/TASK-016-ui-layout.md) — VS Code식 기본 배치 + 창 이동 체계 (구현 완료, 사용자 테스트 중)
+- [TASK-017](tasks/active/TASK-017-ime-auto-switch.md) — Windows 한/영 자동 전환 (구현 완료, 실제 전환 사용자 확인 대기)
 
 ## Next Action
-TASK-016 1단계 구현 시작 — 문서의 "다음 세션 시작 지점" 순서대로: nvim-tree·mini.tabline 추가 → mini.files 제거·기능 이전 → 하단 영역 공통화 → winbar 경로·명령 팔레트 → 시작 시 트리 자동 열기 → 검증 → 사용자 화면 확인. 브랜치 `feat/ui-layout`.
+사용자 테스트: TASK-017 실제 한/영 전환(Agent에서 한글 → `Alt+a`로 코드 창 → 영어로), TASK-016 남은 항목(`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P`·`` Alt+` `` 전달, 마우스, 아이콘). 문제 없으면 TASK-016·017 완료 처리 → 커밋·PR (브랜치 `feat/ui-layout`, 미커밋).
