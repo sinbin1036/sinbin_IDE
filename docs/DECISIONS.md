@@ -264,3 +264,14 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Consequences: 목록 파일은 저장소 밖. 시작 화면에서 프로젝트를 고르면 작업 폴더만 바뀜 (이미 열린 오른쪽 영역 Terminal은 원래 폴더). Action 키는 Keymap을 따라가므로 Keymap을 바꾸면 자동 반영. 시작 화면에서는 오른쪽 영역 Shell을 열지 않고 첫 파일을 열 때 엶 (사용자 요청, [D-020](#d-020-상태바는-vs-code식-색-구역--pullpush-오른쪽-영역은-탭-창-하나로-시작-시-일반-terminal)의 시작 시 Shell 보완)
 - Related Task: TASK-018
 - Evidence: UI attach한 `nvim --embed` RPC로 화면 내용·highlight·키 동작 확인 (2026-10-07)
+
+### D-024: 설정 패널은 자체 floating 창 + 저장소 밖 settings.json (기본값과 다른 값만)
+- Date: 2026-10-07
+- Status: Accepted
+- Context: TASK-019. 자주 바꾸는 설정(테마, 줄 번호, 들여쓰기, 시작 시 Terminal/Agent 등)을 코드 수정 없이 바꾸고 유지
+- Decision: `lua/sinbin/settings.lua` 한 곳에 항목 정의(기본값·선택지·바로 적용 함수)를 두고, 바뀐 값만 `stdpath('data')/sinbin/settings.json`에 저장. 각 모듈은 load 시 `settings.get()`으로 읽고, 패널(`settings_ui.lua`)은 `set()` → 저장 + 적용. 열기: 시작 화면 `c`, `:Settings`, `<Leader>,`. 배경 이미지(Windows Terminal 영역)·Agent 패널 위치(D-018·D-020 배치 전제)는 제외
+- Reason: 사용자 선택 (설정 패널 방식, 저장소 밖 저장). Plugin 없이 구현 가능, 기본값이 코드에 남아 새 장비·초기화가 단순. Outline "자동 따라가기"는 aerial이 항상 코드 커서를 따라가므로 끌 수 없어, 반대 방향 `autojump`로
+- Alternatives: 주석 달린 설정 파일 하나를 직접 편집 (사용자 B안, 값 직접 입력), 저장소 안 저장 (장비 간 공유되나 바꿀 때마다 git 변경)
+- Consequences: 설정은 장비마다 따로 (Phase 13 설치 시 기본값). 들여쓰기는 전역 값만 바꾸므로 이미 연 파일·filetype 설정에는 적용 안 됨. 시작 관련 항목은 재시작 후. 새 설정 항목은 `settings.list`에 추가하고 해당 모듈에서 `get()`
+- Related Task: TASK-019
+- Evidence: UI attach한 `nvim --embed` RPC로 패널 조작·저장·재시작 유지·깨진 JSON·시작 시 Terminal/Agent 확인 (2026-10-07)
