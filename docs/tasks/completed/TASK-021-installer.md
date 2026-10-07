@@ -1,6 +1,6 @@
 # TASK-021: Phase 13 Installer — Windows `setup.ps1`
 
-- **Status:** In Progress (2026-10-07) — 구현·검증 완료, 실제 터미널 화면·대화형 Runtime 선택 사용자 확인 대기
+- **Status:** Done (2026-10-07) — 구현·검증 완료, 실제 Windows Terminal 화면·대화형 Runtime 선택 사용자 확인. 새 PC 설치(UAC·WinLibs PATH·winget 없음)는 미검증으로 남김 (PROGRESS Unverified)
 - **Goal:** 새 Windows PC에서 저장소를 받은 뒤 `setup.ps1` 하나로 sinbin_IDE 설치를 끝낸다. 설치 과정은 busy.js 스타일(RGB gradient, spinner, progress bar)로 보여주되, 화면에는 실제 설치 상태만 표시한다.
 
 ## Background
@@ -91,7 +91,8 @@
 - 실패 표시 (dot-source 후 없는 winget ID `Sinbin.DoesNotExist`, Mason 없는 패키지): `✖ bogus failed winget install 실패 (exit 0x8A150014)` + winget 실제 출력 줄, Mason 그룹 `✖ not-a-package not in Mason registry`, 요약 `SETUP INCOMPLETE`·실패 목록(단계 › 항목 › 작업)·로그 경로
 - 화면 갱신: 출력 파일의 `\r`/`ESC[2K`/`ESC[nF`를 재생해 최종 화면 확인. winget 줄은 winget 출력 줄이 올 때마다 문구 변경, 그룹 줄은 helper 이벤트마다 행 상태 변경
 - 일반 시작 `nvim --headless +qa` 에러 없음, `require('sinbin.plugins.treesitter').parsers` = 10개
-- **미검증 (사용자 확인 필요):** 실제 Windows Terminal에서 화면 모양(gradient·spinner·제자리 갱신·로고 배치), 대화형 Runtime 번호 선택, Runtime winget 설치(이 PC에 모두 있음), 새 PC에서 Neovim·Git winget 설치(UAC), WinLibs 설치 후 gcc PATH, config link 백업 경로, winget 없는 PC
+- 사용자 확인 (2026-10-07): 실제 Windows Terminal에서 `setup.ps1` 화면(gradient·spinner·제자리 갱신·로고 배치), 대화형 Runtime 번호 선택 문제 없음
+- **미검증:** Runtime winget 설치(이 PC에 모두 있음), 새 PC에서 Neovim·Git winget 설치(UAC), WinLibs 설치 후 gcc PATH, config link 백업 경로, winget 없는 PC
 
 ## Acceptance Criteria
 - 새 PC 흐름: 저장소 받기 → `setup.ps1` → `nvim` 실행 시 Plugin·parser·LSP 준비됨

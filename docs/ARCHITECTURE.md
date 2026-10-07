@@ -11,7 +11,7 @@ Neovim은 Root의 `init.lua`(및 이후 `lua/` 등 runtime 경로)만 로드하�
 | 경로 | 책임 |
 |---|---|
 | `init.lua` | Neovim 진입점. 시작 시각 기록(`vim.g.sinbin_start`, 시작 화면 표시용) 후 아래 모듈을 순서대로 로드 (keymaps → settings → options → autocmds → commands → diagnostics → platform → plugins → terminal → run → lazygit → agent → ime) |
-| `setup.ps1` | Windows 설치 진입점 ([TASK-021](tasks/active/TASK-021-installer.md)): Preflight → Core tools → Build & helper tools → Language runtimes(선택) → Config link(Junction) → Neovim plugins → Treesitter parsers → Mason. 항목마다 확인 후 없는 것만 winget / helper로 설치, 결과(설치·있음·건너뜀·실패 + 단계)를 모아 요약. 의존 단계는 앞 단계 결과(`$Have`)로 건너뜀. dot-source 시 함수만 정의 |
+| `setup.ps1` | Windows 설치 진입점 ([TASK-021](tasks/completed/TASK-021-installer.md)): Preflight → Core tools → Build & helper tools → Language runtimes(선택) → Config link(Junction) → Neovim plugins → Treesitter parsers → Mason. 항목마다 확인 후 없는 것만 winget / helper로 설치, 결과(설치·있음·건너뜀·실패 + 단계)를 모아 요약. 의존 단계는 앞 단계 결과(`$Have`)로 건너뜀. dot-source 시 함수만 정의 |
 | `scripts/setup/ui.ps1`, `proc.ps1` | 설치 화면(busy.js 스타일 gradient·spinner·bar·로고, 한글 폭 계산) / 외부 명령 실행기 (C# `Process` 래퍼: 출력 줄·종료를 queue + `AutoResetEvent`로 알림, 끝은 `Exited` 이벤트 기준) |
 | `scripts/setup/nvim_setup.lua` | 설치용 Neovim headless helper (OS 중립): `SINBIN_SETUP_STEP` = plugins / parsers / mason 단계를 실행하고 항목마다 `@@sinbin\|event\|name\|info` 출력. parser 목록은 `plugins/treesitter.lua` 반환값 |
 | `lua/sinbin/keymaps.lua` | Leader(`<Space>`) / LocalLeader(`\`) 설정 및 Plugin과 무관한 전역 Keymap (Phase 2 편집 Keymap, 창 이동 `Alt+h/j/k/l` [D-019](DECISIONS.md)). Plugin 전용 Keymap은 `plugins/` 영역별 파일 |

@@ -70,7 +70,7 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 - Plugin 최소화 ([RULES.md](RULES.md) Plugin)
 - Plugin Manager: 내장 `vim.pack` ([D-007](DECISIONS.md)). 개별 Plugin 선택은 [DECISIONS.md](DECISIONS.md) D-008 이후
 
-### Dependency 분류 (Phase 13 확정, [TASK-021](tasks/active/TASK-021-installer.md))
+### Dependency 분류 (Phase 13 확정, [TASK-021](tasks/completed/TASK-021-installer.md))
 
 Windows는 `setup.ps1`이 이 분류대로 확인·설치한다 (winget).
 
