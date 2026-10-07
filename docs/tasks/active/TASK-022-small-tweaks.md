@@ -64,5 +64,20 @@
   - 시작 직후 프로젝트 선택: 창 2개, 오른쪽 ` Agent ` 하나(중복 없음), Shell cwd = 고른 폴더, 이어서 `q` → 종료 안 됨
   - 일반 시작 `nvim --headless +qa` 에러 없음
 
+### 6. 빈 코드 창 `[No Name]` 탭 숨기기 (2026-10-07 사용자 요청)
+- 문제: `nvim .`이나 최근 프로젝트로 들어가면 빈 코드 창의 이름 없는 버퍼가 위쪽 탭 바에 `[No Name]` 탭으로 보임
+- 구현: `plugins/ui.lua` bufferline `custom_filter`에 이름 없는 버퍼는 수정됐거나 내용이 있을 때만 탭 표시 조건 추가 (기존 폴더 버퍼 제외는 그대로). 입력하면 탭이 생겨 저장 안 된 내용은 계속 보임
+- 검증 (2026-10-07, `pynvim` UI attach, `NVIM` 없이, tabline을 `nvim_eval_statusline`로 확인): `nvim .` → 탭 바 비어 있음(mini.files 열림) / 시작 화면 → 최근 프로젝트 → 탭 바 비어 있음 / 빈 창에 `hello` 입력 → `[No Name] ●` 탭 / 이어서 `:edit README.md` → `[No Name] ●`·`README.md` / `nvim README.md` 후 `:enew` → `README.md` 탭만 / 일반 시작 에러 없음
+
+### 7. 빈 코드 창을 읽기 전용 빈 편집기로 (2026-10-07 사용자 결정)
+- 문제: 항목 6 이후에도 빈 코드 창은 입력할 수 있는 버퍼라, 입력하는 순간 `[No Name]` 탭이 생김. 코드 창 자체는 배치(`layout.lua`)가 항상 하나를 유지해서 없앨 수 없음
+- 사용자 결정: VS Code 빈 편집기처럼 키 안내만 보이는 읽기 전용 화면 (선택지 1)
+- 구현 (`layout.lua`)
+  - `empty_buf()`: scratch(`nofile`, 목록 제외), `bufhidden` wipe, `filetype` `sinbinempty`, `modifiable` 끔. `show_empty(win)`
+  - `BufWinEnter`·`WinResized`·`VimResized`마다 그 버퍼를 보이는 창 크기에 맞춰 가운데에 안내 5줄(키 `Special`, 설명 `Comment`), 창 옵션(번호·cursorline·signcolumn 등)은 `vim.wo[win][0]`으로 그 버퍼에만 끔 → 파일을 열면 원래 옵션
+  - 사용처: 마지막 코드 창을 닫은 자리(`ensure_code_window`, 원래도 scratch), 마지막 탭 닫기(`close_buffer`, 원래 이름 없는 목록 버퍼), `nvim .`의 폴더 버퍼(VimEnter 후 교체·삭제), 시작 화면의 최근 프로젝트(`enew` 대신)
+  - 최근 프로젝트에서 빈 편집기는 `nofile`이라 시작 직후 1회용 오른쪽 영역 처리가 동작하지 않음 → 오른쪽 Shell은 `agent.enter_project()`가 염 (설정 `startup_agent`만 켠 경우 Agent는 첫 파일을 열 때)
+- 검증 (2026-10-07, `pynvim` UI attach 160x40, `NVIM` 없이): `nvim .` → 코드 창 `sinbinempty`(번호 없음, winbar 없음, 읽기 전용, 목록 제외) 안내 5줄 가운데, 탭 바 비어 있음 / 시작 화면 → 최근 프로젝트 → 같음 / 빈 편집기에서 `ihello` → `E21`, 탭 바 비어 있음 / `:edit README.md` → markdown, 번호 켜짐, winbar 경로, 남은 빈 편집기 버퍼 0개 / `<Space>bd`(마지막 탭) → 빈 편집기 / `vertical resize 50` → 안내가 새 폭 가운데로 / 일반 시작 에러 없음
+
 ## Related Files
-`lua/sinbin/quit_confirm.lua`, `init.lua`, `lua/sinbin/agent.lua`, `lua/sinbin/{starter,commands,projects,terminal}.lua`, `docs/USAGE.md`, `docs/ARCHITECTURE.md`
+`lua/sinbin/quit_confirm.lua`, `init.lua`, `lua/sinbin/agent.lua`, `lua/sinbin/{starter,commands,projects,terminal}.lua`, `lua/sinbin/plugins/ui.lua`, `docs/USAGE.md`, `docs/ARCHITECTURE.md`
