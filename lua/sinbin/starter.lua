@@ -99,7 +99,7 @@ local ACTIONS = {
   {
     "c",
     "설정 열기",
-    function() MiniPick.builtin.files(nil, { source = { cwd = vim.fn.stdpath("config") } }) end,
+    function() require("sinbin.settings_ui").open() end,
   },
   { "q", "종료", "qall" },
 }
