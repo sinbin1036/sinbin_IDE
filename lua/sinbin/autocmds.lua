@@ -38,3 +38,24 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave
     end
   end,
 })
+
+-- Auto save (settings panel, TASK-019, off by default): leaving Insert mode, the buffer
+-- or Neovim writes a changed file. Only named, writable, ordinary files.
+vim.api.nvim_create_autocmd({ "InsertLeave", "BufLeave", "FocusLost" }, {
+  group = group,
+  desc = "Auto save",
+  callback = function(args)
+    local bo = vim.bo[args.buf]
+    if
+      not require("sinbin.settings").get("autosave")
+      or bo.buftype ~= ""
+      or not bo.modified
+      or bo.readonly
+      or not bo.modifiable
+      or vim.api.nvim_buf_get_name(args.buf) == ""
+    then
+      return
+    end
+    vim.api.nvim_buf_call(args.buf, function() vim.cmd("silent! update") end)
+  end,
+})
