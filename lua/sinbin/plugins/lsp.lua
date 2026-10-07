@@ -32,6 +32,34 @@ vim.lsp.enable({
   "jdtls", -- Java (needs JDK 21+ on PATH)
 })
 
+-- A server that is not installed does not start, and vim.lsp says so only in its log:
+-- tell once per server when a file it serves is opened (TASK-023).
+--- Language and install hint per server. The executable is the config's cmd[1] (set per
+--- OS, dartls: platform layer); jdtls's cmd is a function that runs `jdtls`.
+local SERVERS = {
+  vtsls = { "TypeScript / JavaScript", ":MasonInstall vtsls (Node.js 필요)" },
+  basedpyright = { "Python", ":MasonInstall basedpyright (Python 필요)" },
+  clangd = { "C / C++", ":MasonInstall clangd" },
+  jdtls = { "Java", ":MasonInstall jdtls (JDK 21+ 필요)", exe = "jdtls" },
+  dartls = { "Dart / Flutter", "Flutter SDK 설치 후 PATH에 추가" },
+}
+local told = {}
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("sinbin_lsp_missing", { clear = true }),
+  desc = "Tell once when the language server for this file is not installed",
+  callback = function(args)
+    for name, s in pairs(SERVERS) do
+      local config = vim.lsp.config[name] or {}
+      local exe = type(config.cmd) == "table" and config.cmd[1] or s.exe
+      if not told[name] and exe and vim.list_contains(config.filetypes or {}, args.match) and vim.fn.executable(exe) == 0 then
+        told[name] = true
+        vim.notify(("%s 언어 서버(%s) 없음: 자동완성·진단·이동 꺼짐. 설치: %s 또는 :Setup"):format(s[1], name, s[2]),
+          vim.log.levels.WARN)
+      end
+    end
+  end,
+})
+
 -- Completion popup: <Tab>/<S-Tab> move, <CR> accepts the selected item. Without the
 -- popup they keep the built-in jump between snippet placeholders (`foo(a, b)`: a -> b).
 local map = vim.keymap.set
