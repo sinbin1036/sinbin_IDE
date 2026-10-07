@@ -248,7 +248,7 @@ ma      현재 위치를 a로 표시
 | [bufferline.nvim](https://github.com/akinsho/bufferline.nvim) | 위쪽 탭 바 (열린 파일) | `lua/sinbin/plugins/ui.lua` |
 | [mini.clue](https://github.com/nvim-mini/mini.clue) | 키 힌트 창 | `lua/sinbin/plugins/ui.lua` |
 | [mini.notify](https://github.com/nvim-mini/mini.notify) | 알림 창 (오른쪽 위) | `lua/sinbin/plugins/ui.lua` |
-| [mini.starter](https://github.com/nvim-mini/mini.starter) | 시작 화면 (파일 없이 `nvim` 실행 시) | `lua/sinbin/plugins/ui.lua` |
+| [mini.starter](https://github.com/nvim-mini/mini.starter) | 시작 화면 (파일 없이 `nvim` 실행 시) | `lua/sinbin/starter.lua` |
 | [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) | 언어 Server 설정 모음 | `lua/sinbin/plugins/lsp.lua` |
 | [mason.nvim](https://github.com/mason-org/mason.nvim) | 언어 Server 설치 (`:Mason`) | `lua/sinbin/plugins/lsp.lua` |
 | [mini.completion](https://github.com/nvim-mini/mini.completion) | 자동완성 목록, 문서 창, 인자 힌트 | `lua/sinbin/plugins/lsp.lua` |
@@ -278,7 +278,7 @@ Plugin 관리는 Neovim 내장 `vim.pack` ([D-007](DECISIONS.md)). 아래 [Plugi
 - **하단 패널:** Terminal·Run이 한 창을 같이 쓰고 위쪽 탭으로 전환(클릭 가능). 디버그 중에는 디버그 패널이 그 오른쪽 절반. 코드 아래에만 있고 Outline·Agent 아래로는 내려가지 않는다.
 - **Terminal 영역에는 Terminal만:** 오른쪽 영역·하단 패널에 커서가 있을 때 파일을 열어도(탭 클릭, `<Space>ff`, 탐색기, `Ctrl+O`) 파일은 마지막에 쓰던 코드 창에 열리고 그 영역은 Terminal 그대로 (VS Code와 같음).
 - **탭 페이지(오른쪽 위 `1 2 3`):** Neovim의 화면 전체 작업 공간. 이 배치는 탭 페이지 하나를 기준으로 하므로 평소에는 쓰지 않는다 (diffview `<Space>gv`는 자체 탭 페이지를 열고 `q`로 닫음). 생겼다면 `:tabonly`(현재 것만 남김) / `:tabclose`.
-- **오른쪽 영역:** 창 하나에 Terminal·Claude Code·Codex가 탭으로 (위쪽 탭 클릭 또는 각 키로 전환). **시작하면 일반 Terminal이 열린다** (Agent는 자동 실행 안 함, 커서는 코드 창). git commit 메시지 편집·diff 모드·Neovim 안의 Neovim에서는 열지 않는다.
+- **오른쪽 영역:** 창 하나에 Terminal·Claude Code·Codex가 탭으로 (위쪽 탭 클릭 또는 각 키로 전환). **시작하면 일반 Terminal이 열린다** (Agent는 자동 실행 안 함, 커서는 코드 창). 시작 화면에서는 열지 않고, 거기서 파일을 처음 열 때 그 파일의 프로젝트 폴더에서 열린다 (그 전에 `<Space>ac` 등으로 오른쪽 영역을 열었으면 그대로). git commit 메시지 편집·diff 모드·Neovim 안의 Neovim에서는 열지 않는다.
 - **왼쪽 영역:** Files(`<Space>fe`)와 Outline(`<Space>co`)이 번갈아 쓴다. 아래 [Outline](#outline-현재-파일-구조) 참조.
 - **상태바 (화면 전체 한 줄, VS Code 상태바 형식):**
   ```
@@ -746,10 +746,37 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 - Agent가 파일을 고치면 열린 버퍼가 자동으로 다시 읽힌다. 바뀐 내용은 `<Space>gv`(전체 변경 검토), `]h` / `<Space>gp`(변경 묶음)로 본다.
 - Codex는 폴더를 처음 열 때 "Trust this folder?" 확인이 나온다.
 
+## 설정 패널
+
+`<Space>,` / `:Settings` / 시작 화면 `c`로 연다. 화면 가운데 창에 항목과 현재 값이 보이고, 바꾸면 바로 적용·저장된다.
+
+| 키 (패널 안) | 동작 |
+|---|---|
+| `j` / `k` (화살표) | 항목 이동 |
+| `<CR>` / `Space` | 켜기·끄기, 다음 값, 고급 항목 실행 |
+| `l` / `h` (화살표) | 다음 / 이전 값 |
+| `q` / `<Esc>` | 닫기 |
+
+| 분류 | 항목 |
+|---|---|
+| 화면 | 색 테마 moon / storm / night, 배경 투명(터미널이 반투명일 때 비침), 상대 줄 번호, 현재 줄 강조, 공백 문자 표시, 긴 줄 줄바꿈 |
+| 편집 | 들여쓰기 폭 2 / 4 / 8, 들여쓰기 문자 Spaces / Tab (둘 다 새로 여는 파일부터), 검색 대소문자, 커서 위아래 여백, 자동 저장 |
+| IDE | 시작 시 Terminal / 시작 시 Agent (재시작 후), 줄 끝 Git blame, 에러·경고 표시, 한/영 자동 전환, Outline에서 움직이면 코드도 이동 (Outline 다시 열 때) |
+| 시작 화면 | 시작 화면 사용 (재시작 후), 로고 gradient, Tip 표시, 최근 프로젝트 개수 0~5 |
+| Agent | 기본 Agent Claude Code / Codex (`Alt+a`·시작 시 Agent), 패널 폭 30 / 40 / 50%, 이전 대화 이어서 시작 (`claude --continue` / `codex resume --last`, 다음 Agent 시작부터) |
+| 고급 | 설정 파일 열기, Plugin / LSP / Treesitter 상태 (`:checkhealth`, 새 탭 페이지, `q`로 닫기), 설정 초기화 (확인 후) |
+
+- 저장 위치: `stdpath('data')/sinbin/settings.json` (Windows `%LOCALAPPDATA%\nvim-data\sinbin\settings.json`), 기본값과 다른 값만. 저장소 밖이라 장비마다 따로.
+- 파일을 직접 고쳐 저장(`:w`)해도 바로 다시 읽는다. 잘못된 값은 무시하고 기본값, JSON이 깨지면 알림 후 전부 기본값.
+- 자동 저장: Insert 모드를 벗어날 때, 다른 버퍼로 갈 때, Neovim이 포커스를 잃을 때 바뀐 파일을 저장.
+- 시작 시 Agent를 켜면 오른쪽 영역에 기본 Agent가 실행된다 (커서는 코드 창). "이전 대화 이어서"는 그 폴더에 이전 대화가 없으면 Agent CLI가 알려 준다.
+- `<Space>et`(에러 표시 토글)는 저장하지 않는 일시 전환. 다음 실행에는 설정 패널 값.
+
 ## 명령
 
 | 명령 | 동작 |
 |---|---|
+| `:Settings` | 설정 패널 열기 (`<Space>,`) |
 | `:TrimWhitespace` | 버퍼 전체의 줄 끝 공백 삭제 (커서 위치 유지) |
 | `:'<,'>TrimWhitespace` | 선택 범위만 삭제 (Visual에서 `:` 입력 후) |
 
@@ -768,8 +795,9 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 | 클립보드 | `y` / `p`가 시스템 클립보드와 공유 |
 | Undo 유지 | 파일을 닫았다 열어도 `u`로 이전 변경 되돌리기 가능 |
 | 검색 | 소문자로만 검색하면 대소문자 무시, 대문자가 섞이면 구분 |
-| 색 테마 | tokyonight `moon` (네온 계열 다크). 바꾸려면 `ui.lua`의 `style`을 `storm`/`night`로 |
-| 시작 화면 | 파일 없이 `nvim` 실행 시 최근 파일·메뉴 표시. 글자 입력으로 좁히고 `<CR>` |
+| 색 테마 | tokyonight `moon` (네온 계열 다크). [설정 패널](#설정-패널)에서 `storm`/`night`, 배경 투명 |
+| 시작 화면 | 파일 없이 `nvim` 실행 시 SINBIN 로고·메뉴·최근 프로젝트 표시. 키 한 글자로 바로 실행: `f` 파일 찾기 / `g` 내용 검색 / `e` 파일 탐색기 / `c` 설정 패널 / `q` 종료, `1`~`5` 최근 프로젝트로 작업 폴더 변경. 위아래 화살표 + `<CR>`도 됨. 아래에 Plugin 수·시작 시간·Tip 하나 (창이 좁으면 로고 대신 `SinBin IDE` 한 줄) |
+| 최근 프로젝트 | 작업 폴더가 바뀔 때마다(시작 폴더, 탐색기 `g.`, `:cd`) 기록. 홈 폴더 제외, 최근 10개를 `stdpath('data')/sinbin/projects.txt`에 저장 |
 | 외부 수정 반영 | Agent·git 등이 파일을 바꾸면 Neovim으로 돌아올 때 자동으로 다시 읽음 (수정 중인 버퍼는 확인 메시지) |
 | 알림 | 메시지가 오른쪽 위 창에 잠깐 표시. LSP 진행 상황(로딩·분석 중)은 표시하지 않음. 지난 알림은 `:lua MiniNotify.show_history()` |
 

@@ -6,7 +6,7 @@ local gitsigns = require("gitsigns")
 
 gitsigns.setup({
   -- Who changed the cursor line and when, dimmed at the end of the line.
-  current_line_blame = true,
+  current_line_blame = require("sinbin.settings").get("blame"),
   on_attach = function(buf)
     local function map(mode, lhs, rhs, desc)
       vim.keymap.set(mode, lhs, rhs, { buffer = buf, desc = desc })

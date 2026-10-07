@@ -1,22 +1,24 @@
 -- Editor options. OS-neutral only; OS-specific values belong in sinbin.platform.
+-- Values the settings panel can change come from sinbin.settings (TASK-019).
 
 local opt = vim.opt
+local settings = require("sinbin.settings")
 
 -- Line numbers
 opt.number = true
-opt.relativenumber = true
+opt.relativenumber = settings.get("relativenumber")
 opt.signcolumn = "yes"
 
 -- Indent (filetype plugins may override per language)
-opt.expandtab = true
-opt.shiftwidth = 4
-opt.tabstop = 4
-opt.softtabstop = 4
+opt.expandtab = settings.get("expandtab")
+opt.shiftwidth = settings.get("indent")
+opt.tabstop = settings.get("indent")
+opt.softtabstop = settings.get("indent")
 opt.smartindent = true
 
 -- Search
-opt.ignorecase = true
-opt.smartcase = true
+opt.ignorecase = settings.get("search_case") ~= "match"
+opt.smartcase = settings.get("search_case") == "smart"
 
 -- Clipboard: share the system clipboard. The provider itself is platform-dependent.
 opt.clipboard = "unnamedplus"
@@ -27,15 +29,15 @@ opt.undofile = true
 -- Windows / scrolling
 opt.splitright = true
 opt.splitbelow = true
-opt.scrolloff = 8
+opt.scrolloff = settings.get("scrolloff")
 
 -- Visual aids
-opt.cursorline = true
-opt.list = true
+opt.cursorline = settings.get("cursorline")
+opt.list = settings.get("list")
 opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
 -- Long lines: soft-wrap at word boundaries, keeping the indent
-opt.wrap = true
+opt.wrap = settings.get("wrap")
 opt.linebreak = true
 opt.breakindent = true
 

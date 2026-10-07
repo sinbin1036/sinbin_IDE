@@ -1,9 +1,9 @@
 -- UI plugins (TASK-006): colorscheme, icons, statusline, key clues,
 -- notifications, start screen. Tab bar (TASK-016).
 
--- Soft neon dark, not pitch black (user choice).
-require("tokyonight").setup({ style = "moon" })
-vim.cmd.colorscheme("tokyonight")
+-- Soft neon dark, not pitch black (user choice). Style and transparency are settings
+-- (TASK-019).
+require("sinbin.settings").apply_theme()
 
 -- Requires a Nerd Font in the terminal for glyphs.
 require("mini.icons").setup()
@@ -58,7 +58,8 @@ map("n", "<Leader>b[", "<Cmd>BufferLineMovePrev<CR>", { desc = "Move tab left" }
 -- LSP progress messages are hidden (user choice): too noisy, especially jdtls.
 require("mini.notify").setup({ lsp_progress = { enable = false } })
 
-require("mini.starter").setup()
+-- Start screen layout (TASK-018).
+require("sinbin.starter").setup()
 
 local miniclue = require("mini.clue")
 miniclue.setup({

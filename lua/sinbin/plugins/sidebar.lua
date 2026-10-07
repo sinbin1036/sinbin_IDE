@@ -60,6 +60,8 @@ aerial.setup({
   end,
   -- Highlight only inside a symbol (blank lines between symbols: none).
   highlight_closest = false,
+  -- Moving in the Outline moves the code too (settings panel, TASK-019).
+  autojump = require("sinbin.settings").get("outline_autojump"),
   nerd_font = true,
   -- Defaults kept: j/k move, h/l fold/unfold, <CR> jump, q close.
   keymaps = {

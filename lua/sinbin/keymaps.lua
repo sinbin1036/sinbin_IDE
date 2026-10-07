@@ -16,6 +16,9 @@ vim.keymap.set("x", "K", ":m '<-2<CR>gv=gv", { silent = true, desc = "Move selec
 vim.keymap.set("x", "<", "<gv", { desc = "Indent left, keep selection" })
 vim.keymap.set("x", ">", ">gv", { desc = "Indent right, keep selection" })
 
+-- Settings panel (TASK-019), also :Settings and `c` on the start screen.
+vim.keymap.set("n", "<Leader>,", function() require("sinbin.settings_ui").open() end, { desc = "Settings" })
+
 -- Window moves (TASK-016): Alt+h/j/k/l, also straight out of a terminal, so programs
 -- in it keep Ctrl+h/j/k/l. Windows Terminal binds only Alt+arrows (pane focus).
 for key, dir in pairs({ h = "h", j = "j", k = "k", l = "l" }) do

@@ -4,16 +4,19 @@
 -- make come back through checktime and <Leader>gv.
 
 local terminal = require("sinbin.terminal")
+local settings = require("sinbin.settings")
 
 local M = {}
 
---- @type table<string, { cmd: string, name: string }>
+--- `resume`: arguments that continue the most recent conversation (settings panel).
+--- @type table<string, { cmd: string, name: string, resume: string }>
 local AGENTS = {
-  claude = { cmd = "claude", name = "Claude Code" },
-  codex = { cmd = "codex", name = "Codex" },
+  claude = { cmd = "claude", name = "Claude Code", resume = "--continue" },
+  codex = { cmd = "codex", name = "Codex", resume = "resume --last" },
 }
 
-local last = "claude"
+-- The default agent (settings panel) until another one is used.
+local last = settings.get("agent_default")
 --- Working directory each agent was started in, for relative file references.
 --- @type table<string, string>
 local cwds = {}
@@ -38,7 +41,8 @@ end
 
 --- Shows or hides `agent`, starting it on first use in the git root of the current file
 --- (or the working directory).
-function M.toggle(agent)
+--- @param background? boolean when starting it, keep the cursor where it is
+function M.toggle(agent, background)
   local spec = AGENTS[agent]
   if vim.fn.executable(spec.cmd) == 0 then
     notify(("%s 없음 (설치: npm install -g ...)"):format(spec.cmd))
@@ -48,8 +52,13 @@ function M.toggle(agent)
   if not terminal.is_running(term_id(agent)) then
     cwds[agent] = root_dir()
   end
-  terminal.toggle(term_id(agent), "right", { cmd = spec.cmd, cwd = cwds[agent], name = spec.name })
+  local cmd = settings.get("agent_resume") and (spec.cmd .. " " .. spec.resume) or spec.cmd
+  terminal.toggle(term_id(agent), "right", { cmd = cmd, cwd = cwds[agent], name = spec.name, background = background })
 end
+
+--- The agent Alt+a starts (settings panel).
+--- @param agent string
+function M.set_default(agent) last = agent end
 
 --- Agent to send to: the last used one that is running, else any running one.
 local function target()
@@ -153,11 +162,23 @@ function M.toggle_shell(background)
   terminal.toggle(SHELL, "right", { name = "Terminal", cwd = root_dir(), background = background })
 end
 
+--- The right area at startup: shell and / or the default agent (settings panel), the
+--- cursor staying in the code window.
+local function open_right()
+  if settings.get("startup_terminal") then
+    M.toggle_shell(true)
+  end
+  if settings.get("startup_agent") then
+    M.toggle(last, true)
+  end
+end
+
 -- At startup the right area opens with a plain shell, not an agent (user choice,
--- TASK-016). Not for git commit messages, diff mode, a Neovim inside a Neovim terminal
+-- TASK-016; both can be changed in the settings panel, TASK-019). Not for git commit messages, diff mode, a Neovim inside a Neovim terminal
 -- (lazygit's editor) or without a UI.
+local group = vim.api.nvim_create_augroup("sinbin_agent", { clear = true })
 vim.api.nvim_create_autocmd("VimEnter", {
-  group = vim.api.nvim_create_augroup("sinbin_agent", { clear = true }),
+  group = group,
   desc = "Right area shell at startup",
   once = true,
   callback = function()
@@ -165,11 +186,28 @@ vim.api.nvim_create_autocmd("VimEnter", {
     if #vim.api.nvim_list_uis() == 0 or vim.env.NVIM or vim.o.diff or ft == "gitcommit" or ft == "gitrebase" then
       return
     end
-    M.toggle_shell(true)
-    -- The start screen centers its content on the narrower window.
-    if vim.bo.filetype == "ministarter" then
-      MiniStarter.refresh()
+    if ft ~= "ministarter" then
+      open_right()
+      return
     end
+    -- Not on the start screen (TASK-018): the shell opens with the first file, in its
+    -- project. Skipped if the right area was opened meanwhile (<Leader>ac from the start screen).
+    vim.api.nvim_create_autocmd("BufEnter", {
+      group = group,
+      desc = "Right area shell after the start screen",
+      callback = function()
+        if vim.bo.buftype ~= "" or vim.api.nvim_win_get_config(0).relative ~= "" then
+          return
+        end
+        -- Scheduled: not while the file's window is still being set up.
+        vim.schedule(function()
+          if not require("sinbin.layout").right_win() then
+            open_right()
+          end
+        end)
+        return true
+      end,
+    })
   end,
 })
 

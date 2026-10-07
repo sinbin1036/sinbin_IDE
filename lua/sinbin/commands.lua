@@ -7,3 +7,6 @@ vim.api.nvim_create_user_command("TrimWhitespace", function(opts)
   vim.cmd(string.format([[keeppatterns %d,%ds/\s\+$//e]], opts.line1, opts.line2))
   vim.fn.winrestview(view)
 end, { range = "%", desc = "Remove trailing whitespace (whole buffer or range)" })
+
+-- Settings panel (TASK-019).
+vim.api.nvim_create_user_command("Settings", function() require("sinbin.settings_ui").open() end, { desc = "Settings panel" })
