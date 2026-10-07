@@ -21,6 +21,8 @@
 주의: RPC 조작 client는 임시 venv의 `pynvim` (`python -m venv <임시>/venv` → `pip install pynvim`, 시스템 Python에는 설치 안 함) — `pynvim.attach("child", argv=["nvim","--embed","--headless","-n"])` → `ui_attach`. Neovim을 controller로 `jobstart(rpc)` + `nvim_ui_attach`하면 자식이 바로 종료됨 (redraw 알림 처리 불가, 2026-10-06 확인).
 주의: 시작 시(VimEnter) 동작은 `nvim --embed -n`(`--headless` 없이)으로 확인한다. `--headless`를 붙이면 UI attach 전에 VimEnter가 지나가 `nvim_list_uis()`가 비어 있음 (2026-10-07 확인).
 주의: 화면 배치 검증 (2026-10-06 확인)은 자식에서 `nvim_eval_statusline`(tabline/winbar/statusline 실제 표시 문자열)·`winlayout()`·창 크기를 읽는다. 자식에서 `set messagesopt=wait:0,history:500`로 hit-enter prompt를 막고 `:messages`로 에러 확인 (prompt에 걸리면 RPC 요청이 멈춤, `nvim_get_mode().blocking`으로 감지).
+주의: WSL 검증은 Windows 쪽에서 `printf '<명령>' | wsl.exe -d Ubuntu-24.04 -- bash -l`로 실행 (인자로 넘기면 `$변수`가 Windows 쪽 Shell에서 풀림). 실제 TUI 시작은 `script -qfc "nvim ..." /dev/null` pty로 띄우고 `defer_fn`으로 상태를 파일에 기록 후 `qa!` — 이때 `E1568`(DSR 응답 없음)은 pty 때문이라 무시. SSH 모드 OSC 52는 같은 pty 출력에서 `\e]52;c;` 검색 (2026-10-07 확인).
+주의: `mini.notify`는 알림을 다음 event loop에서 추가하므로 같은 명령 안에서 `get_all()`하면 비어 있음 (`+sleep` 뒤에 확인).
 주의: autocmd 안의 `:checktime`은 안전한 시점까지 미뤄진다 (`:h :checktime`). headless 스크립트 안에서는 실행되지 않으므로 `nvim --embed`를 RPC로 조작해 확인한다.
 
 ## 변경 종류별
@@ -58,7 +60,9 @@
 | fd, fzf, make | 미설치 |
 | Nerd Font | JetBrainsMono Nerd Font 3.3.0 (winget `DEVCOM.JetBrainsMonoNerdFont`, Font 이름 `JetBrainsMono NF`, 2026-10-02 설치). Windows Terminal Font 지정은 사용자 설정 |
 | `%LOCALAPPDATA%\nvim` (Windows 기본 config 경로) | 이 Repository로의 Junction |
-| Linux / macOS / WSL / SSH | UNVERIFIED (검증 환경 없음) |
+| WSL | Ubuntu 24.04.2 LTS (WSL2, `Ubuntu-24.04`), Neovim v0.12.5 (공식 tarball → `~/.local/opt`, `~/.local/bin/nvim`), tree-sitter CLI 0.27.0 (`~/.local/bin`), git·python3·node·gcc (apt 기본). `~/.config/nvim` → `/mnt/c/.../sinbin_IDE` symlink. ripgrep·lazygit·Mason 패키지 없음 (2026-10-07 설치·확인) |
+| SSH | 실제 접속 미검증. WSL에서 `SSH_CONNECTION`을 설정해 SSH 모드로 확인 |
+| Linux (WSL 아닌) / macOS | UNVERIFIED (검증 환경 없음) |
 
 ## Verification Context
 
