@@ -11,9 +11,12 @@ local parsers = {
 
 -- Async, and a no-op for parsers that are already installed. Without the tree-sitter
 -- CLI every missing parser fails to build on each startup, so warn once instead.
+-- setup.ps1 (TASK-021) installs them itself with progress output, not at startup.
 local installed = require("nvim-treesitter").get_installed("parsers")
 local missing = vim.tbl_filter(function(p) return not vim.list_contains(installed, p) end, parsers)
-if #missing == 0 or vim.fn.executable("tree-sitter") == 1 then
+if vim.env.SINBIN_SETUP then
+  -- nothing: scripts/setup/nvim_setup.lua
+elseif #missing == 0 or vim.fn.executable("tree-sitter") == 1 then
   require("nvim-treesitter").install(parsers)
 else
   vim.notify(("tree-sitter CLI 없음: 구문 강조 parser %d개 설치 건너뜀 (%s)"):format(
@@ -43,3 +46,5 @@ vim.api.nvim_create_autocmd("PackChanged", {
     end
   end,
 })
+
+return { parsers = parsers }

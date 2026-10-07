@@ -101,6 +101,7 @@ local ACTIONS = {
     "설정 열기",
     function() require("sinbin.settings_ui").open() end,
   },
+  { "s", "설치 / 점검", "Setup" },
   { "q", "종료", "qall" },
 }
 

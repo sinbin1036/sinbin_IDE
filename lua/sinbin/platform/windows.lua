@@ -42,6 +42,11 @@ function M.setup(platform)
     end
   end
 
+  -- Install script for :Setup (TASK-021), run from the repository root.
+  platform.setup_cmd = function(root)
+    return { "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", vim.fs.joinpath(root, "setup.ps1") }
+  end
+
   -- Python launcher name (Linux/macOS usually only have python3).
   platform.python = "python"
 

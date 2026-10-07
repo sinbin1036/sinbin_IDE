@@ -70,14 +70,16 @@ nvim . → 프로젝트 탐색 → AI Agent 실행 → 코드 생성/수정 → 
 - Plugin 최소화 ([RULES.md](RULES.md) Plugin)
 - Plugin Manager: 내장 `vim.pack` ([D-007](DECISIONS.md)). 개별 Plugin 선택은 [DECISIONS.md](DECISIONS.md) D-008 이후
 
-### Dependency 분류 (Planned — Phase 13에서 확정)
+### Dependency 분류 (Phase 13 확정, [TASK-021](tasks/completed/TASK-021-installer.md))
 
-| 분류 | 예상 항목 |
-|---|---|
-| Required | Neovim, Git, ripgrep |
-| Optional | fd, fzf, lazygit, Nerd Font |
-| Language-specific | LSP Server, Formatter, Debugger, Runtime/SDK |
-| Platform-specific | Shell, Package Manager 차이 |
+Windows는 `setup.ps1`이 이 분류대로 확인·설치한다 (winget).
+
+| 분류 | 항목 | 설치 |
+|---|---|---|
+| Required | Neovim 0.12+, Git(Windows: Git Bash 포함), ripgrep, config 연결, `vim.pack` Plugin | 없으면 설치 |
+| Optional (기본 설치) | fd, tree-sitter CLI·C compiler(Treesitter parser 빌드, Windows는 WinLibs gcc·gdb), lazygit, JetBrainsMono Nerd Font, Treesitter parser | 없으면 설치. tree-sitter CLI·C compiler 없으면 parser 건너뜀 |
+| Language-specific | Runtime: Python, Node.js, Java(JDK), Flutter/Dart / Mason: clangd(항상), vtsls·js-debug-adapter(Node), basedpyright·ruff·debugpy(Python), jdtls·java-debug-adapter(Java) | Runtime은 선택한 것만 설치 (Flutter는 수동). Mason은 Runtime 있는 것만 |
+| Platform-specific | Windows: winget, Junction(D-005), Git Bash Shell / Linux·macOS: symlink(D-025), `$SHELL` | — |
 
 ## Keymap 방향 (Planned)
 
