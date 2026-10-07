@@ -2,7 +2,7 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 14 — 안정화 및 최적화 (완료, PR 전). 계획된 Phase 모두 완료
+- **Current Phase:** Phase 14 — 안정화 및 최적화 (완료, PR #21). 계획된 Phase 모두 완료
 - **Status:** Phase 13 Installer 완료 (Windows `setup.ps1`, PR #19, Linux/macOS 스크립트는 Deferred). 자잘한 개선 TASK-022 (PR #20). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
@@ -28,7 +28,7 @@
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
 - Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), PR #19)
 - 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
-- Phase 14 안정화: checkhealth 정리, 시작 속도(디버거·diffview 지연 로드, 약 75ms), `:Setup update`, 안내 메시지·README ([TASK-023](tasks/completed/TASK-023-stabilization.md), branch `feat/stabilization`, PR 전)
+- Phase 14 안정화: checkhealth 정리, 시작 속도(디버거·diffview 지연 로드, 약 75ms), `:Setup update`, 안내 메시지·README ([TASK-023](tasks/completed/TASK-023-stabilization.md), PR #21)
 
 ## In Progress
 - 없음
@@ -63,4 +63,4 @@
 없음
 
 ## Next Action
-`feat/stabilization` PR merge (TASK-023). 그다음 계획된 Phase는 없음 → 쓰면서 나오는 개선 / Deferred 항목(빌드 에러 quickfix, 목적별 Mode 전환, Linux/macOS 설치 스크립트 등) 중 선택.
+계획된 Phase는 없음 → 쓰면서 나오는 개선 / Deferred 항목(빌드 에러 quickfix, 목적별 Mode 전환, Linux/macOS 설치 스크립트 등) 중 선택.
