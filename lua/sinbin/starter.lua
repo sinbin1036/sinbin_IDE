@@ -119,12 +119,12 @@ local function items()
     if dir ~= cwd then
       list[#list + 1] = {
         name = ("%d  %s"):format(#list - #ACTIONS + 1, (vim.fn.fnamemodify(dir, ":~"):gsub("\\", "/"))),
-        -- Into the project: the start screen goes away (an empty code window in its
-        -- place), so its keys (q = quit) no longer apply (TASK-022).
+        -- Into the project: the start screen goes away (an empty editor in its place),
+        -- so its keys (q = quit) no longer apply (TASK-022).
         action = function()
           vim.fn.chdir(dir)
           vim.schedule(function()
-            vim.cmd.enew()
+            require("sinbin.layout").show_empty(0)
             require("sinbin.agent").enter_project()
           end)
         end,

@@ -195,6 +195,112 @@ vim.api.nvim_create_autocmd("WinResized", {
   end,
 })
 
+------------------------------------------------------------------------------
+-- Empty editor (TASK-022): a code window without a file shows key hints in a read-only
+-- scratch buffer, like VS Code's empty editor, instead of an empty [No Name] buffer
+-- that takes typing. Opening a file replaces it (bufhidden = wipe).
+
+local EMPTY_FT = "sinbinempty"
+local HINTS = {
+  { "Space f f", "파일 찾기" },
+  { "Space f e", "파일 탐색기" },
+  { "Space s g", "내용 검색" },
+  { "Space a c", "Claude Code" },
+  { ":Home", "시작 화면" },
+}
+local empty_ns = vim.api.nvim_create_namespace("sinbin_empty_editor")
+
+--- Draws the hints centered in `win`.
+local function render_empty(buf, win)
+  local key_width = 0
+  for _, h in ipairs(HINTS) do
+    key_width = math.max(key_width, #h[1])
+  end
+  local rows, block = {}, 0
+  for _, h in ipairs(HINTS) do
+    local text = h[1] .. (" "):rep(key_width - #h[1] + 4) .. h[2]
+    rows[#rows + 1] = text
+    block = math.max(block, vim.fn.strdisplaywidth(text))
+  end
+  local left = (" "):rep(math.max(0, math.floor((vim.api.nvim_win_get_width(win) - block) / 2)))
+  local lines = {}
+  for _ = 1, math.max(0, math.floor((vim.api.nvim_win_get_height(win) - #rows) / 2)) do
+    lines[#lines + 1] = ""
+  end
+  local first = #lines
+  for _, r in ipairs(rows) do
+    lines[#lines + 1] = left .. r
+  end
+  vim.bo[buf].modifiable = true
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+  vim.bo[buf].modifiable = false
+  vim.api.nvim_buf_clear_namespace(buf, empty_ns, 0, -1)
+  for i, h in ipairs(HINTS) do
+    local row = first + i - 1
+    vim.api.nvim_buf_set_extmark(buf, empty_ns, row, #left, { end_col = #left + #h[1], hl_group = "Special" })
+    vim.api.nvim_buf_set_extmark(buf, empty_ns, row, #left + #h[1], { end_col = #lines[row + 1], hl_group = "Comment" })
+  end
+end
+
+--- A new empty editor buffer, to show in a code window.
+--- @return integer buf
+function M.empty_buf()
+  local buf = vim.api.nvim_create_buf(false, true)
+  vim.bo[buf].bufhidden = "wipe"
+  vim.bo[buf].filetype = EMPTY_FT
+  vim.bo[buf].modifiable = false
+  return buf
+end
+
+--- Shows an empty editor in `win` (0 = current window).
+function M.show_empty(win)
+  vim.api.nvim_win_set_buf(win, M.empty_buf())
+end
+
+local function refresh_empty()
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    local buf = vim.api.nvim_win_get_buf(win)
+    if vim.bo[buf].filetype == EMPTY_FT then
+      -- [0]: local to this buffer in the window; a file opened here gets its own.
+      local wo = vim.wo[win][0]
+      wo.number = false
+      wo.relativenumber = false
+      wo.cursorline = false
+      wo.signcolumn = "no"
+      wo.foldcolumn = "0"
+      wo.list = false
+      wo.wrap = false
+      wo.statuscolumn = ""
+      render_empty(buf, win)
+    end
+  end
+end
+
+vim.api.nvim_create_autocmd({ "BufWinEnter", "WinResized", "VimResized" }, {
+  group = group,
+  desc = "Empty editor: hints centered in the window",
+  callback = refresh_empty,
+})
+
+-- `nvim .`: the directory buffer would be the empty, writable code window (the folder
+-- itself opens in mini.files). An empty editor takes its place.
+vim.api.nvim_create_autocmd("VimEnter", {
+  group = group,
+  desc = "Empty editor instead of the directory buffer",
+  callback = function()
+    vim.schedule(function()
+      for _, win in ipairs(vim.api.nvim_list_wins()) do
+        local buf = vim.api.nvim_win_get_buf(win)
+        local name = vim.api.nvim_buf_get_name(buf)
+        if vim.api.nvim_win_get_config(win).relative == "" and name ~= "" and vim.fn.isdirectory(name) == 1 then
+          M.show_empty(win)
+          pcall(vim.api.nvim_buf_delete, buf, { force = true })
+        end
+      end
+    end)
+  end,
+})
+
 -- Closing the last code window (:q) while the Outline, panel or Agent stay open leaves
 -- an empty code window in its place, like VS Code's empty editor. Not when several
 -- windows close at once (:only, closing a tab).
@@ -239,9 +345,7 @@ local function ensure_code_window()
   if #wins == 0 or vim.tbl_contains(vim.tbl_map(is_code, wins), true) then
     return
   end
-  local buf = vim.api.nvim_create_buf(false, true)
-  vim.bo[buf].bufhidden = "wipe"
-  open_code_window(buf)
+  open_code_window(M.empty_buf())
 end
 
 -- :q in the last code window of the tab closes the Outline, panel, Agent area and
@@ -465,7 +569,7 @@ function M.close_buffer(buf)
   for _, win in ipairs(vim.fn.win_findbuf(buf)) do
     local alt = vim.api.nvim_win_call(win, function() return vim.fn.bufnr("#") end)
     local next_buf = (alt > 0 and alt ~= buf and vim.bo[alt].buflisted) and alt or others[#others]
-    vim.api.nvim_win_set_buf(win, next_buf or vim.api.nvim_create_buf(true, false))
+    vim.api.nvim_win_set_buf(win, next_buf or M.empty_buf())
   end
   vim.api.nvim_buf_delete(buf, { force = true })
 end
