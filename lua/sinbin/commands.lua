@@ -11,5 +11,11 @@ end, { range = "%", desc = "Remove trailing whitespace (whole buffer or range)" 
 -- Settings panel (TASK-019).
 vim.api.nvim_create_user_command("Settings", function() require("sinbin.settings_ui").open() end, { desc = "Settings panel" })
 
+-- Back to the start screen (TASK-022); ! drops unsaved changes.
+vim.api.nvim_create_user_command("Home", function(opts) require("sinbin.starter").home(opts.bang) end, {
+  bang = true,
+  desc = "Start screen, closing every file (! discards unsaved changes)",
+})
+
 -- Install / check (TASK-021). Defined before the plugins load, so it exists without them.
 vim.api.nvim_create_user_command("Setup", function() require("sinbin.setup").run() end, { desc = "Run the install script (setup.ps1)" })

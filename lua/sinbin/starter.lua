@@ -262,6 +262,49 @@ function M.refresh()
   end
 end
 
+--- :Home (TASK-022): back to the start screen as one full window, with every file
+--- closed. Unsaved files stop it unless `force` (:Home!), which drops their changes.
+--- Terminals (Agent, Shell, panel) keep running hidden.
+--- @param force boolean
+function M.home(force)
+  if not _G.MiniStarter then
+    vim.notify("시작 화면(mini.starter)이 로드되지 않았습니다", vim.log.levels.ERROR)
+    return
+  end
+  local files, unsaved = {}, {}
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].buflisted and vim.bo[buf].buftype == "" then
+      files[#files + 1] = buf
+      if vim.bo[buf].modified then
+        local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+        unsaved[#unsaved + 1] = name ~= "" and name or "[No Name]"
+      end
+    end
+  end
+  if #unsaved > 0 and not force then
+    vim.api.nvim_echo({
+      { ("저장 안 된 파일: %s  (:w / :wa 후 다시, 버리려면 :Home!)"):format(table.concat(unsaved, ", ")), "ErrorMsg" },
+    }, true, {})
+    return
+  end
+
+  -- A new tab page with a scratch buffer (a plain empty buffer would count as the first
+  -- file after the start screen and open the right area), then only that window stays.
+  local scratch = vim.api.nvim_create_buf(false, true)
+  vim.bo[scratch].bufhidden = "wipe"
+  vim.cmd("tab sbuffer " .. scratch)
+  vim.cmd("silent! tabonly!")
+  for _, win in ipairs(vim.api.nvim_list_wins()) do
+    if win ~= vim.api.nvim_get_current_win() then
+      pcall(vim.api.nvim_win_close, win, true)
+    end
+  end
+  MiniStarter.open()
+  for _, buf in ipairs(files) do
+    pcall(vim.api.nvim_buf_delete, buf, { force = true })
+  end
+end
+
 function M.setup()
   local starter = require("mini.starter")
   starter.setup({
