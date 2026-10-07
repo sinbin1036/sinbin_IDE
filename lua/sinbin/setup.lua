@@ -5,12 +5,13 @@
 
 local M = {}
 
-function M.run()
+--- @param update? boolean also update plugins, parsers and Mason packages (TASK-023)
+function M.run(update)
   -- The real repository path: through the config junction setup.ps1 would see its own
   -- link as the repository.
   local root = vim.uv.fs_realpath(vim.fn.stdpath("config")) or vim.fn.stdpath("config")
   local cmd_of = require("sinbin.platform").setup_cmd
-  local cmd = cmd_of and cmd_of(root)
+  local cmd = cmd_of and cmd_of(root, update)
   if not cmd then
     vim.notify("이 OS용 설치 스크립트 없음 (Windows: setup.ps1)", vim.log.levels.WARN)
     return
@@ -26,7 +27,9 @@ function M.run()
     cwd = root,
     on_exit = function(_, code)
       vim.schedule(function()
-        local msg = code == 0 and "설치 끝: 새로 설치한 Plugin은 Neovim을 다시 시작하면 적용됩니다"
+        local msg = code == 0
+            and (update and "업데이트 끝: Neovim을 다시 시작하면 적용됩니다 (Plugin이 바뀌었으면 확인 후 nvim-pack-lock.json 커밋)"
+              or "설치 끝: 새로 설치한 Plugin은 Neovim을 다시 시작하면 적용됩니다")
           or ("설치 중 실패 항목 있음 (exit %d): 위 요약 참고"):format(code)
         vim.notify(msg, code == 0 and vim.log.levels.INFO or vim.log.levels.WARN)
         if vim.api.nvim_buf_is_valid(buf) then

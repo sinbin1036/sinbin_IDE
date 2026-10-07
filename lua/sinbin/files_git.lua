@@ -164,7 +164,8 @@ function M.update(buf, dir)
     return
   end
   waiting[root] = { buf }
-  vim.system({ "git", "status", "--porcelain=v1", "-z" }, { cwd = root, text = true }, function(r)
+  -- No index.lock (see statusline.lua): a killed status would leave it behind.
+  vim.system({ "git", "--no-optional-locks", "status", "--porcelain=v1", "-z" }, { cwd = root, text = true }, function(r)
     vim.schedule(function()
       local bufs = waiting[root]
       waiting[root] = nil

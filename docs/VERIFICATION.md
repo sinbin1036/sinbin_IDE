@@ -7,7 +7,7 @@
 | 명령 | 용도 | 상태 |
 |---|---|---|
 | `nvim --headless "+qa"` | Startup 에러 확인 (출력 없음 + exit 0 = 정상) | 확인됨 (2026-10-01) |
-| `nvim --headless "+checkhealth" "+w! <file>" "+qa!"` | checkhealth 결과를 파일로 저장 → `ERROR` 검색 | 확인됨 (2026-10-01, ERROR 0) |
+| `nvim --headless "+checkhealth" "+w! <file>" "+qa!"` | checkhealth 결과를 파일로 저장 → `ERROR` 검색 | 확인됨 (2026-10-07, ERROR 0 / WARNING 9). 남는 WARNING 9개는 Mason의 선택 도구 확인(wget·7z·cargo·luarocks·Ruby·RubyGem·Composer·PHP·julia: 이 Config의 Mason 패키지는 쓰지 않음, wget·7z 대신 curl·unzip·tar 사용)이라 무시. 그 외 WARNING이 새로 생기면 확인 |
 | `nvim --headless "+lua io.write(vim.env.MYVIMRC)" "+qa"` | 이 Repository의 `init.lua`가 로드되는지 확인 | 확인됨 (2026-10-01) |
 | `nvim --headless "+lua io.write(vim.inspect({vim.g.mapleader, vim.o.clipboard}))" "+qa"` | Option·Leader 실제 적용 값 확인 (확인할 항목으로 교체) | 확인됨 (2026-10-01) |
 | `nvim --headless "+verbose map <Space>" "+qa"` | Keymap 충돌 및 정의 위치 확인 | 확인됨 (2026-10-01) |

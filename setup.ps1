@@ -9,6 +9,8 @@
   powershell -ExecutionPolicy Bypass -File .\setup.ps1 -With python,node
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly
+.EXAMPLE
+  powershell -ExecutionPolicy Bypass -File .\setup.ps1 -Update
 #>
 [CmdletBinding()]
 param(
@@ -18,8 +20,12 @@ param(
   # Only check and report, install nothing.
   [switch]$CheckOnly,
   # Do not ask which runtimes to install.
-  [switch]$NoPrompt
+  [switch]$NoPrompt,
+  # Also update plugins, Treesitter parsers and Mason packages (TASK-023). External tools
+  # are not upgraded (winget upgrade, with Neovim closed).
+  [switch]$Update
 )
+if ($CheckOnly) { $Update = $false }
 
 $ErrorActionPreference = 'Stop'
 $Root = $PSScriptRoot
@@ -368,9 +374,62 @@ function Install-Plugins {
   $script:Have['plugins'] = $true
 }
 
+# -Update: vim.pack.update without its confirmation buffer. Progress from vim.pack's own
+# "Updating (i/N)" lines; the helper then reports each plugin as updated or current.
+function Update-Plugins {
+  $st = @{ Frame = 0; Done = 0; Total = 0; Current = '설정 로드 · 새 버전 확인 중'; Items = @(); Updated = @(); Fails = @() }
+  $draw = {
+    $pct = if ($st.Total) { 100 * $st.Done / $st.Total } else { 0 }
+    $count = if ($st.Total) { "$($st.Done)/$($st.Total)" } else { '' }
+    $line = "  $(Format-Spin $st.Frame) {0,-20} $(Format-Bar $pct (Get-BarWidth)) {1,-7} " -f 'vim.pack update', $count
+    Write-Ui ($CL + $line + $DIM + (Limit-Text $st.Current ((Get-UiWidth) - (Get-VisWidth $line) - 1)) + $RESET)
+  }
+  & $draw
+  $r = Invoke-NvimStep 'update_plugins' $null -OnEvent {
+    param($event, $name, $info)
+    switch ($event) {
+      'present' { $st.Items += , @($name, $info) }
+      'done' { $st.Items += , @($name, $info); $st.Updated += , @($name, $info) }
+      'fail' { $st.Fails += , @($name, $info) }
+    }
+  } -OnOther {
+    param($line)
+    if ($line.Text -match 'vim\.pack:\s+\d+%.*\((\d+)/(\d+)\)(?:\s+-\s+(.+))?') {
+      $st.Done = [int]$Matches[1]; $st.Total = [int]$Matches[2]
+      if ($Matches[3]) { $st.Current = $Matches[3].Trim() }
+    } elseif ($line.Text.Trim()) {
+      $st.Current = $line.Text.Trim()
+    }
+    & $draw
+  } -OnTick { $st.Frame++; & $draw }
+
+  $updatedNames = @($st.Updated | ForEach-Object { $_[0] })
+  foreach ($it in $st.Items) {
+    $status = if ($updatedNames -contains $it[0]) { 'updated' } else { 'present' }
+    Add-Result $it[0] $status $it[1]
+  }
+  foreach ($f in $st.Fails) { Add-Result $f[0] 'failed' '' "vim.pack 업데이트 실패: $($f[1])" $r.Tail }
+  if ($st.Fails.Count -or -not $st.Items.Count) {
+    $stage = if ($st.Items.Count) { "$($st.Fails.Count)개 실패: " + (($st.Fails | ForEach-Object { $_[0] }) -join ', ') } else { 'Neovim 실행 / 업데이트 실패' }
+    if (-not $st.Items.Count -and -not $st.Fails.Count) { Add-Result 'vim.pack' 'failed' '' $stage $r.Tail }
+    Write-ItemFail 'vim.pack update' $stage $r.Tail
+    return
+  }
+  $note = if ($st.Updated.Count) { "업데이트 $($st.Updated.Count) · 최신 $($st.Items.Count - $st.Updated.Count)" } else { '모두 최신' }
+  $line = "  $MARK_OK {0,-20} $(Format-Bar 100 (Get-BarWidth) $PAL_BAR) {1,-7} " -f 'vim.pack update', "$($st.Items.Count)/$($st.Items.Count)"
+  Write-Ui ($CL + $line + $GREEN + $note + $RESET + "`n")
+  foreach ($u in $st.Updated) { Write-Ui ((Format-Row "  $MARK_OK" $u[0] $u[1] '업데이트됨' $GREEN) + "`n") }
+  $script:Have['plugins'] = $true
+  $script:PluginsUpdated = $st.Updated.Count
+}
+
 # Parallel installs (parsers, Mason) as one row per item under a live count bar,
 # redrawn in place like busy.js multiDownload. Rows come from the helper's events.
-function Install-Group([string]$title, [string]$step, [hashtable]$extraEnv, $preRows) {
+function Install-Group([string]$title, [string]$step, [hashtable]$extraEnv, $preRows, [switch]$Updating) {
+  # Update steps: "present" = up to date, "done" = updated.
+  $presentText = if ($Updating) { '최신' } else { '이미 설치됨' }
+  $doneText = if ($Updating) { '업데이트됨' } else { '설치됨' }
+  $doneStatus = if ($Updating) { 'updated' } else { 'installed' }
   $g = @{ Frame = 0; Rows = New-Object Collections.ArrayList; Index = @{}; Drawn = 0; T0 = [Diagnostics.Stopwatch]::StartNew() }
   foreach ($p in $preRows) { $g.Index[$p.Name] = $g.Rows.Add(@{ Name = $p.Name; State = 'skip'; Info = $p.Info }) }
   $draw = {
@@ -386,8 +445,8 @@ function Install-Group([string]$title, [string]$step, [hashtable]$extraEnv, $pre
     [void]$out.Append($head)
     foreach ($row in $g.Rows) {
       $line = switch ($row.State) {
-        'present' { Format-Row "  $MARK_OK" $row.Name $row.Info '이미 설치됨' }
-        'done' { Format-Row "  $MARK_OK" $row.Name $row.Info '설치됨' $GREEN }
+        'present' { Format-Row "  $MARK_OK" $row.Name $row.Info $presentText }
+        'done' { Format-Row "  $MARK_OK" $row.Name $row.Info $doneText $GREEN }
         'fail' { Format-Row "  $MARK_FAIL" $row.Name 'failed' $row.Info $RED }
         'skip' { Format-Row "  $MARK_SKIP" $row.Name '' $row.Info $YELLOW }
         default { Format-Row "  $(Format-Spin ($g.Frame + $row.Name.Length))" $row.Name '' '설치 중' $CYAN }
@@ -417,7 +476,7 @@ function Install-Group([string]$title, [string]$step, [hashtable]$extraEnv, $pre
   foreach ($row in $g.Rows) {
     switch ($row.State) {
       'present' { Add-Result $row.Name 'present' $row.Info }
-      'done' { Add-Result $row.Name 'installed' $row.Info }
+      'done' { Add-Result $row.Name $doneStatus $row.Info }
       'skip' { Add-Result $row.Name 'skipped' '' $row.Info }
       'fail' {
         $mine = @($r.Tail | Where-Object { $_ -match [regex]::Escape($row.Name) })
@@ -436,23 +495,24 @@ function Install-Group([string]$title, [string]$step, [hashtable]$extraEnv, $pre
 
 function Show-Summary {
   $by = @{}
-  foreach ($s in 'installed', 'present', 'skipped', 'failed', 'missing') { $by[$s] = @($script:Results | Where-Object { $_.Status -eq $s }) }
+  foreach ($s in 'installed', 'updated', 'present', 'skipped', 'failed', 'missing') { $by[$s] = @($script:Results | Where-Object { $_.Status -eq $s }) }
   $fails = $by['failed']
   $total = $script:Results.Count
-  $ok = $by['installed'].Count + $by['present'].Count
+  $ok = $by['installed'].Count + $by['updated'].Count + $by['present'].Count
   $secs = $script:Clock.Elapsed.TotalSeconds
 
   Write-Ui "`n"
-  $title = if ($CheckOnly) { 'SINBIN IDE CHECK' } elseif ($fails.Count) { 'SINBIN IDE SETUP INCOMPLETE' } else { 'SINBIN IDE READY' }
+  $title = if ($CheckOnly) { 'SINBIN IDE CHECK' } elseif ($fails.Count) { 'SINBIN IDE SETUP INCOMPLETE' } elseif ($Update) { 'SINBIN IDE UPDATED' } else { 'SINBIN IDE READY' }
   $pal = if ($fails.Count) { $PAL_FAIL } else { $PAL_BAR }
   $bar = Format-Bar (100 * $ok / [Math]::Max(1, $total)) ((Get-BarWidth) + 6) $pal
   Write-Ui ("  " + (Format-Grad "■ $title" $pal) + "`n")
   Write-Ui ("  $bar $ok/$total`n")
-  Write-Ui ("  {0}새로 설치 {1}{2}  ·  이미 있음 {3}  ·  건너뜀 {4}  ·  {5}실패 {6}{2}{7}  ·  총 소요 {8}`n" -f `
+  Write-Ui ("  {0}새로 설치 {1}{2}{9}  ·  이미 있음 {3}  ·  건너뜀 {4}  ·  {5}실패 {6}{2}{7}  ·  총 소요 {8}`n" -f `
       $GREEN, $by['installed'].Count, $RESET, $by['present'].Count, $by['skipped'].Count,
     $(if ($fails.Count) { $RED } else { '' }), $fails.Count,
     $(if ($by['missing'].Count) { "  ·  ${YELLOW}없음 $($by['missing'].Count)$RESET" } else { '' }),
-    (Format-Duration $secs))
+    (Format-Duration $secs),
+    $(if ($Update) { "  ·  ${GREEN}업데이트 $($by['updated'].Count)$RESET" } else { '' }))
 
   if ($fails.Count) {
     Write-Ui "`n  ${RED}실패 항목$RESET`n"
@@ -466,6 +526,13 @@ function Show-Summary {
   }
   if ($by['missing'].Count) {
     Write-Ui "`n  ${DIM}설치: powershell -ExecutionPolicy Bypass -File .\setup.ps1$RESET`n"
+  }
+  if ($Update) {
+    if ($script:PluginsUpdated) {
+      Write-Ui "`n  ${YELLOW}Plugin $($script:PluginsUpdated)개 업데이트 · nvim-pack-lock.json 변경됨$RESET`n"
+      Write-Ui "  ${DIM}Neovim을 다시 시작해 확인한 뒤 nvim-pack-lock.json을 커밋하세요 (되돌리기: git checkout nvim-pack-lock.json 후 :lua vim.pack.update(nil, { target = 'lockfile' }))$RESET`n"
+    }
+    Write-Ui "  ${DIM}외부 도구(Neovim·Git·ripgrep 등)는 업데이트하지 않음 · Neovim을 끈 뒤 winget upgrade --all$RESET`n"
   }
   Write-Ui "`n"
   $fails.Count
@@ -497,6 +564,7 @@ try {
     Write-Ui ((Format-Row "$YELLOW!$RESET" 'winget' '' '없음 · 설치가 필요한 항목은 실패로 표시 (Microsoft Store: App Installer)' $YELLOW) + "`n")
   }
   if ($CheckOnly) { Write-Ui "  ${DIM}-CheckOnly: 확인만 하고 설치하지 않음$RESET`n" }
+  if ($Update) { Write-Ui "  ${DIM}-Update: 없는 것은 설치, Plugin·parser·Mason은 새 버전으로 (외부 도구 제외)$RESET`n" }
 
   Start-Section 'Core tools'
   foreach ($t in $CoreTools) { Install-Tool $t }
@@ -520,6 +588,7 @@ try {
   Start-Section 'Neovim plugins'
   if ($CheckOnly) { Write-StepSkip 'vim.pack' '-CheckOnly' }
   elseif (-not $nvimReady) { Write-StepSkip 'vim.pack' $nvimWhy }
+  elseif ($Update) { Update-Plugins }
   else { Install-Plugins }
 
   Start-Section 'Treesitter parsers'
@@ -530,6 +599,7 @@ try {
     ) | Where-Object { $_ }) -join ', '
   if ($CheckOnly) { Write-StepSkip 'parsers' '-CheckOnly' }
   elseif ($tsWhy) { Write-StepSkip 'parsers' $tsWhy }
+  elseif ($Update) { Install-Group 'parsers' 'update_parsers' $null @() -Updating }
   else { Install-Group 'parsers' 'parsers' $null @() }
 
   Start-Section 'LSP / Debug (Mason)'
@@ -539,7 +609,8 @@ try {
     $wanted = @($MasonPackages | Where-Object { -not $_.Needs -or $script:Have[$_.Needs] } | ForEach-Object { $_.Name })
     $pre = @($MasonPackages | Where-Object { $_.Needs -and -not $script:Have[$_.Needs] } |
         ForEach-Object { @{ Name = $_.Name; Info = "$($RuntimeNames[$_.Needs]) 없음 (-With $($_.Needs))" } })
-    Install-Group 'Mason' 'mason' @{ SINBIN_SETUP_MASON = ($wanted -join ',') } $pre
+    $masonStep = if ($Update) { 'update_mason' } else { 'mason' }
+    Install-Group 'Mason' $masonStep @{ SINBIN_SETUP_MASON = ($wanted -join ',') } $pre -Updating:$Update
   }
 
   $failCount = Show-Summary

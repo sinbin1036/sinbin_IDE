@@ -19,7 +19,7 @@ if vim.env.SINBIN_SETUP then
 elseif #missing == 0 or vim.fn.executable("tree-sitter") == 1 then
   require("nvim-treesitter").install(parsers)
 else
-  vim.notify(("tree-sitter CLI 없음: 구문 강조 parser %d개 설치 건너뜀 (%s)"):format(
+  vim.notify(("tree-sitter CLI 없음: 구문 강조 parser %d개 설치 건너뜀 (%s). 설치: :Setup"):format(
     #missing, table.concat(missing, ", ")), vim.log.levels.WARN)
 end
 

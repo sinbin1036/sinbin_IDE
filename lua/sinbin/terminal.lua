@@ -448,7 +448,7 @@ function M.toggle_zoom()
   local right = layout.right_win()
   local buf = right and vim.api.nvim_win_get_buf(right) or (area_terms("right")[1] or {}).buf
   if not buf then
-    vim.notify("오른쪽 영역에 열린 Terminal 없음 (<Space>at Terminal, <Space>ac Claude Code)", vim.log.levels.INFO)
+    vim.notify("오른쪽 영역에 열린 Terminal 없음 (<Space>at Agent Shell, <Space>ac Claude Code)", vim.log.levels.INFO)
     return
   end
   local width = right and (vim.w[right].sinbin_width or vim.api.nvim_win_get_width(right))

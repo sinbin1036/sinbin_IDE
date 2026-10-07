@@ -17,5 +17,12 @@ vim.api.nvim_create_user_command("Home", function(opts) require("sinbin.starter"
   desc = "Start screen, closing every file (! discards unsaved changes)",
 })
 
--- Install / check (TASK-021). Defined before the plugins load, so it exists without them.
-vim.api.nvim_create_user_command("Setup", function() require("sinbin.setup").run() end, { desc = "Run the install script (setup.ps1)" })
+-- Install / check (TASK-021); `:Setup update` also updates plugins, parsers and Mason
+-- packages (TASK-023). Defined before the plugins load, so it exists without them.
+vim.api.nvim_create_user_command("Setup", function(opts)
+  if opts.args ~= "" and opts.args ~= "update" then
+    vim.notify(":Setup 또는 :Setup update", vim.log.levels.WARN)
+    return
+  end
+  require("sinbin.setup").run(opts.args == "update")
+end, { nargs = "?", complete = function() return { "update" } end, desc = "Run the install script (setup.ps1), update: also update" })
