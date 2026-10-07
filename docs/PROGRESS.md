@@ -2,8 +2,8 @@
 
 현재 상태 Snapshot. History를 누적하지 않는다. Phase 정의는 [PROJECT.md](PROJECT.md) Roadmap.
 
-- **Current Phase:** Phase 13 — Installer / Bootstrap 자동화 (진행 중)
-- **Status:** Phase 11 Custom UI / Layout 완료 (VS Code식 배치·창 이동·VS Code 키, PR #15). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
+- **Current Phase:** Phase 14 — 안정화 및 최적화 (진행 중)
+- **Status:** Phase 13 Installer 완료 (Windows `setup.ps1`, PR #19, Linux/macOS 스크립트는 Deferred). 자잘한 개선 TASK-022 (PR #20). 설치된 Plugin 21개 ([D-009](DECISIONS.md)~[D-018](DECISIONS.md)). 설정은 `<Space>,` 설정 패널 ([D-024](DECISIONS.md)). 조작법은 [USAGE.md](USAGE.md).
 
 ## Completed
 - Project 정의 ([TASK-001](tasks/completed/TASK-001-define-project.md))
@@ -30,7 +30,7 @@
 - 자잘한 개선: 강제 종료 확인 창, 오른쪽 Shell 탭 `Agent`, `:Home[!]`, 시작 폴더 홈, 최근 프로젝트 진입 정리, 빈 편집기 ([TASK-022](tasks/completed/TASK-022-small-tweaks.md), PR #20)
 
 ## In Progress
-- 없음
+- Phase 14 안정화 ([TASK-023](tasks/active/TASK-023-stabilization.md), branch `feat/stabilization`): 범위 확정(checkhealth → 시작 속도 → 업데이트 명령(`:Setup update`) → 안내 메시지·문서). 1번 checkhealth 정리 완료(WARNING 17 → 9, 남은 것은 Mason 선택 도구), 2번 시작 속도 완료(디버거·diffview 지연 로드, 상태줄 git 갱신 지연: 같은 부하에서 약 75ms 단축, 남는 `.git/index.lock` 문제 수정), 3번 `:Setup update`(Plugin·parser·Mason 업데이트, 외부 도구 제외, lock 커밋은 안내만) 완료, 사용자 확인 대기
 
 ## Blocked
 - 없음
@@ -43,14 +43,14 @@
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
 - 실제 새 Windows PC에서 `setup.ps1` (TASK-021은 이 PC + 임시 Neovim 데이터 폴더로 검증: Neovim·Git·Runtime winget 설치·UAC, WinLibs gcc PATH, winget 없는 PC 미검증)
-- Linux / macOS 설치 스크립트 없음 (helper `nvim_setup.lua`는 재사용 가능)
 - TASK-022 실제 화면: 강제 종료 확인 창 모양·버튼 색, 빈 편집기 안내 모양, 실제 `claude`·`codex`와 함께 쓸 때 (pynvim UI attach로만 검증)
 
 ## Remaining Phases
-- **13 Installer / Bootstrap 자동화** (진행 중) → 14 안정화 및 최적화
+- **14 안정화 및 최적화** (진행 중)
 - 예정 범위: [PROJECT.md](PROJECT.md) "남은 Phase 계획"
 
 ## Deferred
+- Linux / macOS 설치 스크립트 (Phase 13, 사용자 결정 2026-10-07. `scripts/setup/nvim_setup.lua`는 OS 중립이라 재사용 가능)
 - 빌드 에러 quickfix 연동 (TASK-013)
 - 목적별 Mode 전환 Coding / Debug / Git / AI / Focus (Phase 11 기본 배치 이후 별도 Task)
 - claudecode.nvim Claude 전용 IDE 연동 (D-017, 필요 시)
@@ -58,7 +58,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-없음 (Phase 13 남은 범위 결정 대기)
+[TASK-023](tasks/active/TASK-023-stabilization.md) Phase 14 안정화 및 최적화
 
 ## Next Action
-Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
+TASK-023 사용자 확인(시작 화면 시간 표시, 디버그·diffview 첫 사용, `:Setup update` 실제 실행) → 4번 안내 메시지·문서(README 현재 상태, USAGE 정리, 도구 없을 때 안내 점검).

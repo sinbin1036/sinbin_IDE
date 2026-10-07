@@ -244,6 +244,7 @@ ma      현재 위치를 a로 표시
 powershell -ExecutionPolicy Bypass -File .\setup.ps1              # 확인 + 없는 것 설치
 powershell -ExecutionPolicy Bypass -File .\setup.ps1 -With python,node   # Runtime도 설치
 powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly    # 확인만
+powershell -ExecutionPolicy Bypass -File .\setup.ps1 -Update       # 위 설치 + Plugin·parser·Mason 업데이트
 ```
 
 | 단계 | 내용 |
@@ -264,6 +265,20 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly    # 확인만
 - **Neovim 안에서:** `:Setup` 또는 시작 화면 `s` → 새 탭의 Terminal에서 같은 스크립트가 실행된다 (Runtime 번호 입력도 거기서). 끝나면 알림이 뜨고 `q`로 탭을 닫는다. 새로 설치된 Plugin은 Neovim을 다시 시작해야 적용된다
   - Plugin이 하나도 없어도(첫 실행 때 Git·네트워크 문제로 설치 실패) `:Setup`은 있다. 이때는 시작 화면이 안 뜨므로 빈 화면에서 `:Setup` 입력
   - Neovim·Git이 아예 없는 처음 설치는 PowerShell에서 `setup.ps1`
+
+### 업데이트 (`:Setup update`, `setup.ps1 -Update`)
+
+설치 단계를 그대로 거치면서(없는 것은 설치) Neovim 안쪽 것을 새 버전으로 올린다.
+
+| 대상 | 방법 |
+|---|---|
+| Plugin | `vim.pack.update` 확인 화면 없이 바로 적용. 바뀐 Plugin은 `이전 → 새` revision으로 표시 |
+| Treesitter parser | 설치된 revision이 nvim-treesitter가 고정한 revision과 다르면 다시 빌드 (Plugin 업데이트로 nvim-treesitter가 바뀌면 생김) |
+| Mason (LSP·디버거) | 설치된 버전이 최신이 아니면 다시 설치 |
+
+- 화면: ✔ 최신 / 업데이트됨, 끝에 `SINBIN IDE UPDATED`와 업데이트 수
+- **외부 도구(Neovim·Git·ripgrep 등)는 업데이트하지 않는다.** 실행 중인 Neovim을 바꾸면 충돌하고 UAC 창이 뜰 수 있어서, Neovim을 끈 뒤 `winget upgrade --all`
+- **Plugin이 바뀌면 `nvim-pack-lock.json`이 바뀐다.** Neovim을 다시 시작해 문제없는지 확인한 뒤 직접 커밋한다 (자동 커밋 안 함). 되돌리려면 `git checkout nvim-pack-lock.json` 후 `:lua vim.pack.update(nil, { target = 'lockfile' })`
 
 ## 설치된 Plugin
 
@@ -735,7 +750,7 @@ Neovim 안에서 Shell을 연다 (Windows는 Git Bash). 숨겨도 실행 중인 
 
 ## Debug (nvim-dap)
 
-breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(하단 패널이 열려 있으면 그 오른쪽 절반, 끝나면 자동으로 닫힘), 멈춘 동안 코드 줄 끝에 변수 값(`total = 3`)이 보인다.
+디버거는 시작 시간을 줄이려고 디버그 키(`<Space>d…`, `F5` 등)를 처음 누를 때 불러온다 (그 한 번만 조금 늦음). breakpoint를 걸고 시작하면 하단에 디버그 패널이 열리고(하단 패널이 열려 있으면 그 오른쪽 절반, 끝나면 자동으로 닫힘), 멈춘 동안 코드 줄 끝에 변수 값(`total = 3`)이 보인다.
 
 | 모드 | 키 | 동작 |
 |---|---|---|
@@ -816,6 +831,7 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 |---|---|
 | `:Settings` | 설정 패널 열기 (`<Space>,`) |
 | `:Setup` | 설치 / 점검 스크립트(`setup.ps1`)를 새 탭 Terminal에서 실행 (시작 화면 `s`). Plugin이 없어도 동작 |
+| `:Setup update` | 위와 같이 실행하면서 Plugin·Treesitter parser·Mason 패키지를 새 버전으로 (외부 도구 제외, Plugin이 바뀌면 `nvim-pack-lock.json` 확인 후 커밋) |
 | `:TrimWhitespace` | 버퍼 전체의 줄 끝 공백 삭제 (커서 위치 유지) |
 | `:'<,'>TrimWhitespace` | 선택 범위만 삭제 (Visual에서 `:` 입력 후) |
 
@@ -847,7 +863,7 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 | 작업 | 방법 |
 |---|---|
 | 추가 | `lua/sinbin/plugins/init.lua`의 `vim.pack.add({ ... })`에 항목 추가 후 Neovim 재시작 (설치 확인 prompt 표시) |
-| 업데이트 | `:lua vim.pack.update()` → 확인 buffer에서 `:write`로 적용 |
+| 업데이트 | `:Setup update` (Plugin·parser·Mason 한 번에, [업데이트](#업데이트-setup-update-setupps1--update)). Plugin만 바뀐 내용을 보며 고르려면 `:lua vim.pack.update()` → 확인 buffer에서 `:write`로 적용 |
 | 제거 | 목록에서 지운 뒤 `:lua vim.pack.del({ "이름" })` |
 | 상태 확인 | `:checkhealth vim.pack` |
 
