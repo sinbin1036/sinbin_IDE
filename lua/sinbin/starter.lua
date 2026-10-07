@@ -123,7 +123,10 @@ local function items()
         -- place), so its keys (q = quit) no longer apply (TASK-022).
         action = function()
           vim.fn.chdir(dir)
-          vim.schedule(function() vim.cmd.enew() end)
+          vim.schedule(function()
+            vim.cmd.enew()
+            require("sinbin.agent").enter_project()
+          end)
         end,
         section = "Recent Projects",
       }
@@ -263,7 +266,8 @@ function M.refresh()
 end
 
 --- :Home (TASK-022): back to the start screen as one full window, with every file
---- closed. Unsaved files stop it unless `force` (:Home!), which drops their changes.
+--- closed, in the home directory. Unsaved files stop it unless `force` (:Home!), which
+--- drops their changes.
 --- Terminals (Agent, Shell, panel) keep running hidden.
 --- @param force boolean
 function M.home(force)
@@ -299,6 +303,8 @@ function M.home(force)
       pcall(vim.api.nvim_win_close, win, true)
     end
   end
+  -- Out of the project too: the home directory, so it shows under Recent Projects.
+  vim.fn.chdir(vim.uv.os_homedir())
   MiniStarter.open()
   for _, buf in ipairs(files) do
     pcall(vim.api.nvim_buf_delete, buf, { force = true })

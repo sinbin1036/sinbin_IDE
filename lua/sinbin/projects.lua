@@ -41,9 +41,16 @@ vim.api.nvim_create_autocmd("VimEnter", {
   desc = "Record the startup working directory",
   callback = function()
     -- Headless runs (scripts, checks) are not project visits.
-    if #vim.api.nvim_list_uis() > 0 then
-      M.add(vim.fn.getcwd())
+    if #vim.api.nvim_list_uis() == 0 then
+      return
     end
+    -- Plain `nvim` starts in the home directory (start screen, TASK-022); `nvim .` or
+    -- `nvim <file>` keeps the directory it was started in as a project.
+    if vim.fn.argc() == 0 then
+      vim.fn.chdir(vim.uv.os_homedir())
+      return
+    end
+    M.add(vim.fn.getcwd())
   end,
 })
 vim.api.nvim_create_autocmd("DirChanged", {
