@@ -259,6 +259,9 @@ powershell -ExecutionPolicy Bypass -File .\setup.ps1 -CheckOnly    # 확인만
 - 전체 출력은 `%TEMP%\sinbin-setup-<시각>.log`
 - winget은 진행률(%)을 주지 않으므로 winget 설치 줄은 spinner + winget이 출력한 마지막 줄 + 경과 시간만 보인다. Neovim·Git·Runtime 설치 중 관리자 권한(UAC) 창이 뜰 수 있다
 - 설치 후 PATH는 새 터미널부터 적용된다 (스크립트 안에서는 바로 다시 읽어 사용)
+- **Neovim 안에서:** `:Setup` 또는 시작 화면 `s` → 새 탭의 Terminal에서 같은 스크립트가 실행된다 (Runtime 번호 입력도 거기서). 끝나면 알림이 뜨고 `q`로 탭을 닫는다. 새로 설치된 Plugin은 Neovim을 다시 시작해야 적용된다
+  - Plugin이 하나도 없어도(첫 실행 때 Git·네트워크 문제로 설치 실패) `:Setup`은 있다. 이때는 시작 화면이 안 뜨므로 빈 화면에서 `:Setup` 입력
+  - Neovim·Git이 아예 없는 처음 설치는 PowerShell에서 `setup.ps1`
 
 ## 설치된 Plugin
 
@@ -807,6 +810,7 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 | 명령 | 동작 |
 |---|---|
 | `:Settings` | 설정 패널 열기 (`<Space>,`) |
+| `:Setup` | 설치 / 점검 스크립트(`setup.ps1`)를 새 탭 Terminal에서 실행 (시작 화면 `s`). Plugin이 없어도 동작 |
 | `:TrimWhitespace` | 버퍼 전체의 줄 끝 공백 삭제 (커서 위치 유지) |
 | `:'<,'>TrimWhitespace` | 선택 범위만 삭제 (Visual에서 `:` 입력 후) |
 
@@ -826,7 +830,7 @@ Agent는 Neovim과 별개 프로그램(CLI) 그대로 오른쪽 영역에서 돈
 | Undo 유지 | 파일을 닫았다 열어도 `u`로 이전 변경 되돌리기 가능 |
 | 검색 | 소문자로만 검색하면 대소문자 무시, 대문자가 섞이면 구분 |
 | 색 테마 | tokyonight `moon` (네온 계열 다크). [설정 패널](#설정-패널)에서 `storm`/`night`, 배경 투명 |
-| 시작 화면 | 파일 없이 `nvim` 실행 시 SINBIN 로고·메뉴·최근 프로젝트 표시. 키 한 글자로 바로 실행: `f` 파일 찾기 / `g` 내용 검색 / `e` 파일 탐색기 / `c` 설정 패널 / `q` 종료, `1`~`5` 최근 프로젝트로 작업 폴더 변경. 위아래 화살표 + `<CR>`도 됨. 아래에 Plugin 수·시작 시간·Tip 하나 (창이 좁으면 로고 대신 `SinBin IDE` 한 줄) |
+| 시작 화면 | 파일 없이 `nvim` 실행 시 SINBIN 로고·메뉴·최근 프로젝트 표시. 키 한 글자로 바로 실행: `f` 파일 찾기 / `g` 내용 검색 / `e` 파일 탐색기 / `c` 설정 패널 / `s` 설치 / 점검(`:Setup`) / `q` 종료, `1`~`5` 최근 프로젝트로 작업 폴더 변경. 위아래 화살표 + `<CR>`도 됨. 아래에 Plugin 수·시작 시간·Tip 하나 (창이 좁으면 로고 대신 `SinBin IDE` 한 줄) |
 | 최근 프로젝트 | 작업 폴더가 바뀔 때마다(시작 폴더, 탐색기 `g.`, `:cd`) 기록. 홈 폴더 제외, 최근 10개를 `stdpath('data')/sinbin/projects.txt`에 저장 |
 | 외부 수정 반영 | Agent·git 등이 파일을 바꾸면 Neovim으로 돌아올 때 자동으로 다시 읽음 (수정 중인 버퍼는 확인 메시지) |
 | 알림 | 메시지가 오른쪽 위 창에 잠깐 표시. LSP 진행 상황(로딩·분석 중)은 표시하지 않음. 지난 알림은 `:lua MiniNotify.show_history()` |

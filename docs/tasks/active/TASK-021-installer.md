@@ -76,6 +76,12 @@
   - `Get-GradAt`의 `[Math]::Min(1, $t)`이 `Min(int, int)`로 해석되어 위치가 0/1로 반올림 → gradient가 앞 절반 첫 색 / 뒤 절반 끝 색으로 나뉨 (로고·머리줄 포함). `1.0`/`0.0`으로 수정 → 32칸 32색
   - 바 팔레트를 busy.js 무지개(빨강→주황→초록→하늘, 주황·초록 사이 탁한 올리브)에서 로고와 같은 청록→파랑→보라로 통일, 완료 바·요약도 같은 팔레트 (실패 요약만 빨강 계열) (사용자 선택)
 
+## 추가: Neovim 안에서 실행 (2026-10-07 사용자 요청)
+- `:Setup`(`commands.lua`, Plugin보다 먼저 로드) + 시작 화면 `s 설치 / 점검` → `lua/sinbin/setup.lua`가 Platform Layer `setup_cmd`(Windows만)를 새 탭 Terminal에서 실행. 내장 `jobstart`만 사용 (Plugin 로드 실패 시 `sinbin.terminal`도 로드 안 됨)
+- 위험 발견·방지: config 경로(Junction)로 실행하면 `$Root`가 링크 경로라 Config link 단계가 "다른 곳을 가리킴"으로 판단해 링크를 백업하고 자기 자신을 가리키는 Junction을 만들 수 있었음 → Neovim은 `fs_realpath` 경로를 넘기고, `setup.ps1`은 링크 경로에서 실행된 경우 "여기서 실행됨"으로 처리
+- 검증: 일반 시작 에러 없음, `:Setup` 등록, `setup_cmd` = `powershell ... -File C:/.../sinbin_IDE/setup.ps1`(실제 경로) / Junction 경로로 `-CheckOnly` 실행 → `config link Junction (여기서 실행됨)`, Junction 대상 그대로 / headless에서 `:Setup` → 탭 2개, terminal 버퍼, exit 0, 완료 알림, `q` 매핑, 로그상 8단계 모두 `present` / git을 PATH에서 빼고 빈 데이터 폴더로 시작 → `vim.pack` "No git executable" 에러, `:Setup` 있음·`setup_cmd` 있음·`sinbin.terminal` 미로드·mini.starter 없음
+- 미검증: 실제 화면에서 `:Setup` Terminal 표시(headless는 Terminal 버퍼 내용이 비어 로그로만 확인), Plugin 없는 상태에서 `:Setup` 끝까지 실행
+
 ## 검증 (2026-10-07, 이 PC)
 - 문법: `[Parser]::ParseFile` 3개 파일 오류 0
 - `-CheckOnly`: 8단계 확인만, 설치 0, `SINBIN IDE CHECK`
