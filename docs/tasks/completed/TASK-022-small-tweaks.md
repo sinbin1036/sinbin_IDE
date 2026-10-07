@@ -1,6 +1,6 @@
 # TASK-022: 자잘한 개선 (Phase 13 Linux/macOS 결정 전)
 
-- **Status:** In Progress (2026-10-07)
+- **Status:** Done (2026-10-07) — 항목 1~7 구현·검증 (pynvim UI attach), 사용자가 쓰면서 확인한 문제는 반영. 실제 화면 모양(확인 창 색·빈 편집기)은 PROGRESS Unverified
 - **Goal:** Phase 13 남은 범위로 넘어가기 전에 사용자가 요청한 작은 개선을 모아 처리한다. 항목은 요청이 올 때마다 추가.
 
 ## 항목
