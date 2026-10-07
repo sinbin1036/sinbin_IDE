@@ -17,6 +17,9 @@ for name, id in pairs(vim.lsp.protocol.SymbolKind) do
 end
 
 vim.lsp.config("*", { capabilities = MiniCompletion.get_lsp_capabilities() })
+-- nvim-lspconfig also lists `c.doxygen` / `cpp.doxygen`, compound filetypes only set
+-- with g:load_doxygen_syntax (not used here); :checkhealth warns they are unknown (TASK-023).
+vim.lsp.config("clangd", { filetypes = { "c", "cpp", "objc", "objcpp", "cuda" } })
 
 -- Server names are nvim-lspconfig config names (lsp/<name>.lua).
 vim.lsp.enable({

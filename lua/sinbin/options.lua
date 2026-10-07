@@ -20,6 +20,12 @@ opt.smartindent = true
 opt.ignorecase = settings.get("search_case") ~= "match"
 opt.smartcase = settings.get("search_case") == "smart"
 
+-- Remote plugin providers: no plugin here uses them (all Lua). Off, so startup does not
+-- probe for python / node / ruby / perl hosts and :checkhealth does not warn (TASK-023).
+for _, lang in ipairs({ "python3", "node", "ruby", "perl" }) do
+  vim.g["loaded_" .. lang .. "_provider"] = 0
+end
+
 -- Clipboard: share the system clipboard. The provider itself is platform-dependent.
 opt.clipboard = "unnamedplus"
 
