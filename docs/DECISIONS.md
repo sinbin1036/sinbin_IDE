@@ -252,5 +252,5 @@ Status: `Proposed` / `Accepted` / `Superseded`
 - Alternatives: `VK_HANGUL` 입력(사용자 B안), ENG 레이아웃 전환(im-select 류, 요구사항 위반), PowerShell 상주 프로세스, 미리 빌드한 exe를 저장소에 포함
 - Consequences: Windows 전용 (Platform Layer, 다른 OS는 동작 없음). 도우미 빌드 산출물은 저장소 밖(`stdpath("data")`). 터미널 목록 밖 프로그램(예: 다른 GUI 터미널)에서는 동작 안 함. 새 장비 설치(Phase 13)에서 첫 실행 시 자동 빌드
 - Related Task: TASK-017
-- Evidence: 빌드·상태 읽기·전경 프로세스 제한 확인 (2026-10-07), 실제 전환은 사용자 확인 필요
+- Evidence: 빌드·상태 읽기·전경 프로세스 제한 확인, 실제 전환 사용자 확인 (2026-10-07)
 

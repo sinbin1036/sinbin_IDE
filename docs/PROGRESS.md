@@ -22,9 +22,10 @@
 - Phase 9 Debug ([TASK-014](tasks/completed/TASK-014-debug.md))
 - Phase 10 AI Coding Agent Integration ([TASK-015](tasks/completed/TASK-015-ai-agent.md))
 - Phase 11 Custom UI / Layout ([TASK-016](tasks/completed/TASK-016-ui-layout.md))
+- Windows 한/영 자동 전환 ([TASK-017](tasks/completed/TASK-017-ime-auto-switch.md))
 
 ## In Progress
-- [TASK-017](tasks/active/TASK-017-ime-auto-switch.md): Windows 한/영 자동 전환 — 구현·merge 완료, 실제 전환 사용자 확인 대기 ([D-022](DECISIONS.md))
+- 없음
 
 ## Blocked
 - 없음
@@ -34,8 +35,6 @@
 - Java 디버그 step·변수 확인 (TASK-014, 정지·패널·종료만 확인)
 - Codex에 파일 위치 넘기기 (TASK-015, 폴더 신뢰 확인 화면 때문에 미검증)
 - Git Bash에서 Neovim 실행 시 `:!`·`system()` 깨짐 가능 ('shell'=bash, 'shellcmdflag'=`/s /c`, TASK-016 QA에서 발견, Phase 12)
-- TASK-016 사용자 화면: Windows Terminal에서 `Alt+z`·`` Alt+` ``·`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P` 전달, 마우스(탭·패널 탭 클릭), Nerd Font·codicon 아이콘 표시
-- TASK-017 실제 한/영 전환 (`to-english`, 상태 읽기·빌드만 확인)
 - lock 파일 기준 새 장비 일괄 설치 (Phase 13). Mason Server·Debug Adapter, Treesitter parser, 외부 CLI(ripgrep, tree-sitter, lazygit)는 lock 파일 밖
 
 ## Remaining Phases
@@ -50,9 +49,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-[TASK-017](tasks/active/TASK-017-ime-auto-switch.md) — Windows 한/영 자동 전환 (실제 전환 사용자 확인 대기)
+없음 — 다음은 Phase 12 Task 작성
 
 ## Next Action
-1. 사용자 확인: TASK-017 실제 한/영 전환 (오른쪽 Terminal에서 한글 → `Alt+a`로 코드 창 → 영어로, 영어 상태면 그대로). 되면 TASK-017 완료 처리, 안 되면 원인 조사 (Windows Terminal의 TSF 입력에 `WM_IME_CONTROL`이 안 먹을 가능성)
-2. 같이 확인: TASK-016 Unverified 항목 (키 전달·마우스·아이콘)
-3. 그 다음 Phase 12 Cross-platform Setup Task 작성 (PROJECT "남은 Phase 계획" 12번 범위 + Git Bash에서 `:!` 깨짐). 현재 브랜치 `docs/phase11-wrapup` (이 세션 마무리 문서, main 기준)
+Phase 12 Cross-platform Setup Task 작성 (TASK-018): PROJECT "남은 Phase 계획" 12번 범위 (Linux / macOS / WSL / SSH Platform Layer: Terminal Shell, `python`, `exe_suffix`, `venv_bin`, Dart/Flutter 경로, clipboard provider, config 연결) + Git Bash에서 Neovim 실행 시 `:!` 깨짐. 한/영 자동 전환은 Windows 전용으로 두고 다른 OS는 범위 판단.

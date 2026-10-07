@@ -1,6 +1,6 @@
 # TASK-016: Phase 11 Custom UI / Layout — VS Code식 기본 배치
 
-- **Status:** Done (2026-10-07) — PR #15 merge. 사용자 테스트 중 나온 피드백 반영 후 merge, 아래 "완료 시점 미검증" 항목은 사용자 화면에서 확인 안 됨
+- **Status:** Done (2026-10-07) — PR #15 merge, 남은 화면 항목 사용자 확인 완료 (2026-10-07)
 - **Goal:** VS Code와 비슷한 화면 배치(왼쪽 파일 트리, 위쪽 탭, 하단 통합 패널, 오른쪽 Agent, 경로 표시)를 기본으로 만들고, 사용자가 써 보며 커스터마이징할 출발점을 만든다. 조작 키는 기존 Vim 방식(`<Space>` Leader)을 유지한다.
 
 ## Background
@@ -249,7 +249,7 @@ PROJECT 목표 Layout(탐색기 / 코드 / 진단·심볼·Git / 하단 Terminal
 
 ### 완료 (2026-10-07)
 - PR #15 merge (`b84b580`, 기능별 15개 commit)
-- 완료 시점 미검증 (사용자 화면): Windows Terminal에서 `Alt+z`·`` Alt+` ``·`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P` 전달, 마우스(탭·패널 탭 클릭), Nerd Font·codicon 아이콘 표시 → PROGRESS Unverified
+- 사용자 확인 (2026-10-07, merge 후): Windows Terminal에서 `Alt+z`·`` Alt+` ``·`Alt+h/j/k/l`·`Ctrl+B`·`Ctrl+P` 동작, 마우스(탭·패널 탭 클릭), Nerd Font·codicon 아이콘 표시 → 미검증 항목 없음
 - 이후 별도 Task: 목적별 Mode 전환 (Deferred), Git Bash에서 `:!` 깨짐 (Phase 12)
 
 ## Steps
