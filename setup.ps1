@@ -256,6 +256,13 @@ function Install-ConfigLink {
   $link = Join-Path $env:LOCALAPPDATA 'nvim'
   $rootFull = [IO.Path]::GetFullPath($Root).TrimEnd('\')
   $item = Get-Item -LiteralPath $link -Force -ErrorAction SilentlyContinue
+  # Started through the link itself (e.g. from Neovim's config path): already connected.
+  if ($item -and $item.LinkType -and [IO.Path]::GetFullPath($link).TrimEnd('\') -ieq $rootFull) {
+    Write-Ui ((Format-Row $MARK_OK 'config link' $item.LinkType "$link (여기서 실행됨)") + "`n")
+    Add-Result 'config link' 'present' $item.LinkType
+    $script:Have['link'] = $true
+    return
+  }
   if ($item -and $item.LinkType) {
     $dest = [IO.Path]::GetFullPath(@($item.Target)[0]).TrimEnd('\')
     if ($dest -ieq $rootFull) {
