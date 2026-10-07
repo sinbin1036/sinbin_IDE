@@ -26,10 +26,10 @@
 - 시작 화면 디자인 ([TASK-018](tasks/completed/TASK-018-start-screen.md))
 - 설정 패널 ([TASK-019](tasks/completed/TASK-019-settings-panel.md), PR #17)
 - Phase 12 Cross-platform Setup ([TASK-020](tasks/completed/TASK-020-cross-platform.md), PR #18)
-- Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), branch `feat/installer`, PR 전)
+- Phase 13 Windows 설치 스크립트 `setup.ps1` + `:Setup` ([TASK-021](tasks/completed/TASK-021-installer.md), PR #19)
 
 ## In Progress
-- 없음
+- 자잘한 개선 ([TASK-022](tasks/active/TASK-022-small-tweaks.md), branch `feat/small-tweaks`): 강제 종료 확인 창(가운데 창)·오른쪽 Shell 탭 이름 `Agent`·최근 프로젝트 진입 시 시작 화면 닫기·`:Home[!]`·시작 폴더 홈·프로젝트 진입 시 오른쪽 Shell 새로 구현·검증 완료, 실제 화면 사용자 확인 대기. 항목 추가 예정
 
 ## Blocked
 - 없음
@@ -56,7 +56,7 @@
 - 진단 메시지 번역 규칙 추가 (`diagnostics/rules_ko.lua`, 쓰면서 계속)
 
 ## Current Active Task
-없음 (Phase 13 남은 범위 결정 대기)
+[TASK-022](tasks/active/TASK-022-small-tweaks.md) 자잘한 개선
 
 ## Next Action
-`feat/installer` PR 생성·merge (TASK-021). 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
+TASK-022 남은 자잘한 항목 받기 → 실제 화면 확인 → PR. 그다음 Phase 13 남은 범위 결정: Linux / macOS 설치 스크립트(`nvim_setup.lua` 재사용, symlink [D-025](DECISIONS.md)) 여부 → Phase 14.
