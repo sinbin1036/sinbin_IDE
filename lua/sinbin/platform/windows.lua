@@ -42,9 +42,14 @@ function M.setup(platform)
     end
   end
 
-  -- Install script for :Setup (TASK-021), run from the repository root.
-  platform.setup_cmd = function(root)
-    return { "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", vim.fs.joinpath(root, "setup.ps1") }
+  -- Install script for :Setup (TASK-021), run from the repository root. `update`:
+  -- :Setup update also updates plugins, parsers and Mason packages (TASK-023).
+  platform.setup_cmd = function(root, update)
+    local cmd = { "powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", vim.fs.joinpath(root, "setup.ps1") }
+    if update then
+      table.insert(cmd, "-Update")
+    end
+    return cmd
   end
 
   -- Python launcher name (Linux/macOS usually only have python3).
