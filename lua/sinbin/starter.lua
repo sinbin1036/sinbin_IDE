@@ -2,6 +2,7 @@
 -- columns, recent projects (sinbin/projects.lua), plugin count / startup time and a tip.
 -- mini.starter makes the items and the query keys; the layout is one content hook.
 local projects = require("sinbin.projects")
+local settings = require("sinbin.settings")
 
 local M = {}
 
@@ -32,18 +33,22 @@ local function color_at(t)
   return ("#%02x%02x%02x"):format(rgb[1], rgb[2], rgb[3])
 end
 
--- One highlight group per logo column; a shorter text uses evenly spaced ones.
-local function set_hl()
+-- One highlight group per logo column; a shorter text uses evenly spaced ones. With the
+-- gradient off (settings panel) all columns take the header color.
+function M.set_hl()
+  local gradient = settings.get("starter_gradient")
   for col = 1, LOGO_WIDTH do
-    vim.api.nvim_set_hl(0, "SinbinStarterLogo" .. col, { fg = color_at((col - 1) / (LOGO_WIDTH - 1)), bold = true })
+    local hl = gradient and { fg = color_at((col - 1) / (LOGO_WIDTH - 1)), bold = true }
+      or { link = "MiniStarterHeader" }
+    vim.api.nvim_set_hl(0, "SinbinStarterLogo" .. col, hl)
   end
   vim.api.nvim_set_hl(0, "SinbinStarterSub", { link = "Comment" })
 end
-set_hl()
+M.set_hl()
 vim.api.nvim_create_autocmd("ColorScheme", {
   group = vim.api.nvim_create_augroup("sinbin_starter", { clear = true }),
   desc = "Start screen logo colors",
-  callback = set_hl,
+  callback = M.set_hl,
 })
 
 local TIPS = {
@@ -99,8 +104,6 @@ local ACTIONS = {
   { "q", "종료", "qall" },
 }
 
-local MAX_PROJECTS = 5
-
 -- Item names start with their key: typing it leaves one item, which runs.
 local function items()
   local list = {}
@@ -109,7 +112,7 @@ local function items()
   end
   local cwd = vim.fs.normalize(vim.fn.getcwd())
   for _, dir in ipairs(projects.list()) do
-    if #list - #ACTIONS == MAX_PROJECTS then
+    if #list - #ACTIONS >= settings.get("starter_projects") then
       break
     end
     if dir ~= cwd then
@@ -216,7 +219,9 @@ local function layout(content, buf_id)
 
   blank()
   add({ unit(info(), "footer", "MiniStarterFooter") }, true)
-  add({ unit("Tip: " .. tip, "footer", "MiniStarterFooter") }, true)
+  if settings.get("starter_tip") then
+    add({ unit("Tip: " .. tip, "footer", "MiniStarterFooter") }, true)
+  end
 
   local function width(units)
     return vim.fn.strdisplaywidth(table.concat(vim.tbl_map(function(u) return u.string end, units)))
@@ -242,9 +247,20 @@ local function layout(content, buf_id)
   return result
 end
 
+--- Redraws the start screen if it is shown (settings, directory changes).
+function M.refresh()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.bo[buf].filetype == "ministarter" and vim.fn.bufwinid(buf) > 0 then
+      MiniStarter.refresh(buf)
+    end
+  end
+end
+
 function M.setup()
   local starter = require("mini.starter")
   starter.setup({
+    -- Off in the settings panel: an empty buffer as in plain Neovim.
+    autoopen = settings.get("starter"),
     evaluate_single = true,
     items = { items },
     header = "",
@@ -257,13 +273,7 @@ function M.setup()
     group = vim.api.nvim_create_augroup("sinbin_starter_refresh", { clear = true }),
     pattern = "global",
     desc = "Refresh the start screen",
-    callback = function()
-      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.bo[buf].filetype == "ministarter" and vim.fn.bufwinid(buf) > 0 then
-          MiniStarter.refresh(buf)
-        end
-      end
-    end,
+    callback = M.refresh,
   })
 end
 

@@ -14,7 +14,7 @@ function M.bottom_height()
 end
 
 function M.right_width()
-  return math.max(60, math.floor(vim.o.columns * 0.4))
+  return math.max(60, math.floor(vim.o.columns * require("sinbin.settings").get("agent_width") / 100))
 end
 
 --- Marks `win` as the bottom panel or a right column window (set by sinbin.terminal).
@@ -58,6 +58,15 @@ end
 --- The right area window (shell / AI Agents) of the current tab, if open.
 function M.right_win()
   return area_win("right")
+end
+
+--- Sets the open right area to right_width() (settings panel), keeping it from then on.
+function M.resize_right()
+  local win = M.right_win()
+  if win then
+    vim.api.nvim_win_set_width(win, M.right_width())
+    vim.w[win].sinbin_width = vim.api.nvim_win_get_width(win)
+  end
 end
 
 local function plain_wins()

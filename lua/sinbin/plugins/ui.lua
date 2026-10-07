@@ -1,9 +1,9 @@
 -- UI plugins (TASK-006): colorscheme, icons, statusline, key clues,
 -- notifications, start screen. Tab bar (TASK-016).
 
--- Soft neon dark, not pitch black (user choice).
-require("tokyonight").setup({ style = "moon" })
-vim.cmd.colorscheme("tokyonight")
+-- Soft neon dark, not pitch black (user choice). Style and transparency are settings
+-- (TASK-019).
+require("sinbin.settings").apply_theme()
 
 -- Requires a Nerd Font in the terminal for glyphs.
 require("mini.icons").setup()

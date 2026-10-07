@@ -44,6 +44,11 @@ vim.diagnostic.config({
   },
 })
 
+-- Off from the settings panel (TASK-019). <Leader>et below toggles without saving.
+if not require("sinbin.settings").get("diagnostics") then
+  vim.diagnostic.enable(false)
+end
+
 local map = vim.keymap.set
 
 map("n", "<Leader>ee", vim.diagnostic.open_float, { desc = "Diagnostic under cursor" })

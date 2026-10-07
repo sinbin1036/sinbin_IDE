@@ -5,6 +5,7 @@
 -- The OS side is the Platform Layer's `ime` (Windows only; no-op elsewhere).
 
 local ime = require("sinbin.platform").ime
+local settings = require("sinbin.settings")
 if not ime then
   return
 end
@@ -44,7 +45,7 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" }, {
     pending = true
     vim.schedule(function()
       pending = false
-      if focused and in_code_window() and in_terminal_ui() then
+      if focused and settings.get("ime") and in_code_window() and in_terminal_ui() then
         ime.to_english()
       end
     end)
