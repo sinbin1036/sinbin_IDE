@@ -121,7 +121,10 @@ local function refresh(force)
       done()
     end)
   end)
-  vim.system({ "git", "status", "--porcelain" }, { cwd = root, text = true }, function(r)
+  -- --no-optional-locks: status would take .git/index.lock to refresh the index, and a
+  -- Neovim quitting meanwhile kills it, leaving the lock behind (git then refuses to
+  -- commit until it is deleted, TASK-023).
+  vim.system({ "git", "--no-optional-locks", "status", "--porcelain" }, { cwd = root, text = true }, function(r)
     vim.schedule(function()
       c.dirty = r.code == 0 and (r.stdout or "") ~= ""
       done()
