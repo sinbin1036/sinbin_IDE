@@ -4,7 +4,7 @@ local M = {}
 
 function M.open()
   if vim.fn.executable("lazygit") == 0 then
-    vim.notify("lazygit not found on PATH (see docs/USAGE.md)", vim.log.levels.WARN)
+    vim.notify("lazygit 없음 (설치: Windows는 :Setup, Linux/macOS는 패키지 관리자)", vim.log.levels.WARN)
     return
   end
   require("sinbin.terminal").run_float({ "lazygit" }, {

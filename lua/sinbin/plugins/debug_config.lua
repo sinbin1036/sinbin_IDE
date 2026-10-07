@@ -313,7 +313,7 @@ function M.start_or_continue()
   end
   if not dap.session() then
     local need = ({
-      c = { "gdb", "MSYS2 gdb 설치 필요" },
+      c = { "gdb", "설치: :Setup (WinLibs gcc·gdb)" },
       python = { debugpy_python(), ":MasonInstall debugpy" },
       javascript = { mason_path("js-debug-adapter", "js-debug", "src", "dapDebugServer.js"), ":MasonInstall js-debug-adapter" },
       typescript = { mason_path("js-debug-adapter", "js-debug", "src", "dapDebugServer.js"), ":MasonInstall js-debug-adapter" },

@@ -9,10 +9,11 @@ local settings = require("sinbin.settings")
 local M = {}
 
 --- `resume`: arguments that continue the most recent conversation (settings panel).
---- @type table<string, { cmd: string, name: string, resume: string }>
+--- `install`: the command shown when the CLI is missing (TASK-023).
+--- @type table<string, { cmd: string, name: string, resume: string, install: string }>
 local AGENTS = {
-  claude = { cmd = "claude", name = "Claude Code", resume = "--continue" },
-  codex = { cmd = "codex", name = "Codex", resume = "resume --last" },
+  claude = { cmd = "claude", name = "Claude Code", resume = "--continue", install = "npm install -g @anthropic-ai/claude-code" },
+  codex = { cmd = "codex", name = "Codex", resume = "resume --last", install = "npm install -g @openai/codex" },
 }
 
 -- The default agent (settings panel) until another one is used.
@@ -45,7 +46,7 @@ end
 function M.toggle(agent, background)
   local spec = AGENTS[agent]
   if vim.fn.executable(spec.cmd) == 0 then
-    notify(("%s 없음 (설치: npm install -g ...)"):format(spec.cmd))
+    notify(("%s 없음 (설치: %s, Node.js 필요)"):format(spec.name, spec.install))
     return
   end
   last = agent
